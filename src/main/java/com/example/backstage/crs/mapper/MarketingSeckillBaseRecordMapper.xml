@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingSeckillBaseRecordMapper">
+
+    <insert id="insertMarketingSeckillBaseRecord" parameterType="com.example.backstage.crs.entity.MarketingSeckillBaseRecordEntity">
+        insert into marketing_seckill_base_record (recordid,unionid,cardstatus,price,groupid,cardno,phonenumber,wechatnumber,paymentstatus,wechatimgid,
+        wechatimgurl,state,isremoved,createdon,lastedon)
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+        #{recordid},
+        #{unionid},
+        #{cardstatus},
+        #{price},
+        #{groupid},
+        #{cardno},
+        #{phonenumber},
+        #{wechatnumber},
+        #{paymentstatus},
+        #{wechatimgid},
+        #{wechatimgurl},
+        #{state},
+        #{isremoved},
+        #{createdon},
+        #{lastedon}
+        </trim>
+    </insert>
+
+
+    <!--秒杀记录表修改状态-->
+    <update id="updateStatus" parameterType="Map">
+        update marketing_seckill_base_record set paymentstatus = #{paymentstatus} :: SMALLINT ,  CardStatus =#{cardstatus} :: SMALLINT where recordid = #{recordid} :: VARCHAR
+    </update>
+
+    <select id="selectSeckillBaseRecord" resultType="com.example.backstage.crs.entity.MarketingSeckillBaseRecordEntity">
+        select * from marketing_seckill_base_record where groupid=#{groupid}  order by createdon limit #{limit} offset #{pages}
+    </select>
+
+    <select id="selectSeckillBaseTotal" resultType="Integer">
+        select count(recordid) as number from marketing_seckill_base_record
+    </select>
+</mapper>

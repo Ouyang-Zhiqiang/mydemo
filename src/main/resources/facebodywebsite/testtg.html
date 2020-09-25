@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>团购活动</title>
+<link href="js/swiper-4.5.1/swiper-Swiper4/dist/css/swiper.min.css"; rel="stylesheet">
+<link href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css"; rel="stylesheet">
+<script src="js/jquery.min.js";></script>
+<script src="js/swiper-4.5.1/swiper-Swiper4/dist/js/swiper.min.js";></script>
+<script src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<style type="text/css">
+  *{
+    margin: 0;
+    padding: 0;
+    font-family: 微软雅黑!important;
+  }
+  html{
+      width: 100%;
+      background-repeat:no-repeat;
+      touch-action:none;
+      touch-action:pan-y;
+  }
+  body{
+      background-color:#130E4E;
+      color: white;
+  }
+  
+</style>
+</head>
+<body style="background: #25272A;background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;font-size: 15px">
+  <div class="row" style="margin-top:20px">
+    <div class="col-lg-3 col-md-3 col-xs-0" >
+    </div>
+    <div class="col-lg-6 col-md-6 col-xs-12" style="padding:25px;margin-bottom: 30px;">
+        <div style="width:100%;text-align: center;padding-bottom: 15px;"><apan>团购标题</apan></div>
+        <img src="images-14/card.jpg" width="300px" height="170px" style="margin:0 auto;display: block;border-radius: 7px;">
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;margin-top: 15px;"><span>拼团产品：</span><span>小团私教38次课时卡</span></div>
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;margin-top: 15px;"><span>原价：</span>3980 元</div>
+
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;"><span>拼团价：</span>2000 元</div>
+
+        <div style="width: 300px;margin: 40px auto;padding-left: 7px;"><span>已参团：</span></div>
+
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;"><span>还差：</span><span>2人</span></div>
+        
+        <div id="tijiao" class="btn btn-success btn-xs"  style="background:#FCCF00;width: 100px;height: 40px;text-align: center;line-height: 35px;margin:0px auto;display: block;margin-top: 60px;font-size: 15px;">
+          立即参团
+        </div>
+        
+        <div style="position: absolute;font-size: 13px;left: 60px;bottom: -80px;">
+          <span>活动开始时间：</span><span>2020-01-22</span><div style="height: 7px;"></div>
+          <span>活动结束时间：</span><span>2020-01-22</span>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
+<script>
+  jQuery(function($) {
+    var groupid=1
+      var cardid='2019032117362410135';
+      var membershipcardprice = '3380'
+    var grouppurchaseprice = '2000'
+    var grouptitle = '标题'
+    var cardname = "38次课时卡"
+    var groupsize = 10
+    var effectivestartdate='2020-8-01'
+    var effectiveenddate='2020-8-28'
+      var url = location.search; //获取url中"?"符后的字串
+      var openid=''
+      var unionid=''
+
+      var theRequest = new Object();
+
+
+      if (url.indexOf("?") != -1) {
+
+          var str = url.substr(1);
+
+          strs = str.split("&");
+
+          for(var i = 0; i < strs.length; i ++) {
+
+              theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1]);
+
+          }
+
+      }
+      // alert(theRequest.code)
+      const local = window.location.href
+
+      if (theRequest.code == null || theRequest.code === '') {
+          var time = (new Date()).valueOf()
+          window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + 'wx1b98935219078af2' +
+              '&redirect_uri=' + encodeURIComponent(local)+"?time="+time + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+      }
+      alert(theRequest.code)
+      $.ajax({
+          type : "POST",
+          url : "https://www.facebodyfitness.com/hi/main?hi=24CQRLLNKPLT",
+          dataType : "text",
+          data : {cardid:cardid},
+          success : function(data) {
+              // console.log(JSON.parse(data).rows[0].resurl)
+              // document.getElementById('img').src=JSON.parse(data).rows[0].resurl
+          }
+      })
+
+
+
+
+      $('#tijiao').click(function(){
+          alert("fdsfsf")
+          $.ajax({
+              type : "POST",
+              url : "http://10.25.19.29:8081/getCode",
+              dataType : "text",
+              data : {code:theRequest.code},
+              success : function(e) {
+                  var obj = JSON.parse(e)
+                  openid=obj.openid
+                  unionid=obj.unionid
+                  alert(openid)
+                  alert(unionid+'unionid')
+                  $.ajax({
+                      type : "POST",
+                      url : "http://10.25.19.29:8080/web/marketingMakeupgroupBase/makeupgroupBase",
+                      dataType : "text",
+                      data : {openid:openid,groupid:4,id:'111',sfprice:0.01},
+                      success : function(e) {
+                          var myresult=JSON.parse(e)
+                          WeixinJSBridge.invoke(
+                              'getBrandWCPayRequest', {
+                                  "appId":'wx1b98935219078af2',     //公众号名称，由商户传入
+                                  "timeStamp":myresult.timeStamp,         //时间戳，自1970年以来的秒数
+                                  "nonceStr":myresult.nonceStr, //随机串
+                                  "package":myresult.package,
+                                  "signType":"MD5",         //微信签名方式：
+                                  "paySign":myresult.paySign //微信签名
+                              }),
+                              function(res){
+                                  if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                                      alert('成功')
+                                  }
+                              }
+                      }
+                  })
+              }
+          })
+      })
+  })
+</script>

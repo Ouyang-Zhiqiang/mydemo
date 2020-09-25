@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mydemo.mapper.GhostUserMapper" >
+  <resultMap id="BaseResultMap" type="com.example.mydemo.pojo.GhostUser" >
+    <id column="uuid" property="uuid" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="CHAR" />
+    <result column="phone" property="phone" jdbcType="CHAR" />
+    <result column="deleteflag" property="deleteflag" jdbcType="NUMERIC" />
+    <result column="dateline" property="dateline" jdbcType="DATE" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    uuid, name, phone, deleteflag, dateline
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from ghost_user
+    where uuid = #{uuid,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from ghost_user
+    where uuid = #{uuid,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.example.mydemo.pojo.GhostUser" >
+    insert into ghost_user (uuid, name, phone, deleteflag,
+      dateline)
+    values (#{uuid,jdbcType=CHAR}, #{name,jdbcType=CHAR}, #{phone,jdbcType=CHAR}, #{deleteflag,jdbcType=NUMERIC},
+      #{dateline,jdbcType=DATE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.mydemo.pojo.GhostUser" >
+    insert into ghost_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        uuid,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="deleteflag != null" >
+        deleteflag,
+      </if>
+      <if test="dateline != null" >
+        dateline,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="uuid != null" >
+        #{uuid,jdbcType=CHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=CHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=CHAR},
+      </if>
+      <if test="deleteflag != null" >
+        #{deleteflag,jdbcType=NUMERIC},
+      </if>
+      <if test="dateline != null" >
+        #{dateline,jdbcType=DATE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.mydemo.pojo.GhostUser" >
+    update ghost_user
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=CHAR},
+      </if>
+      <if test="deleteflag != null" >
+        deleteflag = #{deleteflag,jdbcType=NUMERIC},
+      </if>
+      <if test="dateline != null" >
+        dateline = #{dateline,jdbcType=DATE},
+      </if>
+    </set>
+    where uuid = #{uuid,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.mydemo.pojo.GhostUser" >
+    update ghost_user
+    set name = #{name,jdbcType=CHAR},
+      phone = #{phone,jdbcType=CHAR},
+      deleteflag = #{deleteflag,jdbcType=NUMERIC},
+      dateline = #{dateline,jdbcType=DATE}
+    where uuid = #{uuid,jdbcType=CHAR}
+  </update>
+</mapper>

@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+       <meta charset="UTF-8" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+       <title>Document</title>
+       <link href="js/swiper-4.5.1/swiper-Swiper4/dist/css/swiper.min.css"; rel="stylesheet">
+       <link href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css"; rel="stylesheet">
+       <script src="js/jquery.min.js";></script>
+       <script src="js/swiper-4.5.1/swiper-Swiper4/dist/js/swiper.min.js";></script>
+       <script src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+       <style type="text/css">
+         *{
+           margin: 0;
+           padding: 0;
+         }
+          .swiper-container{
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            background: #EEEEEE;
+            text-align: center
+          }
+          .slide2 .swiper-slide{
+            background: #2AC3CB;
+          }
+          .swiper-slide p{
+          transform:translateX(-200px);
+          opacity:0;
+          transition:all .4s;}
+          .ani-slide p{
+          transform:translateX(0);
+          opacity:1;
+          }
+       </style>
+</head>
+<body>
+<div class="swiper-container swiper-container-father">
+
+  <div class="swiper-wrapper">
+    <div class="swiper-slide slide1">slider1</div>
+    <div class="swiper-slide slide2">
+      <div class="swiper-container swiper-container-son">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide ani-slide"><p>2.1</p></div>
+          <div class="swiper-slide"><p>2.2</p></div>
+          <div class="swiper-slide"><p>2.3</p></div>
+        </div>
+      </div>
+      <!-- <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div> -->
+    </div>
+    <div class="swiper-slide slide3">
+        <div class="swiper-container swiper-container-son2">
+            <div class="swiper-wrapper">
+              <div class="swiper-slide" style="background-image: url(images-14/fb01.png);background-size:100%">2.1</div>
+              <div class="swiper-slide" style="background-image: url(images-14/fb02.png);background-size:100%">2.2</div>
+              <div class="swiper-slide" style="background-image: url(images-14/fb03.png);background-size:100%">2.3 </div>
+            </div>
+          </div>
+          <!-- <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div> -->
+    </div>
+  </div>
+</div>
+
+
+
+
+<script>
+  window.window_swiper = new Swiper('.swiper-container-father', {
+    direction : 'vertical',
+    speed: 800,
+    mousewheel: true,
+    // simulateTouch: false,
+    // noSwipingClass : '.swiper-container-father',
+    on: {
+        // onSlideChangeStart: function(swiper) { //滑动父级需要激活滚轮事件
+        //     swiper.enableMousewheelControl();
+        // }
+ 
+    }
+});
+  
+var swiper = new Swiper('.swiper-container-son', {
+  direction : 'vertical',
+      // simulateTouch: false,
+      mousewheel: true,
+      nested: true,
+      
+      on: {
+        init:function(swiper){
+          slide=this.slides.eq(0);
+          console.log(this.slides)
+          slide.addClass('ani-slide');
+        },
+      transitionStart: function(){
+          for(i=0;i<this.slides.length;i++){
+            slide=this.slides.eq(i);
+              slide.removeClass('ani-slide');
+        }
+        },
+      transitionEnd: function(){
+        slide=this.slides.eq(this.activeIndex);
+          slide.addClass('ani-slide');
+        },
+
+        slideChangeTransitionStart: function () {
+        //此处禁止 外层 swiper
+          window.window_swiper.mousewheel.disable();
+         
+        },
+        slideChangeTransitionEnd: function () {
+          window.window_swiper.mousewheel.enable();
+        }
+      }
+    });
+    var swiperson2 = new Swiper('.swiper-container-son2', {
+      // simulateTouch: false,
+      // nested: true,
+      effect : 'coverflow',
+      slidesPerView: 3,
+      centeredSlides: true,
+      coverflowEffect: {
+      rotate: 30,
+      stretch: 10,
+      depth: 60,
+      modifier: 2,
+      slideShadows : true,
+      // nextButton: '.swiper-button-next',
+      // prevButton: '.swiper-button-prev',
+    },
+    });
+</script>
+</body>
+</html>

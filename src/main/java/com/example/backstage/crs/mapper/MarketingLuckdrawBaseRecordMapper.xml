@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingLuckdrawBaseRecordMapper">
+    <insert id="setMarketingLuckdrawBaseRecord" parameterType="com.example.backstage.crs.entity.MarketingLuckdrawBaseRecordEntity" useGeneratedKeys="true" keyProperty="recordid">
+        insert into marketing_luckdraw_base_record(luckdrawid,goodsname,phonenumber,wechatnumber,
+        wechatimgid,wechatimgurl,state,isremoved,createdon,lastedon,expirydatecode,username)values
+        (#{luckdrawid},
+        #{goodsname},
+        #{phonenumber},
+        #{wechatnumber},
+        #{wechatimgid},
+        #{wechatimgurl},
+        #{state},
+        #{isremoved},
+        #{createdon},
+        #{lastedon},
+        #{expirydatecode},
+        #{username}
+        )
+    </insert>
+
+    <update id="ReceiveAward">
+        update  marketing_luckdraw_base_record
+        set state=2,lastedon=current_date
+        where luckdrawid=#{luckdrawid} and phonenumber=#{phone}
+    </update>
+</mapper>

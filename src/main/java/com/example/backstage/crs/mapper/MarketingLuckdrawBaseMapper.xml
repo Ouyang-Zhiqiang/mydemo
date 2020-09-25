@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingLuckdrawBaseMapper">
+    <insert id="setMarketingLuckdrawBase" parameterType="com.example.backstage.crs.entity.MarketingLuckdrawBaseEntity" useGeneratedKeys="true" keyProperty="luckdrawid">
+        insert into marketing_luckdraw_Base(luckdrawname,starttime,endtime,logoid,
+        resurl,activityrules,luckdrawdescription,sharetitle,sharesmallpictures,
+        sharesmallpicturesurl,winningtimes,state,isremoved,createdon,
+        createdby,createdname,createdip,lastedon,lastedby,lastedname,lastedip,awardsetting,actype
+        )
+        values (
+          #{luckdrawname},
+          #{starttime},
+          #{endtime},
+          #{logoid},
+          #{resurl},
+          #{activityrules},
+          #{luckdrawdescription},
+          #{sharetitle},
+          #{sharesmallpictures},
+          #{sharesmallpicturesurl},
+          #{winningtimes},
+          #{state},
+          #{isremoved},
+          #{createdon},
+          #{createdby},
+          #{createdname},
+          #{createdip},
+          #{lastedon},
+          #{lastedby},
+          #{lastedname},
+          #{lastedip},
+          #{awardsetting},
+          #{actype}
+        )
+    </insert>
+
+    <update id="upMarketingLuckdrawBase" parameterType="com.example.backstage.crs.entity.MarketingLuckdrawBaseEntity">
+        update marketing_luckdraw_Base set
+        luckdrawname=#{luckdrawname},starttime=#{starttime},endtime=#{endtime},
+        logoid=#{logoid},resurl=#{resurl},activityrules=#{activityrules},
+        luckdrawdescription=#{luckdrawdescription},sharetitle=#{sharetitle},
+        sharesmallpictures=#{sharesmallpictures},sharesmallpicturesurl=#{sharesmallpicturesurl},
+        awardsetting=#{awardsetting},winningtimes=#{winningtimes},
+        state=#{state},lastedon=current_date,lastedby=#{lastedby},
+        lastedname=#{lastedname},lastedip=#{lastedip}
+        where luckdrawid=#{luckdrawid}
+    </update>
+    
+    <update id="deMarketingLuckdrawBase">
+        update marketing_luckdraw_Base set isremoved=1,lastedip=#{hostAddress},
+        lastedon=current_date
+        where luckdrawid=#{luckdrawid}
+    </update>
+
+    <update id="stopMarketingLuckdrawBase">
+        update marketing_luckdraw_Base set state=0,lastedip=#{hostAddress},
+        lastedon=current_date
+        where luckdrawid=#{luckdrawid}
+    </update>
+
+</mapper>

@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+       <meta charset="UTF-8" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+       <title>首页_颜身运动_FaceBody</title>
+       <link href="js/swiper-4.5.1/swiper-Swiper4/dist/css/swiper.min.css"; rel="stylesheet">
+       <link href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css"; rel="stylesheet">
+       <link href="css/animate.min.css">
+       <script src="js/jquery.min.js";></script>
+       <script src="js/swiper-4.5.1/swiper-Swiper4/dist/js/swiper.min.js";></script>
+       <script src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+       <script src="js/swiper.animate1.0.3.min.js"></script>
+       <link rel="stylesheet" href="https://staticweb.keepcdn.com/staticShow/vendors/webfont/css/keep_icon-645549d368.css">
+       <link rel="stylesheet" href="https://staticweb.keepcdn.com/staticShow/css/common/common-4de95d249d.css">
+       <link rel="stylesheet" href="https://staticweb.keepcdn.com/staticShow/css/homepage-133a205f7f.css">
+       <style type="text/css">
+         *{
+           margin: 0;
+           padding: 0;
+           font-family: 微软雅黑!important;
+         }
+          .swiper-container{
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            background: #EEEEEE;
+            text-align: center
+          }
+          .slide2 .swiper-slide{
+            background: #2AC3CB;
+          }
+          .swiper-slide p{
+          transform:translateX(-200px);
+          opacity:0;
+          transition:all .4s;}
+          .ani-slide p{
+          transform:translateX(0);
+          opacity:1;
+          }
+          .video-bg{
+            height: 100%;
+            width: 100%;
+            object-fit: fill;
+          }
+          .swiper-container{
+          --swiper-theme-color: #ff6600;
+          --swiper-pagination-color: #00ff33;/* 两种都可以 */
+        }
+        .swiper-pagination-bullet{
+          width: 12px;
+          height: 4px;
+          display: inline-block;
+          background: #F2C81F;
+          border-radius: 20%;
+        }
+        .pagination-bullet-active{
+          border-radius: 20%;
+          background: #F2C81F;
+          width: 12px;
+          height: 4px;
+        }
+        .headerbar a :hover{
+          color: yellow!important;
+        }
+        
+       </style>
+</head>
+<body>
+<div style="width: 100%;position: absolute;z-index: 100;color: white;font-size: 17px;height: 60px;line-height: 60px;">
+  <div class="inheader" style="width: 90%;height: 100%;margin: 0 auto;">
+    <div style="width:20%;height: 100%;float: left;">
+      <div style="float: left;margin-left: 0%;"><img src="images-14/logo.png"  height="32px"></div>
+    </div> 
+    <div style="width:80%;height: 100%;float: right;text-align: right;font-size: 17px;">
+      <a href="index.html" style="color: white;text-decoration: none;margin-right: 30px;">首页</a>
+      <a href="shequn.html" style="color: white;text-decoration: none;margin-right: 30px;">社群</a>
+      <a href="index.html#slide5" style="color: white;text-decoration: none;margin-right: 30px;">场馆</a>
+      <a href="kecheng.html" style="color: white;text-decoration: none;margin-right: 30px;">课程</a>
+      <a href="cshz.html" style="color: white;text-decoration: none;">城市合伙</a>
+    </div>      
+  </div>
+  
+</div>
+<div class="swiper-container swiper-container-father">
+  <div class="swiper-wrapper">
+    <div class="swiper-slide slide1" style="position: relative;" data-hash="slide1" id="myslide1">
+      <!-- <video class="video-bg" muted autoplay loop src="images-14/我的影片.mp4"></video> -->
+      <!-- <img src="images-14/pb.png" alt=""  width="240px" height="50px" style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -190%);"> -->
+      <img src="images-14/pb.png" width="280px" height="70px" alt=""  style="position: absolute;left: 50%;top: 50%;transform: translate(-50%, -50%);">
+      <div style="position: absolute;bottom: 18%;left:5%;color: white;font-size: 16px;">
+        <div style="margin-bottom: 5%;text-align: left;">FaceBody颜身运动</div>
+        <div style="text-align: left;">您身边的小团私教专家</div>
+      </div>
+    </div>
+    <div class="swiper-slide slide2" data-hash="slide2">
+        <div class="body-wrap" style="height: 100%;">
+          <section class="users-wrap" style="height: 100%;">
+            <div class="users-wrap-inner" style="height: 100%;width: 100%;background-image: url(https://res.facebodyfitness.com/onlinevideo/img/9144c48e-8a94-4337-9589-d9d096e3af39.png);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;">
+                <div class="users-text" style="position: absolute;top: 28%;left: 6%;">
+                    <div class="users-title">
+                        <div id="countnumber" class="ani" style="width: 500px!important;text-align: left;" swiper-animate-effect="fadeInUp" swiper-animate-duration="0.5s" swiper-animate-delay="0.3s">
+                          <!-- <span style="color: #F2C81F;font-size: 40px!important;">2079,000 </span> -->
+                          <span style="color: white;font-size: 40px!important;">人次在此运动</span>
+                        </div>
+                    </div>
+                    <div class="users-cont" style="color: white!important;font-size: 21px;width: 500px;text-align: left;">每天都有FBer在这里收获新改变新生活</div>
+                </div>
+                <div class="user-list-wrap" style="position: absolute;top: 35%;left: 55%;">
+                    <div style="width:400px;height:120px;overflow:hidden;position:relative;">
+                      <div id="scrollto" style="position: absolute">
+                      </div>
+                    </div>
+                </div>
+
+                <div class="user-list-wrap" style="position: absolute;top: 65%;left: 45%;">
+                  <div style="width:400px;height:120px;overflow:hidden;position:relative;">
+                    <div id="scrollto2" style="position: absolute">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="user-list-wrap" style="position: absolute;top: 50%;left: 70%;">
+                  <div style="width:400px;height:120px;overflow:hidden;position:relative;">
+                    <div id="scrollto3" style="position: absolute">
+                    </div>
+                  </div>
+                </div>
+
+            </div>
+          </section>
+        </div>
+    </div>
+
+    <div class="swiper-slide slide3" style="position: relative;background: white;" data-hash="slide3">
+      <div style="width: 100%;height: 300px;background: #F2C81F;">
+      </div>
+      <div style="position: absolute;top: 230px;left: 5%"><img src="images-14/课程.png" width="140px" height="140px"></div>
+      <div style="position: absolute;top: 420px;left: 6.8%;text-align: left;">
+        <h1 style="color: black;font-weight: 600;font-size: 28px;border-bottom: 5px solid #F2C81F;width: 58px;">课程</h1>
+        <h3 style="color:black;font-weight: 500;">教练每节指导，天天不重样</h3>
+      </div>
+      <h1 style="position: absolute;bottom: 12%;left: 6%;color: #cccccc;font-weight: 600;font-size: 100px;opacity: 0.3;">C O U R S E</h1>
+      <div style="position: absolute;top:22%;right:5%;background: white;padding:0px 10px 10px 10px;width:340px" id="mycourse">
+        <!-- <div style="height: 10px;"></div>
+        <img src="images-14/fb02.png" width="320px" height="180px"> -->
+        
+      </div>
+    </div>
+
+    <div class="swiper-slide slide4" style="position: relative;background: black;" data-hash="slide4">
+      <div style="width: 100%;height: 300px;background: #4F4287;">
+      </div>
+      <div style="position: absolute;top: 230px;right: 5%"><img src="images-14/人群.png" width="140px" height="140px"></div>
+      <div style="position: absolute;top: 420px;right: 6%;text-align: right;">
+        <h1 style="color: white;font-weight: 600;font-size: 28px;border-bottom: 5px solid #4F4287;width: 112px;float:right;">运动社群</h1>
+        <div style="clear: both;"></div>
+        <h3 style="color:white;font-weight: 400;">撸 铁 都 是 PARTY 味</h3>
+      </div>
+      <h1 style="position: absolute;bottom: 15%;;right: 6%;color: #cccccc;font-weight: 600;font-size: 72px;opacity: 0.3;">COMMUNITY</h1>
+      <div style="position: absolute;top:230px;left:5%;width:380px;border-left:10px solid white;border-right:10px solid white;border-bottom:10px solid white" id="myshequn" >
+        <!-- <img src="images-14/fb01.png" width="340px" height="200px" style="margin-top: 50px;"> -->
+        <div style="width:100%;height:10px;background:white"></div><img src="https://res.facebodyfitness.com/onlinevideo/img/c60e7f39-187d-4696-bf89-15dd05ec9c05.jpg" width="360px" height="200px" >
+        <div style="width:100%;height:10px;background:white"></div><img src="https://res.facebodyfitness.com/onlinevideo/img/4d03a2c1-b345-4d66-8b1b-6ea73b896c1e.jpg" width="360px" height="200px" >
+      </div>
+    </div>
+
+    <div class="swiper-slide slide5" style="background-image: url(https://res.facebodyfitness.com/onlinevideo/img/559e6edb-9973-4fa5-89f4-525b7ec30c0a.jpg);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;position: relative;" data-hash="slide5" >
+        <div style="height: 35%;"></div>
+        <div style="width: 100%;display: flex;justify-content: center;">
+          <div class="swiper-container swiper-container-son2" style="height: 400px;width: 1100px;background: transparent;">
+            <div class="swiper-wrapper" style="height: 80%;margin-top:10px" style="background:#4F4287;" id="mystores">
+              
+           
+            </div>
+            <div class="swiper-button-prev swiper-button-prev1" style="margin-top: -50px;"></div>
+            <div class="swiper-button-next swiper-button-prev1" style="margin-top: -50px;"></div>
+            <div class="swiper-pagination"></div>
+          </div>
+        </div>
+        
+        <!-- 切换效果 -->
+        <!-- <div class="swiper-container swiper-container-son2" style="height: 35%;width: 94%;margin-left: 3%;background-color:transparent;">
+          <div class="swiper-wrapper" style="height: 80%;margin-top:10px" style="background:#4F4287;" id="mystores">
+            <div class="swiper-slide" style="position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20190506090549_dongding.jpg);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">东鼎馆</div></div>
+            <div class="swiper-slide" style="position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20191119134850_20190809171716_yafan.png);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">亚繁馆</div></div>
+            <div class="swiper-slide" style="position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20200401104034_WechatIMG546.jpeg);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">马陆馆</div></div>
+            <div class="swiper-slide" style="position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20190506090646_sijing.jpg);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">泗泾馆</div></div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div> -->
+        <!-- <div class="swiper-container swiper-container-son2" style="height:200px;width:1800px;overflow: hidden!important;background-color: black;position: absolute;left: 9%;top:35%;">
+          <div class="swiper-wrapper addimages">
+            <div class="swiper-slide" style="height: 200px;width: 300px!important;position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20190506090549_dongding.jpg );background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">东鼎馆</div></div>
+            <div class="swiper-slide" style="height: 200px;width: 300px!important;position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20191119134850_20190809171716_yafan.png);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">亚繁馆</div></div>
+            <div class="swiper-slide" style="height: 200px;width: 300px!important;position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20200401104034_WechatIMG546.jpeg);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">马陆馆</div></div>
+            <div class="swiper-slide" style="height: 200px;width: 300px!important;position: relative;background-image: url(https://res.facebodyfitness.com/facebody/images/20190506090646_sijing.jpg);background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">泗泾馆</div></div>
+          </div>
+        </div> -->
+        <img class="gzh1" src="images-14/5362f5be69c07344ce134af940b3f54.jpg" width="110px" height="110px" style="position: absolute;bottom: 125px;left: 6.6%;display: none;">
+        <img class="gzh2" src="images-14/5362f5be69c07344ce134af940b3f54.jpg" width="110px" height="110px" style="position: absolute;bottom: 125px;left: 11.3%;display: none;">
+        <img class="gzh3" src="images-14/1591339932.png" width="110px" height="110px" style="position: absolute;bottom: 85px;left: 11.3%;display: none;z-index: 50;">
+        <div class="gzh4" style="position: absolute;bottom: 35px;left: 5.8%;display: none;color: white;" >hr@facebdoychina.com</div>
+        <div style="position: absolute;bottom: 60px;left: 8%;color: white;font-size: 15px;font-weight: 600;">
+          <span class="gywm" style="cursor: pointer;">关于我们</span> &nbsp;&nbsp;&nbsp;&nbsp; <span class="lxfs" style="cursor: pointer;">联系方式</span> <br> <br>
+          <span style="cursor: pointer;" class="jrwm">加入我们</span> &nbsp;&nbsp;&nbsp;&nbsp; <span style="cursor: pointer;"><a class="cshh" style="color: white;direction: none;text-decoration: none;">城市合伙</a></span>
+        </div>
+        <!-- <div style="position: absolute;bottom: 60px;right: 10%;">
+          <img src="images-14/微信.png" width="20px">&nbsp;&nbsp;&nbsp;&nbsp;
+          <img src="images-14/微博.png" width="20px">&nbsp;&nbsp;&nbsp;&nbsp;
+          <img src="images-14/脸书.png" width="20px">&nbsp;&nbsp;&nbsp;&nbsp;
+          <img src="images-14/bird-小鸟.png" width="20px">
+        </div> -->
+    </div>
+
+    
+
+    <!-- <div class="swiper-slide slide4">
+        <div class="swiper-container swiper-container-son3" style="height: 30%;">
+          <div class="swiper-wrapper" style="height: 80%;">
+            <div class="swiper-slide" data-history="slide1" style="background-image: url(images-14/fb01.png);background-size:100%">Slide 1</div>
+            <div class="swiper-slide" data-history="slide2" style="background-image: url(images-14/fb01.png);background-size:100%">Slide 2</div>
+            <div class="swiper-slide" data-history="slide3" style="background-image: url(images-14/fb01.png);background-size:100%">Slide 3</div>
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+        
+    </div> -->
+    
+  </div>
+</div>
+
+<script>
+    var mp4header=''
+    var courseNumber=''
+    var personArr=[]
+    var courses=[]
+    var shequn=[]
+    var s1=false
+    var s2=false
+    $.ajax({
+        type : "POST",
+        url : "http://106.14.162.18:8080/hi/main?hi=24CDIAEC0X3B",
+        dataType : "text",
+        data : {},
+        success : function(data) {
+            var obj = {}
+            obj = JSON.parse(data)
+            var stores=[]
+            stores=obj.rows
+            console.log(stores)
+            stores.forEach((item)=>{
+              $newElement=$('<div class="swiper-slide" style="position: relative;overflow: hidden;"><img height="100%" width="100%" class="myslide" src="'+item.resurl+'"><div style="position: absolute;top:10%;right:0px;width:100px;height: 40px;text-align: center;line-height: 40px;color: white;background: #4F4287;border-radius: 20px 0px 0px 20px;">'+item.name+'</div></div>')
+              $('#mystores').append($newElement);
+            })
+            var swiperson2 = new Swiper('.swiper-container-son2', {
+              // simulateTouch: false,
+              // nested: true,
+              // effect : 'coverflow',
+              // allowSlideNext:true,
+              // allowSlidePrev : true,
+              // prevButton:'.swiper-button-prev',
+              // nextButton:'.swiper-button-next',
+              slidesPerView: 2.2,
+              spaceBetween : 30,
+              loop: true,
+              // centeredSlides: true,
+              slidesOffsetBefore : 1.5,
+              navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+              pagination: {
+                el: '.swiper-pagination',
+              },
+            //   coverflowEffect: {
+            //   rotate: 30,
+            //   stretch: 10,
+            //   depth: 60,
+            //   modifier: 2,
+            //   slideShadows : true,
+            
+            // },
+            });
+        }
+    })
+
+    // $(".gywm").click(function(){
+    //   if(s1==false){
+    //     s1=true
+    //     s2=false
+    //     $(".gzh2").hide()
+    //     $(".gzh1").show()
+    //   }else{
+    //     s1=false
+    //     s2=false
+    //     $(".gzh2").hide()
+    //     $(".gzh1").hide()
+    //   }
+    // })
+
+    // $(".lxfs").click(function(){
+    //   if(s2==false){
+    //     s2=true
+    //     s1=false
+    //     $(".gzh1").hide()
+    //     $(".gzh2").show()
+    //   }else{
+    //     s2=false
+    //     s1=false
+    //     $(".gzh1").hide()
+    //     $(".gzh2").hide()
+    //   } 
+    // })
+
+    $(".gywm").mouseover(function(){
+      $(".gzh1").show()
+    });
+
+    $(".gywm").mouseout(function(){
+      $(".gzh1").hide()
+    });
+
+    $(".lxfs").mouseover(function(){
+      $(".gzh2").show()
+    });
+
+    $(".lxfs").mouseout(function(){
+      $(".gzh2").hide()
+    });
+
+    $(".cshh").mouseover(function(){
+      $(".gzh3").show()
+    });
+
+    $(".cshh").mouseout(function(){
+      $(".gzh3").hide()
+    });
+
+    $(".jrwm").mouseover(function(){
+      $(".gzh4").show()
+    });
+
+
+    $(".jrwm").mouseout(function(){
+      // $(".gzh4").mouseover(function(){
+      //   $(".gzh4").show()
+      // });
+      $(".gzh4").hide()
+    });
+
+    $(".gzh4").mouseover(function(){
+      $(".gzh4").show()
+    });
+
+    $(".gzh4").mouseout(function(){
+      $(".gzh4").hide()
+    });
+
+
+    //首页视频
+    $.ajax({
+        type : "POST",
+        url : "http://106.14.162.18:8080/hi/main?hi=24CDIAEC0WT5",
+        dataType : "text",
+        data : {},
+        success : function(data) {
+            var obj = JSON.parse(data)
+            mp4header=obj.rows[0].url
+            $newElement1=$('<video class="video-bg" muted autoplay loop src="'+mp4header+'"></video>')
+            $('#myslide1').append($newElement1);
+        }
+    })
+
+    //总上课数
+    $.ajax({
+        type : "POST",
+        url : "http://106.14.162.18:8080/hi/main?hi=24AVKXN10WJQ",
+        dataType : "text",
+        data : {},
+        success : function(data) {
+            var obj = {}
+            obj = JSON.parse(data)
+            courseNumber=obj.rows[0].count-0+100000
+            $newElement2=$('<span style="color: #F2C81F;font-size: 40px!important;">'+courseNumber+'</span>')
+            $('#countnumber').prepend($newElement2);
+        }
+    })
+
+    // 上课滚动
+    $.ajax({
+        type : "POST",
+        url : "http://106.14.162.18:8080/hi/main?hi=24AVKXN10WJS",
+        dataType : "text",
+        data : {},
+        success : function(data) {
+            var obj = JSON.parse(data)
+            personArr=obj.rows
+            console.log(personArr)
+            var doplay1=[]
+            var doplay2=[]
+            var doplay3=[]
+            personArr.forEach((item,index)=>{
+              if(index%3==0){
+                  doplay1.push(personArr[index])
+              }else if(index%3==1){
+                  doplay2.push(personArr[index])
+              }else if(index%3==2){
+                  doplay3.push(personArr[index])
+              }
+            })
+            $('#scrollto').empty();
+            doplay1.forEach((item,index) => {
+                $newElement1=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                $newElement=$('<div class="do1" style="width:400px;height:60px;overflow:hidden" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px;"><span style="display:block;float:left;font-size:13px;color:white">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                $newElement2=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                $newElement3=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                $newElement4=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                $newElement5=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                
+                $('#scrollto').append($newElement1);
+                $('#scrollto').append($newElement);
+                $('#scrollto').append($newElement2);
+                $('#scrollto').append($newElement3);
+                $('#scrollto').append($newElement4);
+                $('#scrollto').append($newElement5);
+              
+            })
+            var d1 = setInterval(function scrollText(){
+                $('#scrollto').css({'display':'block'})
+                $('#scrollto').animate({
+                    top:'-=120px',
+                    opacity:'0'
+                },3600,function(){
+                    $('#scrollto').css({'opacity':'1','top':'-=60'})
+                    if(parseInt($('#scrollto').css('top'))<=-(doplay1.length*60*9)){
+                        $('#scrollto').css('top','0px')
+                    }
+                })
+            })
+
+            $('#scrollto2').empty();
+              doplay2.forEach((item,index) => {
+                  $newElement1=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                  $newElement2=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                  $newElement3=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                  $newElement4=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                  $newElement=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px;"><span style="display:block;float:left;font-size:13px;color:white">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                  $newElement5=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                  
+                  $('#scrollto2').append($newElement1);
+                  $('#scrollto2').append($newElement2);
+                  $('#scrollto2').append($newElement3);
+                  $('#scrollto2').append($newElement4);
+                  $('#scrollto2').append($newElement);
+                  $('#scrollto2').append($newElement5);
+                  
+              })
+              var d2 = setInterval(function scrollText(){
+                  $('#scrollto2').css({'display':'block'})
+                  $('#scrollto2').animate({
+                      top:'-=120px',
+                      opacity:'0'
+                  },3200,function(){
+                      $('#scrollto2').css({'opacity':'1','top':'-=60'})
+                      if(parseInt($('#scrollto2').css('top'))<=-(doplay2.length*60*9)){
+                          $('#scrollto2').css('top','0px')
+                      }
+                  })
+              })
+            
+              $('#scrollto3').empty();
+                    doplay3.forEach((item,index) => {
+                       
+                        $newElement4=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement5=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement6=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement7=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px"><span style="display:block;float:left;font-size:13px;color:white">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                        $newElement8=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                   
+                        $('#scrollto3').append($newElement4);
+                        $('#scrollto3').append($newElement5);
+                        $('#scrollto3').append($newElement6);
+                        $('#scrollto3').append($newElement7);
+                        $('#scrollto3').append($newElement);
+                        $('#scrollto3').append($newElement8);
+                    })
+
+                    var d3 = setInterval(function scrollText(){
+                        $('#scrollto3').css({'display':'block'})
+                        $('#scrollto3').animate({
+                            top:'-=120px',
+                            opacity:'0'
+                        },3000,function(){
+                            $('#scrollto3').css({'opacity':'1','top':'-=60'})
+                            if(parseInt($('#scrollto3').css('top'))<=-(doplay3.length*60*9)){
+                                $('#scrollto3').css('top','0px')
+                            }
+                        })
+                    })
+
+        }
+    })
+
+    //课程
+    $.ajax({
+        type : "POST",
+        url : "http://106.14.162.18:8080/hi/main?hi=24CDIAEC0WU5",
+        dataType : "text",
+        data : {},
+        success : function(data) {
+            var obj = {}
+            obj = JSON.parse(data)
+            var arrs=obj.rows
+            courses[0]=arrs[0]
+            courses[1]=arrs[1]
+            courses[2]=arrs[2]
+            courses.forEach((item)=>{
+              $newElement=$('<div style="height: 10px;"></div> <img src="'+item.url+'" width="320px" height="180px">')
+              $('#mycourse').append($newElement);
+            })
+        }
+    })
+
+    //社群
+    // $.ajax({
+    //     type : "POST",
+    //     url : "http://106.14.162.18:8080/hi/main?hi=24CDIAEC131M",
+    //     dataType : "text",
+    //     data : {},
+    //     success : function(data) {
+    //         var obj = {}
+    //         obj = JSON.parse(data)
+    //         shequn=obj.rows
+    //         shequn.forEach((item)=>{
+    //           $newElement=$('<div style="width:100%;height:10px;background:white"></div><img src="'+item.url+'" width="360px" height="200px" >')
+    //           $('#myshequn').append($newElement);
+    //         })
+    //     }
+    // })
+
+    // 门店
+    
+    
+
+    
+
+  window.window_swiper = new Swiper('.swiper-container-father', {
+    direction : 'vertical',
+    speed: 800,
+    mousewheel: true,
+    hashNavigation: true,
+    // simulateTouch: false,
+    // noSwipingClass : '.swiper-container-father',
+    on: {
+        // onSlideChangeStart: function(swiper) { //滑动父级需要激活滚轮事件
+        //     swiper.enableMousewheelControl();
+        // }
+ 
+    }
+});
+
+var swiper = new Swiper('.swiper-container-son', {
+  direction : 'vertical',
+      // simulateTouch: false,
+      mousewheel: true,
+      nested: true,
+      
+      on: {
+        init:function(swiper){
+          slide=this.slides.eq(0);
+          console.log(this.slides)
+          slide.addClass('ani-slide');
+          // swiperAnimateCache(this); //隐藏动画元素 
+          // swiperAnimate(this); //初始化完成开始动画
+        },
+      transitionStart: function(){
+          for(i=0;i<this.slides.length;i++){
+            slide=this.slides.eq(i);
+              slide.removeClass('ani-slide');
+        }
+        },
+      transitionEnd: function(){
+        slide=this.slides.eq(this.activeIndex);
+          slide.addClass('ani-slide');
+        },
+
+        slideChangeTransitionStart: function () {
+        //此处禁止 外层 swiper
+          window.window_swiper.mousewheel.disable();
+         
+        },
+        slideChangeTransitionEnd: function () {
+          window.window_swiper.mousewheel.enable();
+          // swiperAnimate(this); //每个slide切换结束时也运行当前slide动画
+        },
+        onInit: function(swiper) {//轮播初始化时候执行动画
+        swiperAnimateCache(swiper);
+        swiperAnimate(swiper);
+   }, 
+        onSlideChangeEnd: function(swiper) {//轮播切换到最后一张的时候重新执行
+          swiperAnimate(swiper);
+        }
+      }
+    });
+    
+
+    // var swiperson3 = new Swiper('.swiper-container-son3', {
+    //   slidesOffsetBefore : 300,
+    //   width:600,
+    //   spaceBetween : 50,
+    //   pagination: {
+    //     el: '.swiper-pagination',
+    //   },
+    // });
+    
+    // var x = 10;
+	  //       var y = 20;
+	  //       $("#big-circle").mouseover(function (e) {
+	  //           var tooTip = "<div id='tooTip'><img src='" + this.href + "'></img><div>";
+	  //           $("body").append(tooTip);
+	  //           $("#tooTip").css({ position: "absolute",
+	  //               'top': (e.pageY + y) + "px", "left": (e.pageX + x) + "px"
+	  //           }).show("fast");
+	  //       }).mouseout(function () {
+	  //           	            $("#tooTip").remove();
+	  //       }).mousemove(function (e) {
+	  //           $("#tooTip").css({ position: "absolute",
+	  //               'top': (e.pageY + y) + "px", "left": (e.pageX + x) + "px"
+	  //           });
+	  //       });
+
+   
+</script>
+</body>
+</html>

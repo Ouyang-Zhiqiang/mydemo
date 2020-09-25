@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.CrdMembershipcardPurchaseMapper">
+    <insert id="insertCrdMembershipCardPurchase"   parameterType="com.example.backstage.crs.entity.CrdMembershipcardPurchaseEntity"   keyProperty="purchaseid" useGeneratedKeys="true">
+        insert into Crd_MembershipCard_Purchase
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            cardid,cardname,seckillid,cardno,buytype,
+            buytimes,points,sellingfee,payment,
+            storeid,storename,salerid,salername,cardbegin,
+            cardend,remarks,isremoved,createdon,createdby,createdname,createdip,lastedon,lastedby,lastedname,lastedip
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{cardid},
+            #{cardname},
+            #{seckillid},
+            #{cardno},
+            #{buytype},
+            #{buytimes},
+            #{points},
+            #{sellingfee} :: numeric,
+            #{payment},
+            #{storeid},
+            #{storename},
+            #{salerid} ,
+            #{salername},
+            #{cardbegin},
+            #{cardend},
+            #{remarks},
+            #{isremoved},
+            #{createdon},
+            #{createdby},
+            #{createdname},
+            #{createdip},
+            #{lastedon},
+            #{lastedby},
+            #{lastedname},
+            #{lastedip}
+        </trim>
+    </insert>
+
+    <select id="selectSellingfeeSumByStoreidAndSaleridAndDate" resultType="java.util.HashMap">
+        select sum(a.sellingfee) as sellingfeeSum from crd_membershipcard_purchase a
+        <where>
+         a.isremoved is false
+            <if test="storeid!=null and storeid!=''">
+            and a.storeid=#{storeid} ::bigint
+            </if>
+            <if test="salerid!=null and salerid!=''">
+            and a.salerid=#{salerid} ::bigint
+            </if>
+            <if test="datebegin!=null and datebegin!=''">
+                <![CDATA[and a.createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+            <if test="dateend!=null and dateend!=''">
+                <![CDATA[and a.createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMembershipcardStop"  resultType="java.util.HashMap">
+      select stoptype,sum(fee) as fee  from crd_membershipcard_stop
+      <where>
+        1=1
+        <if test="storeid!=null and storeid!='' or salerid!=null and salerid!='' ">
+        and cardno in (select a.cardno from crd_membershipcard_purchase a
+            <where> 1=1
+                <if test="storeid!=null and storeid!='' ">
+                    and a.storeid=#{storeid}::bigint
+                </if>
+                <if test="salerid!=null and salerid!=''">
+                    and a.salerid=#{salerid}::bigint
+                </if>
+            </where>
+        group by  a.cardno)
+        </if>
+          <if test="datebegin!=null and datebegin!=''">
+              <![CDATA[and createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+          </if>
+          <if test="dateend!=null and dateend!=''">
+              <![CDATA[and createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+          </if>
+      </where>
+        group by stoptype
+    </select>
+
+
+    <select id="selectMembershipcardTransfer"  resultType="java.util.HashMap">
+        select COALESCE(sum(fee),0) as fee from crd_membershipcard_transfer
+        <where>
+            1=1
+            <if test="storeid!=null and storeid!='' or salerid!=null and salerid!='' ">
+                and cardno in (select a.cardno from crd_membershipcard_purchase a
+                <where> 1=1
+                    <if test="storeid!=null and storeid!='' ">
+                        and a.storeid=#{storeid}::bigint
+                    </if>
+                    <if test="salerid!=null and salerid!=''">
+                        and a.salerid=#{salerid}::bigint
+                    </if>
+                </where>
+                )
+            </if>
+            <if test="datebegin!=null and datebegin!=''">
+                <![CDATA[and createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+            <if test="dateend!=null and dateend!=''">
+                <![CDATA[and createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectMembershipcardReconciliation"  resultType="java.util.HashMap">
+        select sum(recamount) as recamount,rectype from crd_membershipcard_reconciliation
+        <where>
+            1=1
+            <if test="storeid!=null and storeid!='' or salerid!=null and salerid!='' ">
+                and cardno in (select a.cardno from crd_membershipcard_purchase a
+                <where> 1=1
+                    <if test="storeid!=null and storeid!='' ">
+                        and a.storeid=#{storeid}::bigint
+                    </if>
+                    <if test="salerid!=null and salerid!=''">
+                        and a.salerid=#{salerid}::bigint
+                    </if>
+                </where>
+                group by  a.cardno )
+            </if>
+            <if test="datebegin!=null and datebegin!=''">
+                <![CDATA[and createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+            <if test="dateend!=null and dateend!=''">
+                <![CDATA[and createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+        </where>
+        group by rectype
+    </select>
+
+    <select id="selectStaticListCount" resultType="Integer">
+        select count(*) from(select to_char(a.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmb.cardname,ub.name,a.sellingfee,case a.payment when 1 then '刷卡' when 2 then  '转账' when 3 then  '线上支付' when 4 then  '现金' else '其他' end  as payment,a.buytimes,a.salername,a.storeid,a.storename,case a.buytype when 'F' then '首充' when 'C' then  '续卡' else ' ' end as buytype ,a.lastedname,a.remarks
+        from crd_membershipcard_purchase a
+        left join crd_membershipcardcategory_base cmb on cmb.cardid=a.cardid
+        left join Crd_MembershipCard_User ab on ab.cardno=a.cardno
+        left join User_Base ub on ub.userid=ab.userid
+        UNION all
+        select to_char(cms.createdon,'yyyy-mm-dd HH24:MI') as createdon,cms.cardname,ub.name,case  when cms.stoptype='P' then (0-cms.fee) else cms.fee end  as sellingfee,case cms.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,case  when cms.stoptype='P' then (0-cms.curtimes) else cms.curtimes end  as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'停卡' as buytype ,cms.createdname as lastedname,cms.remarks
+        from Crd_MembershipCard_Stop cms
+        left join Crd_MembershipCard_User ab on ab.cardno=cms.cardno
+        left join User_Base ub on ab.userid=ub.userid
+        left join crd_membershipcard_purchase cmp on cms.cardno=cmp.cardno and cmp.BuyType='F'
+        UNION all
+        select to_char(cmr.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmr.cardname,ub.name,cmr.recamount as sellingfee, '其他'  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'平账' as buytype ,cmr.createdname as lastedname,cmr.remarks
+        from Crd_MembershipCard_Reconciliation cmr
+        left join Crd_MembershipCard_User ab on ab.cardno=cmr.cardno
+        left join User_Base ub on ab.userid=ub.userid
+        left join crd_membershipcard_purchase cmp on cmr.cardno=cmp.cardno and cmp.BuyType='F'
+        union all
+        select to_char(cmt.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmt.cardname,ub.name,cmt.fee as sellingfee,case cmt.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'转卡' as buytype ,cmp.createdname as lastedname,cmp.remarks
+        from Crd_MembershipCard_Transfer cmt
+        left join Crd_MembershipCard_User ab on ab.cardno=cmt.cardno
+        left join User_Base ub on ab.userid=ub.userid
+        left join crd_membershipcard_purchase cmp on cmt.cardno=cmp.cardno and cmp.BuyType='F'
+        ) as a
+        <where>
+            1=1
+            <if test="storeid!=null and storeid!='' ">
+                and a.storeid=#{storeid}::bigint
+            </if>
+            <if test="datebegin!=null and datebegin!=''">
+                <![CDATA[and to_timestamp(a.createdon, 'yyyy-mm-dd hh24:mi')>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+            <if test="dateend!=null and dateend!=''">
+                <![CDATA[and to_timestamp(a.createdon, 'yyyy-mm-dd hh24:mi')<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectStaticList" resultType="java.util.HashMap">
+        select * from(select to_char(a.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmb.cardname,ub.name,a.sellingfee,case a.payment when 1 then '刷卡' when 2 then  '转账' when 3 then  '线上支付' when 4 then  '现金' else '其他' end  as payment,a.buytimes,a.salername,a.storeid,a.storename,case a.buytype when 'F' then '首充' when 'C' then  '续卡' else ' ' end as buytype ,a.lastedname,a.remarks
+        from crd_membershipcard_purchase a
+        left join crd_membershipcardcategory_base cmb on cmb.cardid=a.cardid
+        left join Crd_MembershipCard_User ab on ab.cardno=a.cardno
+        left join User_Base ub on ub.userid=ab.userid
+        UNION all
+        select to_char(cms.createdon,'yyyy-mm-dd HH24:MI') as createdon,cms.cardname,ub.name,case  when cms.stoptype='P' then (0-cms.fee) else cms.fee end  as sellingfee,case cms.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,case  when cms.stoptype='P' then (0-cms.curtimes) else cms.curtimes end  as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'停卡' as buytype ,cms.createdname as lastedname,cms.remarks
+        from Crd_MembershipCard_Stop cms
+        left join Crd_MembershipCard_User ab on ab.cardno=cms.cardno
+        left join User_Base ub on ab.userid=ub.userid
+        left join crd_membershipcard_purchase cmp on cms.cardno=cmp.cardno and cmp.BuyType='F'
+        UNION all
+        select to_char(cmr.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmr.cardname,ub.name,cmr.recamount as sellingfee, '其他'  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'平账' as buytype ,cmr.createdname as lastedname,cmr.remarks
+        from Crd_MembershipCard_Reconciliation cmr
+        left join Crd_MembershipCard_User ab on ab.cardno=cmr.cardno
+        left join User_Base ub on ab.userid=ub.userid
+        left join crd_membershipcard_purchase cmp on cmr.cardno=cmp.cardno and cmp.BuyType='F'
+        union all
+        select to_char(cmt.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmt.cardname,ub.name,cmt.fee as sellingfee,case cmt.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'转卡' as buytype ,cmp.createdname as lastedname,cmp.remarks
+        from Crd_MembershipCard_Transfer cmt
+        left join Crd_MembershipCard_User ab on ab.cardno=cmt.cardno
+        left join User_Base ub on ab.userid=ub.userid
+        left join crd_membershipcard_purchase cmp on cmt.cardno=cmp.cardno and cmp.BuyType='F'
+        ) as a
+        <where>
+            1=1
+            <if test="storeid!=null and storeid!='' ">
+                and a.storeid=#{storeid}::bigint
+            </if>
+            <if test="datebegin!=null and datebegin!=''">
+                <![CDATA[and to_timestamp(createdon, 'yyyy-mm-dd hh24:mi')>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+            <if test="dateend!=null and dateend!=''">
+                <![CDATA[and to_timestamp( createdon, 'yyyy-mm-dd hh24:mi')<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+        </where>
+        order by createdon desc limit #{limits} offset #{pages}
+    </select>
+
+    <select id="selectStaticListBySaleridCount" resultType="Integer">
+        select count(*) from crd_membershipcard_purchase a
+        left join crd_membershipcardcategory_base cmb on cmb.cardid=a.cardid
+        left join Crd_MembershipCard_User ab on ab.cardno=a.cardno
+        left join User_Base ub on ub.userid=ab.userid
+        <where>
+            1=1 and a.salerid=#{salerid}::bigint
+            <if test="storeid!=null and storeid!='' ">
+                and a.storeid=#{storeid}::bigint
+            </if>
+            <if test="datebegin!=null and datebegin!=''">
+                <![CDATA[and a.createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+            <if test="dateend!=null and dateend!=''">
+                <![CDATA[and a.createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectStaticListBySalerid" resultType="java.util.HashMap">
+        select to_char(a.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmb.cardname,ub.name,a.sellingfee,case a.payment when 1 then '刷卡' when 2 then  '转账' when 3 then  '线上支付' when 4 then  '现金' else '其他' end  as payment,a.buytimes,a.salername,a.storename,case a.buytype when 'F' then '首充' when 'C' then  '续卡' else ' ' end as buytype ,a.lastedname,a.remarks
+        from crd_membershipcard_purchase a
+        left join crd_membershipcardcategory_base cmb on cmb.cardid=a.cardid
+        left join Crd_MembershipCard_User ab on ab.cardno=a.cardno
+        left join User_Base ub on ub.userid=ab.userid
+        <where>
+             a.salerid=#{salerid} ::bigint
+            <if test="storeid!=null and storeid!='' ">
+                and a.storeid=#{storeid}::bigint
+            </if>
+            <if test="datebegin!=null and datebegin!=''">
+                <![CDATA[and a.createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+            <if test="dateend!=null and dateend!=''">
+                <![CDATA[and a.createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+            </if>
+        </where>
+        order by createdon desc limit #{limits} offset #{pages}
+    </select>
+
+    <select id="selectThirdaccount" resultType="java.util.HashMap">
+        select userid from user_bind_thirdaccount where bindinfor4=#{openid}
+    </select>
+</mapper>

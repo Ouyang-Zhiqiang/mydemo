@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.backstage.crs.mapper.UserBaseMappers">
+    <select id="selectNumberBySex" parameterType="String"  resultType="java.util.HashMap">
+        select count(userid) as number,case sex when '1' then '女' else '男' end as sex from user_base
+        <where>
+            <![CDATA[  createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[ and createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   StoreId=#{storeid} :: bigint
+            </if>
+        </where> group by sex
+    </select>
+
+
+    <!--绑定了体验卡的会员-->
+    <select id="selectOnylyIsfreePeopleNumber"  resultType="java.lang.String">
+        select cmu.UserId from crd_membershipcard_purchase cmb
+        left join Crd_MembershipCard_Base cm on cm.CardId=cmb.CardId
+        left join Crd_MembershipCard_User cmu on cmu.cardno=cmb.cardno
+        <where>
+          and  cm.isfree=true and cmb.buytype='F'
+        <![CDATA[ and cmb.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+        <![CDATA[ and cmb.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+            and   cmb.storeid=#{storeid} :: bigint
+        </if>
+        </where>
+        group by cmu.userId
+    </select>
+
+    <select id="selectIsfreeTrue" resultType="java.util.HashMap">
+        select  userid  from crd_membershipcard_purchase cmb
+        left join Crd_MembershipCard_Base c on cmb.cardid = c.cardid
+        left join Crd_MembershipCard_User cmu on cmu.cardno=cmb.cardno
+        <where> c.isfree=false and cmb.buytype='F'
+            <if test="idArray!=null and idArray.length>0">
+                and cmb.cardno in
+            <foreach collection="idArray" item="cardno" open="(" close=")" separator=",">
+                #{cardno}
+            </foreach>
+            </if>
+            <![CDATA[ and cmb.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[ and cmb.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   cmb.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+        group by cmu.userid
+    </select>
+
+    <select id="selectIsfreeTrueByCardNumber" resultType="java.util.HashMap">
+        select  userid  from crd_membershipcard_purchase cmb
+        left join Crd_MembershipCardCategory_Base  cmgb on cmgb.cardid=cmb.cardid and cmgb.cardnumber=12
+        left join Crd_MembershipCard_Base c on cmb.cardid = c.cardid
+        left join Crd_MembershipCard_User cmu on cmu.cardno=cmb.cardno
+        <where> c.isfree=false and cmb.buytype='F'
+            <if test="idArray!=null and idArray.length>0">
+                and cmb.cardno in
+                <foreach collection="idArray" item="cardno" open="(" close=")" separator=",">
+                    #{cardno}
+                </foreach>
+            </if>
+            <![CDATA[ and cmb.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[ and cmb.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   cmb.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+        group by cmu.userid
+    </select>
+
+    <select id="selectIsfreeTrueNotDate" resultType="java.util.HashMap">
+        select  userid  from crd_membershipcard_purchase cmb
+        left join  Crd_MembershipCard_Base cm on cm.CardId=cmb.CardId
+        left join Crd_MembershipCard_Base c on cmb.cardid = c.cardid
+        left join Crd_MembershipCard_User cmu on cmu.cardno=cmb.cardno
+        <where> c.isfree=false and cmb.buytype='F' and cm.cardnumber=12
+            <if test="idArray!=null and idArray.length>0">
+                and cmb.cardno in
+                <foreach collection="idArray" item="cardno" open="(" close=")" separator=",">
+                    #{cardno}
+                </foreach>
+            </if>
+            <if test="storeid!=null and storeid!=''">
+                and   cmb.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+        group by cmu.userid
+    </select>
+
+    <select id="selectMoreThanOneClassNumber" resultType="java.util.HashMap">
+        select userid from (
+        select COALESCE(count(a.userid),0) as number,a.userid from Ord_OrderCourse a
+        left join  Crd_MembershipCard_Base cm on a.cardno=cm.cardno
+        left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+        left join crd_membershipcard_purchase cmp on cmp.cardno=cm.cardno and cmp.BuyType='F'
+        <where> a.signstate=1
+        and cm.isfree=true
+       <![CDATA[  and a.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+       <![CDATA[ and a.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+            and   cmp.storeid=#{storeid} :: bigint
+        </if>
+        </where>
+        group by a.userid
+        ) as t1
+        where <![CDATA[ number>1 ]]>
+    </select>
+
+
+    <select id="selectMoreThanTwice"  resultType="java.util.HashMap">
+        select count(cm.userid)as times,userid from Crd_MembershipCard_Purchase cmp
+        left join Crd_MembershipCard_User cm on cm.cardno=cmp.cardno
+        left join Crd_MembershipCard_Base cmb on cmp.cardno = cmb.cardno
+        <where>
+        cmp.BuyType='C'
+       <![CDATA[  and cmp.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+       <![CDATA[  and cmp.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+            and   cmp.storeid=#{storeid} :: bigint
+        </if>
+        and cmb.isfree=false
+        </where>
+        group by  userid
+        having count(cm.userid)>2
+    </select>
+
+
+    <select id="selectTotalClass" resultType="java.util.HashMap">
+        select userid from Crd_MembershipCard_Base cmb
+        left join Crd_MembershipCard_User cmu on cmu.cardno=cmb.cardno
+        left join Crd_MembershipCard_Purchase cmp on cmp.cardno=cmb.cardno and cmp.buytype='F'
+        <where>
+        (<![CDATA[ CurTimes<=1 ]]>
+        <![CDATA[ or PeriodValidity<=7 ]]>)
+        <![CDATA[  and cmb.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+        <![CDATA[  and cmb.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+            and   cmp.storeid=#{storeid} :: bigint
+        </if>
+        </where>
+        group by userid
+    </select>
+
+
+    <select id="selectBuyCardNumber" resultType="String">
+        select  count(cmu.userid)  from Crd_MembershipCard_Purchase cmp
+        left join Crd_MembershipCard_User cmu on cmp.cardno=cmu.cardno
+        <where>
+         cmp.buytype='F'
+            <![CDATA[  and cmp.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[  and cmp.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   cmp.storeid=#{storeid} :: bigint
+            </if>
+            <if test="numberStr!=null and numberStr.length>0">
+                and cmu.userid in
+                <foreach collection="numberStr" item="userid" open="(" close=")" separator=",">
+                    #{userid} :: bigint
+                </foreach>
+            </if>
+        </where>
+        group by cmu.userid
+    </select>
+
+    <select id="selectsumNumber" resultType="String">
+        select userid from user_base ub
+        <where>
+            <![CDATA[   ub.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[  and ub.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   ub.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+    </select>
+
+
+    <!--注册的流量-->
+    <select id="selectNaturalVisitNumber" resultType="String">
+        select ub.userid from user_base ub
+        <where>
+         ub.sourcetype =#{sourcetype}
+        <![CDATA[  and ub.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+        <![CDATA[  and ub.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   ub.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+        group by  ub.userid
+    </select>
+
+    <select id="selectNaturalVisitNumberCount" resultType="Integer">
+       select count(userid)  from (select ub.userid from user_base ub
+        <where>
+            ub.sourcetype =#{sourcetype}
+            <![CDATA[  and ub.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[  and ub.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   ub.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+        group by  ub.userid) as a
+    </select>
+
+
+    <!--到访流量-->
+    <select id="selectvisitNumber" resultType="String">
+        select ub.userid from user_base ub
+        <where>
+            ub.remarks=''
+            <![CDATA[  and ub.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[  and ub.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and   ub.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+        group by  ub.userid ;
+    </select>
+
+    <!--无时间-->
+    <select id="selectvisitNumberNotDate" resultType="String">
+        select ub.userid from user_base ub
+        <where>
+            ub.remarks=''
+            <if test="storeid!=null and storeid!=''">
+                and   ub.storeid=#{storeid} :: bigint
+            </if>
+        </where>
+        group by  ub.userid ;
+    </select>
+
+    <select id="selectUserIdByPhone" parameterType="String" resultType="String">
+        select ub.userid from user_base ub where ub.tel=#{tel}
+    </select>
+</mapper>

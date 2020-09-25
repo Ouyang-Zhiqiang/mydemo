@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.CurCourseMapper">
+    <select id="getTotalAttendance" resultType="double">
+        select COALESCE(round(t1.attendence::numeric/t2.amount::numeric,4)*100, 0) as TotalAttendance from
+          (
+            select sum(SignedNumber/ReservableNumber) as attendence from Cur_TeamSchedule
+            where isremoved=false
+            and SignedNumber>=1 and ScheduleDate &gt;= #{begintime}::timestamp and ScheduleDate &lt;= #{endtime}::timestamp
+            <if test="storeid !=null and storeid!=''">
+                and storeid=#{storeid}
+            </if>
+          ) as t1,
+          (
+            select count(*) as amount  from Cur_TeamSchedule
+            where isremoved=false
+            and SignedNumber &gt;=1 and ScheduleDate &gt;= #{begintime}::timestamp and ScheduleDate &lt;= #{endtime}::timestamp
+            <if test="storeid !=null and storeid!=''">
+                and storeid=#{storeid}::bigint
+            </if>
+          ) as t2;
+    </select>
+    <select id="getGroupClassAttendance" resultType="double">
+        select COALESCE(round(t1.attendence::numeric/t2.amount::numeric,4)*100, 0) as TotalAttendance from
+        (
+        select sum(SignedNumber/ReservableNumber) as attendence from Cur_TeamSchedule
+        where isremoved=false and SignedNumber &gt;=1
+        and ScheduleDate &gt;=#{begintime}::timestamp and ScheduleDate &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="cid !=null and cid!=''">
+            and cid=#{cid}::bigint
+        </if>
+        ) as t1,
+        (
+        select count(*) as amount  from Cur_TeamSchedule
+        where isremoved=false and SignedNumber &gt;=1
+        and ScheduleDate &gt;=#{begintime}::timestamp and ScheduleDate &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="cid !=null and cid!=''">
+            and cid=#{cid}::bigint
+        </if>
+        ) as t2;
+    </select>
+    
+    <select id="getMonthlyAttendance" resultType="double">
+        select COALESCE(round(t1.attendence::numeric/t2.amount::numeric,4)*100, 0) as monthlyAttendance from
+        (
+        select sum(SignedNumber/ReservableNumber) as attendence from Cur_TeamSchedule
+        where isremoved=false and SignedNumber>=1
+        and scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        and schedulebegin between #{coursetime}::time and #{courseendtime}::time
+        ) as t1,
+        (
+        select count(*) as amount  from Cur_TeamSchedule
+        where isremoved=false and SignedNumber>=1
+        and scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        and schedulebegin between #{coursetime}::time and #{courseendtime}::time
+        ) as t2;
+    </select>
+    <select id="getConversionRateOfGroupLessons" resultType="double">
+        select round(t1.num::numeric/t2.num::numeric,4)*100 as ConversionRateOfGroupLessons from
+        (select count(*) as num from (
+        select ub.userid from user_base ub
+        left join (select userid,cardno from Crd_MembershipCard_User) cmu
+        on ub.userid = cmu.userid
+        left join (select createdon,cardno,cardid,isfree from Crd_MembershipCard_Base) cmb
+        on cmu.cardno = cmb.cardno
+        left join (select coursetype,cardid,cardnumber from Crd_MembershipCardCategory_Base) cmcb
+        on cmb.cardid = cmcb.cardid
+        where cmcb.coursetype = #{coursetype}
+        and cmb.isfree = false
+        and cmcb.cardnumber='12'
+        and cmb.CreatedOn &gt;=#{begintime}::timestamp
+        and cmb.CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and ub.storeid=#{storeid}::bigint
+        </if>
+        and ub.userid in (
+        select ub2.userid from user_base ub2
+        left join (select userid,cardno from Crd_MembershipCard_User) cmu2
+        on ub2.userid = cmu2.userid
+        left join (select createdon,cardno,cardid,isfree from Crd_MembershipCard_Base) cmb2
+        on cmu2.cardno = cmb2.cardno
+        left join (select coursetype,cardid,cardnumber from Crd_MembershipCardCategory_Base) cmcb2
+        on cmb2.cardid = cmcb2.cardid
+        where cmcb2.coursetype = #{coursetype}
+        and cmb2.isfree = true
+        and cmcb2.cardnumber='12'
+        and cmb.CreatedOn &gt;=#{begintime}::timestamp
+        and cmb.CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and ub.storeid=#{storeid}::bigint
+        </if>
+        group by ub2.userid
+        )
+        group by ub.userid
+        ) as t) as t1,
+        (
+        select count(*) as num from (
+        select ub.userid from user_base ub
+        left join (select userid,cardno from Crd_MembershipCard_User) cmu
+        on ub.userid = cmu.userid
+        left join (select createdon,cardno,cardid,isfree from Crd_MembershipCard_Base) cmb
+        on cmu.cardno = cmb.cardno
+        left join (select coursetype,cardid,cardnumber from Crd_MembershipCardCategory_Base) cmcb
+        on cmb.cardid = cmcb.cardid
+        where cmcb.coursetype = #{coursetype}
+        and cmb.isfree = true
+        and cmcb.cardnumber='12'
+        and cmb.CreatedOn &gt;=#{begintime}::timestamp
+        and cmb.CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and ub.storeid=#{storeid}::bigint
+        </if>
+        group by ub.userid
+        ) as t
+        ) as t2;
+    </select>
+    <select id="getNumberOfLessonsGroupLessons" resultType="Integer">
+        select count(*) as Tnumber from Cur_TeamSchedule
+        where IsRemoved=false and SignedNumber>0
+        and scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and ub.storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+    <select id="getNumberOfPrivateLessons" resultType="Integer">
+        select count(*) as Tnumber from Cur_PrivSchedule
+        where IsRemoved=false and SignedNumber>0
+        and scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and ub.storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+</mapper>

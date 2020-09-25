@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mydemo.mapper.OrderMapper" >
+    <insert id="insert" parameterType="com.example.mydemo.pojo.Order">
+        insert into z_orders(
+          uuid,userid,yfprice,orderid,kdid,sfprice,dateline,status
+        ) values(
+        #{uuid},#{userid},#{yfprice},#{orderid},#{kdid},#{sfprice},#{dateline},#{status}
+        )
+    </insert>
+
+
+    <!--订单修改状态-->
+    <update id="updateStatus" parameterType="java.util.Map">
+        update z_orders set status = #{status} where orderid = #{orderId}
+    </update>
+
+</mapper>

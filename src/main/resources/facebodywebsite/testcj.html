@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
+        <meta content="yes" name="apple-mobile-web-app-capable">
+        <meta content="black" name="apple-mobile-web-app-status-bar-style">
+        <meta content="telephone=no" name="format-detection">
+        <meta content="email=no" name="format-detection">
+        <meta name="full-screen" content="yes">
+        <meta name="browsermode" content="application">
+        <meta name="full-screen" content="yes">
+        <meta name="browsermode" content="application">
+        <meta name="x5-orientation" content="portrait">
+        <title>大转盘</title>
+
+    </head>
+
+    <style>
+        .box {
+            margin: 6vh auto;
+            width: 80vw;
+            height: 80vw;
+            position: relative;
+            border-radius: 100%;
+            display: flex;
+            flex-flow: row wrap;
+            overflow: hidden;
+        }
+        
+        .draw_item {
+            width: 40vw;
+            height: 40vw;
+            text-align: center;
+            line-height: 40vw;
+            font-size: 3vw;
+            color: #fff;
+        }
+        
+        .needle {
+            position: absolute;
+            top: 36vw;
+            left: 25vw;
+            width: 30vw;
+            height: 6vw;
+            font-size: 6vw;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            line-height: 6vw;
+        }
+        
+        button{
+            width: 20vw;
+            height: 8vw;
+            margin: auto;
+            display: block;
+        }
+        
+    </style>
+
+    <body>
+
+        <div class="box">
+            <div class="draw_item" style="background: red;">谢谢参与</div>
+            <div class="draw_item" style="background: orange;">热门电影票</div>
+            <div class="draw_item" style="background: green;">品牌优惠券</div>
+            <div class="draw_item" style="background: blue;">限量版公仔</div>
+            <div class="needle">----></div>
+        </div>
+
+        <button id="btn">开启转盘</button>
+
+        <script type="text/javascript" src="js/jquery-2.1.0.js"></script>
+        <script type="text/javascript" src="js/jQueryRotate.js"></script>
+
+        <script>
+            
+            //是否可以抽奖
+            var bRotate = true;
+
+            var rotateFn = function(awards, angles, txt) {
+
+                $('.needle').stopRotate();
+                $('.needle').rotate({
+                    angle: 0,
+                    animateTo: angles + 2520,
+                    duration: 7000,
+                    callback: function() {
+
+                        //抽奖结果
+                        alert(txt);
+
+                    }
+                })
+            };
+
+            $('#btn').click(function() {
+
+                if(!bRotate){
+                    alert("没有抽奖机会了");
+                    return;
+                }
+                var item = 0;
+                bRotate = !bRotate;
+                switch(item) {
+                    case 0:
+                        rotateFn(0, 225, '谢谢参与');
+                        break;
+                    case 1:
+                        rotateFn(1, 315, '热门电影票');
+                        break;
+                    case 2:
+                        rotateFn(2, 135, '品牌优惠券');
+                        break;
+                    case 3:
+                        rotateFn(3, 45, '限量版公仔');
+                        break;
+
+                }
+
+            });
+        </script>
+
+    </body>
+
+</html>

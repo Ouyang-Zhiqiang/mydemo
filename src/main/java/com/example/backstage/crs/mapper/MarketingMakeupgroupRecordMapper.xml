@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingMakeupgroupRecordMapper">
+    <select id="selectGroupid" resultType="com.example.backstage.crs.entity.MarketingMakeupgroupRecordEntity">
+        select count(*) as total,mmr.groupnumber from marketing_makeupgroup_record  mmr
+        left join marketing_makeupgroup_base mmb on mmr.groupid=mmb.groupid
+        where mmr.paymentstatus='1'   and mmr.state='0' and mmb.groupid=#{groupid}
+         group by mmr.groupnumber;
+    </select>
+
+    <select id="selectNumberInGroup" parameterType="String" resultType="Integer">
+        select count(recordid) from marketing_makeupgroup_record where groupnumber=#{groupnumber} and paymentstatus='2'
+    </select>
+
+    <insert id="insertMarketingMakeupgroupRecord"  parameterType="com.example.backstage.crs.entity.MarketingMakeupgroupRecordEntity">
+        insert into marketing_makeupgroup_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            recordid,unionid,price,groupid,cardno,phonenumber,wechatnumber,paymentstatus,groupnumber,wechatimgid,wechatimgurl,memberStatus,state,isremoved,createdon,lastedon
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{recordid},
+            #{unionid},
+            #{price},
+            #{groupid},
+            #{cardno},
+            #{phonenumber},
+            #{wechatnumber},
+            #{paymentstatus},
+            #{groupnumber} :: varchar ,
+            #{wechatimgid},
+            #{wechatimgurl},
+            #{memberStatus},
+            0,
+            0,
+            now(),
+            now()
+        </trim>
+    </insert>
+
+    <!--修改状态-->
+    <update id="updateStateByRecordId" >
+        update marketing_makeupgroup_record set paymentstatus=#{paymentstatus} where groupnumber = #{groupnumber}
+    </update>
+
+
+    <update id="updateStateByGroupNumber">
+        update marketing_makeupgroup_record set paymentstatus=#{paymentstatus} where groupnumber = #{groupnumber}
+    </update>
+
+    <select id="selectMakeupgroupBaseByGroupNumber" resultType="com.example.backstage.crs.entity.MarketingMakeupgroupRecordEntity">
+        select * from Marketing_Makeupgroup_Base where groupnumber=#{groupnumber}
+    </select>
+
+    <select id="selectMakeupgroupBaseRecord" resultType="com.example.backstage.crs.entity.MarketingMakeupgroupRecordEntity">
+        select * from marketing_makeupgroup_record where groupid=#{groupid}  order by createdon limit #{limit} offset #{pages}
+    </select>
+
+    <select id="selectMakeupgroupTotal" resultType="Integer">
+        select count(recordid)  from  marketing_makeupgroup_record where groupid=#{groupid} ;
+    </select>
+
+    <select id="selectMakeupgroupBaseRecordByEffectiveenddate"  resultType="com.example.backstage.crs.entity.MarketingMakeupgroupRecordEntity">
+        select * from Marketing_Makeupgroup_Record mmr
+        left join marketing_makeupgroup_base mmb on mmr.groupid = mmb.groupid ::varchar
+        <where>
+            mmb.effectiveenddate &lt; now()
+        </where>
+    </select>
+
+    <update id="updateStatusByRecordid">
+        update marketing_makeupgroup_record set paymentstatus=#{paymentstatus} where recordid = #{recordid}
+    </update>
+
+</mapper>

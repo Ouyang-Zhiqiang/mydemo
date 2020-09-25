@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>facebody运动馆数据</title>
+    <script src="js/jquery.min.js";></script>
+</head>
+<style>
+html,body{
+    height: 100%;
+    width: 100%;
+    background-image: url('img/xxxx.jpg');
+    background-repeat:no-repeat;
+    background-size:100%;
+}
+*{
+    margin: 0px;
+    padding: 0px;
+}
+</style>
+<body style='overflow:-Scroll;overflow-x:hidden;overflow-y:hidden' >
+
+    <div style="position: relative;left: 2%;top: 30px;"><img src="img/fclogo.png" width="120px"></div>
+
+    <div id="timeid" style="position: relative;left: 86%;top: 0px;color: white;font-size: 20px;font-family: 微软雅黑;"><span></span></div>
+
+    <div style="display: flex;justify-content: center;position: relative;top: 150px;" id="countother">
+        <h1 style="color: white;display: inline;font-size:40px;padding-top: 110px;padding-left:30px;font-family:微软雅黑">在 778 天内已有</h1>
+        <h1 style="color: white;display: inline;font-size: 150px;font-family:微软雅黑" id="count1"><span id="spclone"></span></span></h1>  
+        <h1 style="color: white;display: inline;font-size:40px;padding-top: 40px;padding-left:30px;font-family:微软雅黑">人次在FaceBody运动</h1>
+    </div>
+
+    <div style="display: flex;justify-content: center;position: relative;top: 200px;">
+        <h1 style="display: inline;color: white;font-size: 20px;font-weight: 100;font-family: 微软雅黑;">每天都有FBer在这里收获新改变</h1>
+    </div>
+
+
+    <div style="width:400px;height:120px;overflow:hidden;position:relative;top:260px;left:45%;">
+        <div id="scrollto" style="position: absolute">
+            
+        </div>
+    </div>
+
+    <div style="width:400px;height:120px;overflow:hidden;position:relative;top:350px;left:35%;">
+        <div id="scrollto2" style="position: absolute">
+            
+        </div>
+    </div>
+
+    <div style="width:400px;height:120px;overflow:hidden;position:relative;top:150px;left:65%;">
+        <div id="scrollto3" style="position: absolute">
+           
+        </div>
+    </div>
+
+    <div style="width:400px;height:120px;overflow:hidden;position:relative;top:80px;left:25%;">
+        <div id="scrollto4" style="position: absolute">
+            
+        </div>
+    </div>
+
+    <div style="width:400px;height:120px;overflow:hidden;position:relative;top:-80px;left:50%;">
+        <div id="scrollto5" style="position: absolute">
+            
+        </div>
+    </div>
+
+    
+</body>
+</html>
+<script>
+	$(function() {
+
+        var doplay1=[]
+        var doplay2=[]
+        var doplay3=[]
+        var doplay4=[]
+        var doplay5=[]
+
+        function formatNum(num) {
+            var STEP = 3;
+            var DELIMITER = ',    ';
+            var str = '' + num;
+            var arr = str.split('');
+            var len = arr.length;
+            
+            for(var i = len - STEP; i > 0; i -= STEP) {
+                arr.splice(i, 0, DELIMITER);
+            }
+            
+            return arr.join('');
+        }
+
+        function getNowTime(type){
+            var nowTime = new Date();
+            // console.log(nowTime);	//打印的数据: Wed Jul 17 2019 17:29:31 GMT+0800 (中国标准时间)
+            var nowYear=nowTime.getFullYear().toString();		//获取当前年份
+            var nowMonth=(nowTime.getMonth() + 1).toString();	//获取当前月份
+            var nowDay=nowTime.getDate().toString();			//获取当前日期
+            var nowHours= nowTime.getHours().toString();		//获取当前小时数
+            var nowMin= nowTime.getMinutes().toString();		//获取当前分钟数
+            var nowSecond= nowTime.getSeconds().toString();		//获取当前秒数写
+            //如果小于10，我们就在前面加个"0"
+            if(nowYear<10){nowYear = "0"+nowYear};
+            if(nowMonth<10){nowMonth = "0"+nowMonth};
+            if(nowDay<10){nowDay = "0"+nowDay};
+            if(nowHours<10){nowHours = "0"+nowHours};
+            if(nowMin<10){nowMin = "0"+nowMin};
+            if(nowSecond<10){nowSecond = "0"+nowSecond};
+            var time = "" ;
+            // 反正是拼接 你可以精确到月 也可以精确到秒  
+            if(type==0){
+                time = nowYear+"年"+nowMonth+"月"+nowDay+"日" ;  //精确到天
+            }else if(type==1){
+                time = nowYear+"年"+nowMonth+"月"+nowDay+"日"+nowHours+":"+nowMin ;  //精确到分
+            }else if(type==2){
+                time = nowYear+"/"+nowMonth+"/"+nowDay+"  "+nowHours+":"+nowMin+":"+nowSecond ;  //精确到秒
+            }
+            return time;
+        }
+
+        var timeinterval = setInterval(function(){
+            var times = getNowTime(2);
+            $('#timeid').empty()
+            $newEle=$('<span>'+times+'</span>')
+            $('#timeid').append($newEle)
+        },1000)
+
+
+        function countchange(){
+            $.ajax({
+                type : "POST",
+                url : "http://106.14.162.18:8080/hi/main?hi=24AVKXN10WJQ",
+                dataType : "text",
+                data : {},
+                success : function(data) {
+                    var counts = JSON.parse(data)
+                    var countarr = counts.rows
+                    var count=countarr[0].count+100000
+                    console.log(count)
+                    var a = $('#spclone').clone()
+                    var newnum = formatNum(count)
+                    a.html(' '+newnum+' ')	
+                    $('#count1').empty()
+                    $('#count1').append(a);
+                }
+            })
+        }
+
+        countchange();
+
+        // var countinterval = setInterval(function scr(){
+        //     countchange()
+        // },3600000)
+
+        function userchange(){
+            $.ajax({
+                type : "POST",
+                url : "http://106.14.162.18:8080/hi/main?hi=24AVKXN10WJS",
+                dataType : "text",
+                data : {},
+                success : function(data) {
+                    var objs = JSON.parse(data)
+                    var userarr = objs.rows
+                    if(userarr.length>=5){
+                        doplay1=[]
+                        doplay2=[]
+                        doplay3=[]
+                        doplay4=[]
+                        doplay5=[]
+                        
+                        for(var i=0;i<userarr.length;i++){
+                            if(i%5==0){
+                                doplay1.push(userarr[i])
+                            }else if(i%5==1){
+                                doplay2.push(userarr[i])
+                            }else if(i%5==2){
+                                doplay3.push(userarr[i])
+                            }else if(i%5==3){
+                                doplay4.push(userarr[i])
+                            }else if(i%5==4){
+                                doplay5.push(userarr[i])
+                            }
+                        }
+                        localStorage.setItem('do1',JSON.stringify(doplay1))
+                        localStorage.setItem('do2',JSON.stringify(doplay2))
+                        localStorage.setItem('do3',JSON.stringify(doplay3))
+                        localStorage.setItem('do4',JSON.stringify(doplay4))
+                        localStorage.setItem('do5',JSON.stringify(doplay5))
+                        
+                    }else{
+                        doplay1=JSON.parse(localStorage.getItem('do1'))
+                        doplay2=JSON.parse(localStorage.getItem('do2'))
+                        doplay3=JSON.parse(localStorage.getItem('do3'))
+                        doplay4=JSON.parse(localStorage.getItem('do4'))
+                        doplay5=JSON.parse(localStorage.getItem('do5'))
+
+                        if(i%5==0){
+                            doplay1.unshift(userarr[i])
+                        }else if(i%5==1){
+                            doplay2.unshift(userarr[i])
+                        }else if(i%5==2){
+                            doplay3.unshift(userarr[i])
+                        }else if(i%5==3){
+                            doplay4.unshift(userarr[i])
+                        }else if(i%5==4){
+                            doplay5.unshift(userarr[i])
+                        }
+
+                        localStorage.setItem('do1',JSON.stringify(doplay1))
+                        localStorage.setItem('do2',JSON.stringify(doplay2))
+                        localStorage.setItem('do3',JSON.stringify(doplay3))
+                        localStorage.setItem('do4',JSON.stringify(doplay4))
+                        localStorage.setItem('do5',JSON.stringify(doplay5))
+
+                    }
+                    
+                    $('#scrollto').empty();
+                    doplay1.forEach((item,index) => {
+                        $newElement1=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement=$('<div class="do1" style="width:400px;height:60px;overflow:hidden" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px;"><span style="display:block;float:left;font-size:13px;color:white">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                        $newElement2=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement3=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement4=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement5=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        
+                        
+                        $('#scrollto').append($newElement1);
+                        $('#scrollto').append($newElement);
+                        $('#scrollto').append($newElement2);
+                        $('#scrollto').append($newElement3);
+                        $('#scrollto').append($newElement4);
+                        $('#scrollto').append($newElement5);
+                     
+                        
+                    })
+                    var d1 = setInterval(function scrollText(){
+                        $('#scrollto').css({'display':'block'})
+                        $('#scrollto').animate({
+                            top:'-=120px',
+                            opacity:'0'
+                        },4000,function(){
+                            $('#scrollto').css({'opacity':'1','top':'-=60'})
+                            if(parseInt($('#scrollto').css('top'))<=-(doplay1.length*60*9)){
+                                $('#scrollto').css('top','0px')
+                            }
+                        })
+                    })
+
+
+                    $('#scrollto2').empty();
+                    doplay2.forEach((item,index) => {
+                        $newElement1=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement2=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement3=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement4=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px;"><span style="display:block;float:left;font-size:13px;color:white">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                        $newElement5=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        
+
+                        $('#scrollto2').append($newElement1);
+                        $('#scrollto2').append($newElement2);
+                        $('#scrollto2').append($newElement3);
+                        $('#scrollto2').append($newElement4);
+                        $('#scrollto2').append($newElement);
+                        $('#scrollto2').append($newElement5);
+                       
+                    })
+                    var d2 = setInterval(function scrollText(){
+                        $('#scrollto2').css({'display':'block'})
+                        $('#scrollto2').animate({
+                            top:'-=120px',
+                            opacity:'0'
+                        },3800,function(){
+                            $('#scrollto2').css({'opacity':'1','top':'-=60'})
+                            if(parseInt($('#scrollto2').css('top'))<=-(doplay2.length*60*9)){
+                                $('#scrollto2').css('top','0px')
+                            }
+                        })
+                    })
+
+
+                    $('#scrollto3').empty();
+                    doplay3.forEach((item,index) => {
+                       
+                        $newElement4=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement5=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement6=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement7=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px"><span style="display:block;float:left;font-size:13px;color:white">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                        $newElement8=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        
+                   
+                        $('#scrollto3').append($newElement4);
+                        $('#scrollto3').append($newElement5);
+                        $('#scrollto3').append($newElement6);
+                        $('#scrollto3').append($newElement7);
+                        $('#scrollto3').append($newElement);
+                        $('#scrollto3').append($newElement8);
+                    })
+
+                    var d3 = setInterval(function scrollText(){
+                        $('#scrollto3').css({'display':'block'})
+                        $('#scrollto3').animate({
+                            top:'-=120px',
+                            opacity:'0'
+                        },3600,function(){
+                            $('#scrollto3').css({'opacity':'1','top':'-=60'})
+                            if(parseInt($('#scrollto3').css('top'))<=-(doplay3.length*60*9)){
+                                $('#scrollto3').css('top','0px')
+                            }
+                        })
+                    })
+
+                    $('#scrollto4').empty();
+                    doplay4.forEach((item,index) => {
+                        $newElement1=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement=$('<div class="do1" style="width:400px;height:60px;overflow:hidden" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px;"><span style="display:block;float:left;font-size:13px;color:white">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                        $newElement2=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement3=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement4=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement5=$('<div class="do1" style="width:400px;height:60px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        
+                        
+                        $('#scrollto4').append($newElement1);
+                        $('#scrollto4').append($newElement);
+                        $('#scrollto4').append($newElement2);
+                        $('#scrollto4').append($newElement3);
+                        $('#scrollto4').append($newElement4);
+                        $('#scrollto4').append($newElement5);
+                        
+                        
+                    })
+                    var d4 = setInterval(function scrollText(){
+                        $('#scrollto4').css({'display':'block'})
+                        $('#scrollto4').animate({
+                            top:'-=120px',
+                            opacity:'0'
+                        },3900,function(){
+                            $('#scrollto4').css({'opacity':'1','top':'-=60'})
+                            if(parseInt($('#scrollto4').css('top'))<=-(doplay4.length*60*9)){
+                                $('#scrollto4').css('top','0px')
+                            }
+                        })
+                    })
+
+
+                    $('#scrollto5').empty();
+                    doplay5.forEach((item,index) => {
+                        $newElement1=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement2=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement3=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement4=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        $newElement=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><img src="'+item.imgs+'" width="36px" height="36px" style="border-radius:50%;display:block;float:left;margin-right:18px;"><span style="display:block;float:left;font-size:13px;color:white;font-family:微软雅黑">'+item.name+'</span><br><span style="display:block;float:left;color: white;">刚上了一节'+item.kc+'</span></div>')
+                        $newElement5=$('<div style="width:280px;height:40px;margin-bottom:20px;" ><span style="display:block;float:left;font-size:13px;color:white"></span><br><span style="display:block;float:left;color: white;"></span></div>')
+                        
+
+                        $('#scrollto5').append($newElement1);
+                        $('#scrollto5').append($newElement2);
+                        $('#scrollto5').append($newElement3);
+                        $('#scrollto5').append($newElement4);
+                        $('#scrollto5').append($newElement);
+                        $('#scrollto5').append($newElement5);
+          
+                    })
+                    var d5 = setInterval(function scrollText(){
+                        $('#scrollto5').css({'display':'block'})
+                        $('#scrollto5').animate({
+                            top:'-=120px',
+                            opacity:'0'
+                        },3700,function(){
+                            $('#scrollto5').css({'opacity':'1','top':'-=60'})
+                            if(parseInt($('#scrollto5').css('top'))<=-(doplay5.length*60*9)){
+                                $('#scrollto5').css('top','0px')
+                            }
+                        })
+                    })
+
+                }
+            })
+        }
+        
+        userchange()
+
+        // var userinterval = setInterval(function scrollText(){
+            
+        //     console.log('aaa')
+        //     userchange()
+        //     console.log(doplay1.length)
+        //     clearInterval(d1)
+        //     $('#scrollto').css('top','0px')
+            
+        // },5000)
+        setInterval("window.location.replace('http://wxdfcb.viphk.ngrok.org/pc-center/facebody.html')",3600000)
+
+	});
+</script>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.CrdMembershipCardUserMapper">
+    <resultMap id="CrdMembershipCardUser" type="com.example.backstage.crs.entity.CrdMembershipcardUserEntity">
+        <!-- 配置主键,column表示表字段，property表示类的属性名 -->
+        <id column="userid" property="userid"/>
+        <!-- 配置其他属性 -->
+        <result column="cardno" property="number"/>
+    </resultMap>
+
+
+    <!--每个用户拥有的卡的数量-->
+    <select id="selectCardNumberEveryOne" resultMap="CrdMembershipCardUser">
+        select cmu.userid,COALESCE(count(cmu.userid),0) as cardno from crd_membershipcard_purchase cmp
+        left join crd_membershipcard_base cmb on cmp.cardno=cmb.cardno
+        left join Crd_MembershipCard_User cmu on  cmb.cardno=cmu.cardno
+        <where> cmp.buytype='F'
+        <![CDATA[ and cmp.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+        <![CDATA[ and cmp.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+            and   cmp.storeid=#{storeid} :: bigint
+        </if>
+        </where>
+        group by cmu.userid
+    </select>
+
+    <!--查询出每个用户过期的卡数量-->
+    <select id="selectExpiredCardNumberEveryOne" resultMap="CrdMembershipCardUser">
+        select cmu.userid,COALESCE(count(cmu.userid),0) as cardno from crd_membershipcard_purchase cmp
+        left join crd_membershipcard_base cmb on cmp.cardno=cmb.cardno
+        left join Crd_MembershipCard_User cmu on  cmb.cardno=cmu.cardno
+        <where>
+            (<![CDATA[  cmb.CardEnd<to_timestamp(#{today},'yyyy-mm-dd HH24:MI')  ]]>
+            and cmb.State='0'
+        or cmb.CurTimes=0)
+        and cmp.buytype='F'
+        and cmb.IsFree='false'
+        <![CDATA[ and cmb.CardBegin>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+        <![CDATA[ and cmb.CardBegin<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+            and   cmp.storeid=#{storeid} :: bigint
+        </if>
+        </where>
+        group by cmu.userid
+    </select>
+
+    <insert id="insertMembershipCardUser"  parameterType="com.example.backstage.crs.entity.CrdMembershipcardUserEntity">
+        insert into Crd_MembershipCard_User
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            userid,
+            cardno,
+            ispoint,
+            remarks,
+            state,
+            isremoved,
+            createdon,
+            createdby,
+            createdname,
+            createdip,
+            lastedon,
+            lastedby,
+            lastedname,
+            lastedip
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{userid},
+            #{cardno},
+            #{ispoint},
+            #{remarks},
+            #{state},
+            #{isremoved},
+            now(),
+            #{createdby},
+            #{createdname},
+            #{createdip},
+            now(),
+            #{lastedby},
+            #{lastedname},
+            #{lastedip}
+        </trim>
+    </insert>
+
+</mapper>

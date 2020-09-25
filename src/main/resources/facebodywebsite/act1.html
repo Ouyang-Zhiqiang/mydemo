@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>h5</title>
+    <link href="js/swiper-4.5.1/swiper-Swiper4/dist/css/swiper.min.css"; rel="stylesheet">
+    <link href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css"; rel="stylesheet">
+    <script src="js/jquery.min.js";></script>
+    <script src="js/swiper-4.5.1/swiper-Swiper4/dist/js/swiper.min.js";></script>
+    <script src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+</head>
+<style>
+html{
+    width: 100%;
+    background-repeat:no-repeat;
+    touch-action: none;
+    pointer-events: auto;
+}
+body{
+    background-color:gray;
+    background-size:100%;
+    color: white;
+}
+
+input{
+    opacity: 0.9;
+}
+</style>
+<body >
+    <div class="row" style="margin-top:20px">
+        <div class="col-lg-3 col-md-3 col-xs-0" >
+        </div>
+
+        <div class="col-lg-6 col-md-6 col-xs-12" style="padding:25px;margin-bottom: 30px;">
+            <div style="width: 75%;margin: 0 auto;">
+                <span style="font-size: 23px;">活动标题</span><br>
+                <span>
+                    活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题活动标题
+                </span>
+            </div>
+            <form role="form" class="form-horizontal" style="margin-left:50px;margin-top: 20px;">
+                <div class="form-group form-group-xs">
+                    <label for="hospitalName" class="control-label " style="width: 100px;margin-left:15px;">姓名:</label><br>
+                    <div class="col-xs-5">
+                        <input type="text" class="form-control" style="width: 250px;" name="name" id="name" placeholder="" required="required"/>
+                    </div>
+                </div>
+                <div class="form-group form-group-xs">
+                    <label for="username" class="control-label " style="width: 100px;margin-left:15px;">手机号:</label><br>
+                    <div class="col-xs-5">
+                        <input type="text" class="form-control" style="width: 250px;" name="phone" id="phone" placeholder="" required="required"/>
+                    </div>
+                </div>
+                <div class="form-group form-group-xs">
+                    <label for="mobileNum" class="control-label " style="width: 100px;margin-left:15px;">性别:</label><br>
+                    <div class="col-xs-5">
+                        <input type="text" class="form-control" style="width: 250px;" name="company" id="company" placeholder="" required="required" maxlength="11"/>
+                    </div>
+                </div>
+                <div class="form-group form-group-xs">
+                    <label for="mobileNum" class="control-label " style="width: 100px;margin-left:15px;">人数:</label><br>
+                    <div class="col-xs-5">
+                        <input type="text" class="form-control" style="width: 250px;" name="city" id="city" placeholder="" required="required" maxlength="11"/>
+                    </div>
+                </div>
+                <div class="form-group form-group-xs">
+                    <label for="mobileNum" class="control-label" style="width: 100px;margin-left:15px;">备注:</label><br>
+                    <div class="col-xs-5">
+                        <input type="text" class="form-control" style="width: 250px;" name="sqsm" id="sqsm" placeholder="" required="required" maxlength="11"/>
+                    </div>
+                </div>
+                <div class="form-group form-group-xs">
+                    <label  style="width: 100px;margin-left:15px;float: left;">报名费:</label>
+                    <div style="float: left;margin-left: -30px;">
+                        <!-- <input type="text" class="form-control" style="width: 250px;" name="sqsm" id="sqsm" placeholder="" required="required" maxlength="11"/> -->
+                        30
+                    </div>
+                </div>
+
+                <div class="form-group form-group-xs">
+                    <div class="col-xs-2 col-xs-offset-2">
+                        <!--<input type="submit" id="sub" class="btn btn-success btn-xs"/>-->
+                        <!--<button id="sub" name="sub" type="submit" class="btn btn-success btn-xs">注册</button>-->
+                        <div id="submit" name="submit" class="btn btn-success btn-xs" style="width: 80px;height: 30px;text-align: center;line-height: 25px;margin-left:35px;margin-top:20px;">提交</div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="col-lg-3 col-md-3 col-xs-0"  >
+        </div>
+    </div>
+</body>
+</html>
+<script>
+jQuery(function($) {
+    function isPhoneNum(str){
+        var myreg=/^[1][3,4,5,7,8][0-9]{9}$/;
+        if (!myreg.test(str)) {
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    $("#submit").click(function(){
+	
+
+        $.ajax({
+            type:"post",
+            url:"http://www.facebodyfitness.com:8080/hi/main?hi=24AZHZUKF3JK",
+            dataType:"text",
+            data:{
+                phone:$("#phone").val(),
+            },
+            success:function(data){
+                if(JSON.parse(data).rows.length>0){
+                    alert('该手机号已申请过')
+                }else{
+                    if(isPhoneNum($("#phone").val())){
+			console.log($("#name").val())
+			if($("#name").val()==''||$("#company").val()==''){
+				alert('请查看信息是否填写完整')
+			}else{
+                        $.ajax({
+                            type:"post",
+                            url:"http://www.facebodyfitness.com:8080/hi/main?hi=24AZHZUKF3IQ",
+                            dataType:"text",
+                            data:{
+                                name:$("#name").val(),
+                                phone:$("#phone").val(),
+                                city:$("#city").val(),
+                                company:$("#company").val(),
+                                sqsm:$("#sqsm").val(),
+                            },
+                            success:function(data){
+                                alert('提交成功')
+                            },
+                        })
+			}
+                    }else{
+                        alert('电话号码有误')
+                    }
+                }
+            },
+        })
+        
+    })
+})
+</script>

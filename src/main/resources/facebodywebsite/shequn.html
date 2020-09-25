@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+       <meta charset="UTF-8" />
+       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+       <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+       <title>社群</title>
+       <link href="js/swiper-4.5.1/swiper-Swiper4/dist/css/swiper.min.css"; rel="stylesheet">
+       <link href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css"; rel="stylesheet">
+       <script src="js/jquery.min.js";></script>
+       <script src="js/swiper-4.5.1/swiper-Swiper4/dist/js/swiper.min.js";></script>
+       <script src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+       <style type="text/css">
+         *{
+           margin: 0;
+           padding: 0;
+           font-family: 微软雅黑!important;
+         }
+         .inheader a:hover{
+            color: yellow!important;
+         }
+       </style>
+</head>
+<body>
+
+<div class="container1" id="addstore">
+    <div class="outheader" style="width: 100%;height: 60px;opacity: 0.85;line-height: 60px;background: black;">
+        <div class="inheader" style="width: 90%;height: 100%;margin: 0 auto;">
+            <div style="width:20%;height: 100%;float: left;">
+                <div style="float: left;margin-left: 0%;"><img src="images-14/logo.png" height="32px"></div>
+            </div> 
+            <div style="width:80%;height: 100%;float: right;text-align: right;font-size: 17px;">
+                <a href="index1.html" style="color: white;text-decoration: none;margin-right: 30px;">首页</a>
+                <a href="shequn.html" style="color: white;text-decoration: none;margin-right: 30px;">社群</a>
+                <a href="index.html#slide5" style="color: white;text-decoration: none;margin-right: 30px;">场馆</a>
+                <a href="kecheng.html" style="color: white;text-decoration: none;margin-right: 30px;">课程</a>
+                <a href="cshz.html" style="color: white;text-decoration: none;">城市合伙</a>
+            </div>                    
+        </div>
+    </div>
+
+    <div style="width: 100%;height: 300px;background: #F2C81F;position: relative;">
+        <div style="width: 90%;height: 100%;margin: 0 auto;position: relative;">
+            <h1 style="position: absolute;top: 30%;color: white;font-weight: 600;">运 动 社 群</h1>
+            <h3 style="position: absolute;top: 55%;color: white;font-weight: 500;font-size: 15px;">FaceBody颜身运动倡导的是一种潮流运动的生活方式，</h3>
+            <h3 style="position: absolute;top: 70%;color: white;font-weight: 500;font-size: 15px;">是所有热爱运动，有好奇心，向往自由生活的人群的聚集地。</h3>
+        </div>
+        <div style="position: absolute;right: 5%;top:130px"><img src="images-14/人群.png" width="110px" height="110px"></div>
+    </div>
+
+    <!-- <div style="width: 100%;height: 300px;">
+        <div style="width: 90%;height: 80px;margin:0 auto;color: #737373;line-height: 80px;font-size: 15px;font-weight: 500;">
+            <span>泗泾社群</span>
+        </div>
+        <div style="height: 180px;width: 90%;margin:0 auto;" class="addimages">
+            <div class="swiper-container">
+                <div class="swiper-wrapper addimages">
+                    <div class="swiper-slide" data-history="slide1" style="height: 200px;width: 300px!important;"><img src="images-14/bird-小鸟.png" height="100%" width="100%"></div>
+                    
+                </div>
+            </div>
+        </div>
+        <div style="width: 90%;margin:0 auto;border-bottom: 1px #CCCCCC solid;margin-top: 40px;"></div>
+    </div> -->
+
+    <!-- <div style="width: 100%;height: 300px;">
+        <div style="width: 90%;height: 80px;margin:0 auto;color: #737373;line-height: 80px;font-size: 15px;font-weight: 500;">
+            <span>泗泾社群</span>
+        </div>
+        <div style="height: 180px;width: 90%;margin:0 auto;" class="addimages">
+            <div style="height: 100%;width: 20%;box-shadow:5px 5px 5px #cccccc;float: left;">
+                <img src="images-14/fb01.png" width="100%" height="100%">
+            </div>
+            <div style="height: 100%;width: 5%;float: left;"></div>
+            
+        </div>
+        <div style="width: 90%;margin:0 auto;border-bottom: 1px #CCCCCC solid;margin-top: 40px;"></div>
+    </div>
+
+    <div style="width: 100%;height: 300px;">
+        <div style="width: 90%;height: 80px;margin:0 auto;color: #737373;line-height: 80px;font-size: 15px;font-weight: 500;">
+            <span>泗泾社群</span>
+        </div>
+        <div style="height: 180px;width: 90%;margin:0 auto;" class="addimages">
+            
+        </div>
+        <div style="width: 90%;margin:0 auto;border-bottom: 1px #CCCCCC solid;margin-top: 40px;"></div>
+    </div> -->
+</div>
+
+</body>
+</html>
+<script>
+
+    $.ajax({
+        type : "POST",
+        url : "http://106.14.162.18:8080/hi/main?hi=24CDIAEC0WXO",
+        dataType : "text",
+        data : {},
+        success : function(data) {
+            var obj = {}
+            obj = JSON.parse(data)
+            var arrs=obj.rows
+         
+            arrs.forEach((item,index)=>{
+              item.images=JSON.parse(item.images)
+              console.log(item.images)
+              $newElement=$('<div style="width: 100%;height: 300px;"><div style="width: 90%;height: 80px;margin:0 auto;color: #737373;line-height: 80px;font-size: 15px;font-weight: 500;"><span>'+item.store + '&nbsp;&nbsp;'+item.datetime+'</span></div> <div style="height: 180px;width: 90%;margin:0 auto;" ><div class="swiper-container"> <div class="swiper-wrapper addimages'+index+'"></div></div></div><div style="width: 90%;margin:0 auto;border-bottom: 1px #CCCCCC solid;margin-top: 40px;"></div></div>')
+              $('#addstore').append($newElement);
+              if(item.images){
+                item.images.forEach((item1)=>{
+                    console.log(item1)
+                    $newElement1=$(' <div class="swiper-slide" style="height: 200px;width: 300px!important;"><img src="'+item1.url+'" height="100%" width="100%"></div>')
+                    var classnumber='.addimages'+index
+                    $(classnumber).append($newElement1);
+                })
+              }
+            })
+           
+        }
+    })
+
+    setTimeout(function(){
+        var swiper = new Swiper('.swiper-container', {
+        slidesPerView: "auto",
+        spaceBetween : 80,
+    });
+    },100)
+    
+    
+    
+
+</script>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>砍价活动</title>
+<link href="js/swiper-4.5.1/swiper-Swiper4/dist/css/swiper.min.css"; rel="stylesheet">
+<link href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css"; rel="stylesheet">
+<script src="js/jquery.min.js";></script>
+<script src="js/swiper-4.5.1/swiper-Swiper4/dist/js/swiper.min.js";></script>
+<script src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<style type="text/css">
+  *{
+    margin: 0;
+    padding: 0;
+    font-family: 微软雅黑!important;
+  }
+  html{
+      width: 100%;
+      background-repeat:no-repeat;
+      touch-action:none;
+      touch-action:pan-y;
+  }
+  body{
+      background-color:#130E4E;
+      color: white;
+  }
+  
+</style>
+</head>
+<body style="background: #25272A;background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;font-size: 15px">
+  <div class="row" style="margin-top:0px">
+    <div class="col-lg-6 col-md-6 col-xs-12" style="padding:25px;margin-bottom: 30px;">
+        <div style="width:100%;text-align: center;padding-bottom: 15px;"><apan id="bargainingtitle"></apan></div>
+        <div style="width:100%;text-align: center;padding-bottom: 15px;"><img src="" id="myimg"  width="50px" height="50px" style="border-radius: 50%;"></div>
+        <div style="width:100%;text-align: center;padding-bottom: 15px;"><apan id="nickname">砍价人微信名</apan></div>
+        <div style="width:100%;text-align: center;padding-bottom: 15px;"><apan>“我发起了一个砍价活动，快来帮我砍价”</apan></div>
+        <img src="" id="img" width="300px" height="170px" style="margin:0 auto;display: block;border-radius: 7px;">
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;margin-top: 15px;"><span>砍价产品：</span><span id="cardname"></span></div>
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;margin-top: 15px;"><span>原价：</span><span id="membershipcardprice"></span></div>
+
+        <div style="width: 15%;float: left;"><span style="float: right;padding-right: 8px;">0</span></div>
+        <div class="progress" style="width:70%;float: left;">
+            <div class="progress-bar progress-bar-success" role="progressbar"
+                 aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"
+                 style="width: 30%;">
+                <span class="sr-only">10% 完成（危险）</span>
+            </div>
+        </div>
+        <div style="width: 15%;float: left;padding-left: 8px;"><span id="bargainingprice"></span></div>
+        <div style="clear: both;"></div>
+        <div style="width: 300px;margin: 0px auto;padding-left: 7px;height: 40px;line-height: 40px;"><span>已帮砍：</span></div>
+        <div style="width: 300px;margin: 0 auto;text-align: center;font-size: 15px;margin-top: 20px;">
+            <span style="font-size: 13px;" >当前价格</span><br><div style="height: 5px;"></div>
+            <span style="font-size: 24px;" id="curentprice">1080</span><span style="font-size: 25px;">元</span><div style="height: 5px;"></div>
+            <!-- <span style="font-size: 13px;">还剩</span><span style="font-size: 13px;">93</span><span style="font-size: 13px;">件</span> -->
+        </div>  
+        
+        <div id="tijiao" class="btn btn-success btn-xs" style="width: 100px;height: 40px;text-align: center;line-height: 35px;margin: 35px auto;display: block;font-size: 15px;background: #FCCF00;">
+          帮助砍价
+        </div>
+
+        <div id="faqi" class="btn btn-success btn-xs" style="width: 100px;height: 40px;text-align: center;line-height: 35px;margin: 35px auto;display: block;font-size: 15px;background: #FCCF00;">
+          发起砍价
+        </div>
+
+        <div id="zf" class="btn btn-success btn-xs" style="width: 100px;height: 40px;text-align: center;line-height: 35px;margin: 35px auto;display: block;font-size: 15px;background: #FCCF00;">
+          支付
+        </div>
+        
+        <div style="position: absolute;font-size: 13px;left: 60px;bottom: -60px;">
+          <span>活动开始时间：</span><span id="effectivestartdate">2020-01-22</span><div style="height: 7px;"></div>
+          <span>活动结束时间：</span><span id="effectiveenddate">2020-01-22</span>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
+<script>
+  jQuery(function($) {
+    
+    var bargainingid=25;
+    var cardid='2019032117362410135';
+    var groupid='aaa'
+    var cardname='38次课时卡'
+    var bargainingtitle='砍价标题11'
+    var membershipcardprice=3480
+    var bargainingprice=600;                //可砍价格
+    var bargainingminprice=0;               //最低可砍
+    var bargainingmaxprice=100;             //最高可砍
+    var effectivestartdate='2020-6-29';
+    var effectiveenddate='2020-8-20'
+    var url = location.search; //获取url中"?"符后的字串
+    var openid=''
+    var unionid=''
+    var access_token=''
+    var headimgurl=''
+    var nickname=''
+    
+    var theRequest = new Object();
+
+    if (url.indexOf("?") != -1) {
+        
+        var str = url.substr(1);
+        
+        strs = str.split("&");
+
+        for(var i = 0; i < strs.length; i ++) {
+          
+          theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1]);
+
+        }
+
+    }
+
+    const local = window.location.href
+
+   
+
+    if (theRequest.code == null || theRequest.code === '') {
+        var time = (new Date()).valueOf()
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + 'wx1b98935219078af2' +
+            '&redirect_uri=' + encodeURIComponent(local)+"?time="+time + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+    }
+ 
+    $.ajax({
+      type : "POST",
+      url : "https://www.facebodyfitness.com/hi/main?hi=24CQRLLNKPLT",
+      dataType : "text",
+      data : {cardid:cardid},
+      success : function(data) {
+        // console.log(JSON.parse(data).rows[0].resurl)
+        document.getElementById('img').src=JSON.parse(data).rows[0].resurl
+      }
+    })
+  
+
+    $.ajax({
+        type : "POST",
+        url : "http://10.25.19.29:8081/getCode",
+        dataType : "text",
+        data : {code:theRequest.code},
+        success : function(e) {
+          var obj = JSON.parse(e)
+          openid=obj.openid
+          unionid=obj.unionid
+          access_token=obj.access_token
+          // alert(openid)
+          $.ajax({
+            type : "POST",
+            url : "http://10.25.19.29:8080/web/activity/connect",
+            dataType : "text",
+            data : {access_token:access_token,openid:openid},
+            success : function(e) {
+              var ob=JSON.parse(e)
+              headimgurl=ob.headimgurl
+              nickname=ob.nickname   
+              document.getElementById('nickname').innerHTML=nickname
+              document.getElementById('myimg').src=headimgurl
+              // alert(headimgurl)         
+            }
+          })
+        }
+      })
+
+    document.getElementById('bargainingtitle').innerHTML=bargainingtitle
+    document.getElementById('cardname').innerHTML=cardname
+    document.getElementById('membershipcardprice').innerHTML=membershipcardprice
+    document.getElementById('bargainingprice').innerHTML=bargainingprice
+    document.getElementById('effectivestartdate').innerHTML=effectivestartdate
+    document.getElementById('effectiveenddate').innerHTML=effectiveenddate
+    
+    $('#tijiao').click(function(){
+      alert('eee')
+      var money = Math.round((Math.random() * (bargainingmaxprice - bargainingminprice) + bargainingminprice) * 10) / 10
+      $.ajax({
+        type : "POST",
+        url : "http://10.25.19.6:8080//web/Bargaining/participateinbargaining",
+        dataType : "text",
+        data : {groupid:groupid,bargainingid:25,phonenumber:'',wechatnumber:nickname,wechatimgurl:headimgurl,money:money},
+        success : function(e) {
+          alert('aa')
+        }
+      })
+      
+    })
+
+    $('#faqi').click(function(){
+      alert('eee')
+      $.ajax({
+        type : "POST",
+        url : "http://10.25.19.6:8080//web/Bargaining/initiatebargaining",
+        dataType : "text",
+        data : {bargainingid:25,wechatnumber:nickname,wechatimgurl:headimgurl},
+        success : function(e) {
+          alert('aa')
+        }
+      })
+      
+    })
+
+    $('#zf').click(function(){
+      alert('eee')
+      $.ajax({
+        type : "POST",
+        url : "http://10.25.19.6:8080//web/Bargaining/SeckillPaySuccess",
+        dataType : "text",
+        data : {sfprice:0.01,openid:openid,unionid:unionid},
+        success : function(e) {
+          alert('aa')
+        }
+      })
+      
+    })
+
+  })
+</script>

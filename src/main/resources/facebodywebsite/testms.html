@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+<title>秒杀活动</title>
+<link href="js/swiper-4.5.1/swiper-Swiper4/dist/css/swiper.min.css"; rel="stylesheet">
+<link href="js/bootstrap-3.3.7-dist/css/bootstrap.min.css"; rel="stylesheet">
+<script src="js/jquery.min.js";></script>
+<script src="js/swiper-4.5.1/swiper-Swiper4/dist/js/swiper.min.js";></script>
+<script src="js/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+<style type="text/css">
+  *{
+    margin: 0;
+    padding: 0;
+    font-family: 微软雅黑!important;
+  }
+  html{
+      width: 100%;
+      background-repeat:no-repeat;
+      touch-action:none;
+      touch-action:pan-y;
+      /* pointer-events: auto;
+      touch-action: manipulation; */
+     
+  }
+  body{
+      background-color:#130E4E;
+      /* background-size:100%; */
+      color: white;
+  }
+  
+</style>
+</head>
+<body style="background: #25272A;background-repeat:no-repeat;background-size:100% 100%;-moz-background-size:100% 100%;font-size: 15px">
+  <div class="row" style="margin-top:20px">
+    <div class="col-lg-3 col-md-3 col-xs-0" >
+    </div>
+    <div class="col-lg-6 col-md-6 col-xs-12" style="padding:25px;margin-bottom: 30px;">
+        <div style="width:100%;text-align: center;padding-bottom: 15px;"><apan id="seckilltitle"></apan></div>
+        <img src="" width="300px" height="170px" style="margin:0 auto;display: block;border-radius: 7px;" id="img">
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;margin-top: 15px;" id="cardname"></div>
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;" ><span>原价：</span><span id="membershipcardprice"></span> 元</div>
+
+        <div style="width: 300px;margin: 10px auto;padding-left: 7px;font-size: 21px;"><span>秒杀价：</span><span id="seckillprice"></span> <span>元</span></div>
+
+        <div style="width: 300px;margin: 0 auto;text-align: center;font-size: 15px;margin-top: 50px;">
+          <span>距本场结束</span><br><div style="height: 15px;"></div>
+          <span style="font-size: 24px;" id="times"></span>
+        </div>
+        
+        <div id="tijiao" class="btn btn-success btn-xs" style="width: 100px;height: 40px;text-align: center;line-height: 35px;margin: 45px auto;display: block;font-size: 15px;background: #FCCF00;">
+          立即支付
+        </div>
+        
+        <div style="position: absolute;font-size: 13px;left: 60px;bottom: -80px;">
+          <span>活动开始时间：</span><span id="effectivestartdate"></span><div style="height: 7px;"></div>
+          <span>活动结束时间：</span><span id="effectiveenddate"></span>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
+<script>
+  jQuery(function($) {
+    var seckillid=15923720349168872;
+    var cardid='2019032117362410135';
+    var cardname='38次课时卡'
+    var seckilltitle='秒杀标题11'
+    var membershipcardprice=3380;
+    var seckillprice=3000;
+    var effectivestartdate='2020-6-29';
+    var effectiveenddate='2020-8-20'
+    var url = location.search; //获取url中"?"符后的字串
+    var openid=''
+    var unionid=''
+    
+    var theRequest = new Object();
+
+    if (url.indexOf("?") != -1) {
+        
+        var str = url.substr(1);
+        
+        strs = str.split("&");
+
+        for(var i = 0; i < strs.length; i ++) {
+
+          theRequest[strs[i].split("=")[0]]=(strs[i].split("=")[1]);
+
+        }
+
+    }
+    // alert(theRequest.code)
+    const local = window.location.href
+
+    if (theRequest.code == null || theRequest.code === '') {
+        var time = (new Date()).valueOf()
+        window.location.href = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + 'wx1b98935219078af2' +
+            '&redirect_uri=' + encodeURIComponent(local)+"?time="+time + '&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect'
+    }
+    alert(theRequest.code)
+    $.ajax({
+      type : "POST",
+      url : "https://www.facebodyfitness.com/hi/main?hi=24CQRLLNKPLT",
+      dataType : "text",
+      data : {cardid:cardid},
+      success : function(data) {
+        // console.log(JSON.parse(data).rows[0].resurl)
+        document.getElementById('img').src=JSON.parse(data).rows[0].resurl
+      }
+    })
+    document.getElementById('seckilltitle').innerHTML=seckilltitle
+    document.getElementById('cardname').innerHTML=cardname
+    document.getElementById('membershipcardprice').innerHTML=membershipcardprice
+    document.getElementById('seckillprice').innerHTML=seckillprice
+    document.getElementById('effectivestartdate').innerHTML=effectivestartdate
+    document.getElementById('effectiveenddate').innerHTML=effectiveenddate
+    var textp = document.getElementById('times')
+    var timearray=effectiveenddate.split("-");
+    //ShowLeftTime(timearray[0],timearray[1],timearray[2]);
+    setInterval(function(){ShowLeftTime(timearray[0],timearray[1],timearray[2]);},1000);
+    function ShowLeftTime(year,month,date){
+      //得出剩余时间
+      var now=new Date();
+      var endDate=new Date(year,month-1,date);
+      var leftTime=endDate.getTime()-now.getTime();
+      var leftsecond=parseInt(leftTime/1000);
+      var day=Math.floor(leftsecond/(60*60*24));
+      var hour=Math.floor((leftsecond-day*24*60*60)/3600);
+      var minute=Math.floor((leftsecond-day*24*60*60-hour*3600)/60);
+      var second=Math.floor(leftsecond-day*60*60*24-hour*60*60-minute*60);
+      //显示剩余时间
+      textp.innerHTML="还有"+day+"天"+hour+"小时"+minute+"分"+second+"秒";
+    }
+
+    $('#tijiao').click(function(){
+      $.ajax({
+        type : "POST",
+        url : "http://10.25.19.29:8081/getCode",
+        dataType : "text",
+        data : {code:theRequest.code},
+        success : function(e) {
+          var obj = JSON.parse(e)
+          openid=obj.openid
+          unionid=obj.unionid
+          alert(openid)
+          alert(unionid+'unionid')
+          $.ajax({
+            type : "POST",
+            url : "http://10.25.19.29:8080/web/activity/SeckillPaySuccess",
+            dataType : "text",
+            data : {openid:openid,groupid:25,id:'111',sfprice:0.01},
+            success : function(e) {
+              var myresult=JSON.parse(e) 
+              WeixinJSBridge.invoke(
+                'getBrandWCPayRequest', {
+                  "appId":'wx1b98935219078af2',     //公众号名称，由商户传入     
+                  "timeStamp":myresult.timeStamp,         //时间戳，自1970年以来的秒数     
+                  "nonceStr":myresult.nonceStr, //随机串     
+                  "package":myresult.package,     
+                  "signType":"MD5",         //微信签名方式：     
+                  "paySign":myresult.paySign //微信签名 
+                }),
+                function(res){
+                  if(res.err_msg == "get_brand_wcpay_request:ok" ){
+                    alert('成功')
+                }
+              }
+            }
+          })
+        }
+      })
+    })
+  })
+</script>

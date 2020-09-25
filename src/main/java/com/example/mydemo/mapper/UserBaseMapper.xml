@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.mydemo.mapper.UserBaseMapper" >
+  <resultMap id="BaseResultMap" type="com.example.mydemo.pojo.UserBase" >
+    <id column="userid" property="userid" jdbcType="BIGINT" />
+    <result column="companyid" property="companyid" jdbcType="BIGINT" />
+    <result column="storeid" property="storeid" jdbcType="BIGINT" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="CHAR" />
+    <result column="refuserid" property="refuserid" jdbcType="BIGINT" />
+    <result column="saleuserid" property="saleuserid" jdbcType="BIGINT" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="points" property="points" jdbcType="NUMERIC" />
+    <result column="memgrade" property="memgrade" jdbcType="CHAR" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+    <result column="numberoflogins" property="numberoflogins" jdbcType="INTEGER" />
+    <result column="createdon" property="createdon" jdbcType="TIMESTAMP" />
+    <result column="createdby" property="createdby" jdbcType="VARCHAR" />
+    <result column="createdname" property="createdname" jdbcType="VARCHAR" />
+    <result column="createdip" property="createdip" jdbcType="VARCHAR" />
+    <result column="lastedon" property="lastedon" jdbcType="TIMESTAMP" />
+    <result column="lastedby" property="lastedby" jdbcType="VARCHAR" />
+    <result column="lastedname" property="lastedname" jdbcType="VARCHAR" />
+    <result column="lastedip" property="lastedip" jdbcType="VARCHAR" />
+    <result column="inviterid" property="inviterid" jdbcType="BIGINT" />
+    <result column="regfrom" property="regfrom" jdbcType="INTEGER" />
+    <result column="birthday" property="birthday" jdbcType="DATE" />
+    <result column="workaddress" property="workaddress" jdbcType="VARCHAR" />
+    <result column="homeaddress" property="homeaddress" jdbcType="VARCHAR" />
+    <result column="height" property="height" jdbcType="NUMERIC" />
+    <result column="weight" property="weight" jdbcType="NUMERIC" />
+    <result column="bmi" property="bmi" jdbcType="NUMERIC" />
+    <result column="fitnessgoal" property="fitnessgoal" jdbcType="VARCHAR" />
+    <result column="fitnessexperience" property="fitnessexperience" jdbcType="VARCHAR" />
+    <result column="counts" property="fitnessexperience" jdbcType="VARCHAR" />
+    <collection property="cardList" ofType="com.example.mydemo.pojo.Cards">
+      <id column="cardno" jdbcType="VARCHAR" property="cardid" />
+      <result column="cardname" jdbcType="VARCHAR" property="cardName" />
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    userid, companyid, storeid, tel, name, sex, refuserid, saleuserid, password, salt,
+    points, memgrade, status, remarks, numberoflogins,createdon, createdby, createdname,
+    createdip, lastedon, lastedby, lastedname, lastedip, inviterid, regfrom, birthday,
+    workaddress, homeaddress, height, weight, bmi, fitnessgoal, fitnessexperience,
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user_base
+    where userid = #{userid,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectUsersAll" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select
+    a.userid,a.name,a.createdon,c.cardno,c.cardname
+    from user_base a left join Crd_MembershipCard_User b on a.userid=b.userid
+    left join Crd_MembershipCard_Base c on b.cardno=c.cardno
+    limit 30 offset 0
+  </select>
+
+
+  <insert id="insertSelective" parameterType="com.example.mydemo.pojo.UserBase" >
+    insert into user_base
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        userid,
+      </if>
+      <if test="companyid != null" >
+        companyid,
+      </if>
+      <if test="storeid != null" >
+        storeid,
+      </if>
+      <if test="tel != null" >
+        tel,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="sex != null" >
+        sex,
+      </if>
+      <if test="refuserid != null" >
+        refuserid,
+      </if>
+      <if test="saleuserid != null" >
+        saleuserid,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="points != null" >
+        points,
+      </if>
+      <if test="memgrade != null" >
+        memgrade,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="remarks != null" >
+        remarks,
+      </if>
+      <if test="numberoflogins != null" >
+        numberoflogins,
+      </if>
+      <if test="createdon != null" >
+        createdon,
+      </if>
+      <if test="createdby != null" >
+        createdby,
+      </if>
+      <if test="createdname != null" >
+        createdname,
+      </if>
+      <if test="createdip != null" >
+        createdip,
+      </if>
+      <if test="lastedon != null" >
+        lastedon,
+      </if>
+      <if test="lastedby != null" >
+        lastedby,
+      </if>
+      <if test="lastedname != null" >
+        lastedname,
+      </if>
+      <if test="lastedip != null" >
+        lastedip,
+      </if>
+      <if test="inviterid != null" >
+        inviterid,
+      </if>
+      <if test="regfrom != null" >
+        regfrom,
+      </if>
+      <if test="birthday != null" >
+        birthday,
+      </if>
+      <if test="workaddress != null" >
+        workaddress,
+      </if>
+      <if test="homeaddress != null" >
+        homeaddress,
+      </if>
+      <if test="height != null" >
+        height,
+      </if>
+      <if test="weight != null" >
+        weight,
+      </if>
+      <if test="bmi != null" >
+        bmi,
+      </if>
+      <if test="fitnessgoal != null" >
+        fitnessgoal,
+      </if>
+      <if test="fitnessexperience != null" >
+        fitnessexperience,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="userid != null" >
+        #{userid,jdbcType=BIGINT},
+      </if>
+      <if test="companyid != null" >
+        #{companyid,jdbcType=BIGINT},
+      </if>
+      <if test="storeid != null" >
+        #{storeid,jdbcType=BIGINT},
+      </if>
+      <if test="tel != null" >
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        #{sex,jdbcType=CHAR},
+      </if>
+      <if test="refuserid != null" >
+        #{refuserid,jdbcType=BIGINT},
+      </if>
+      <if test="saleuserid != null" >
+        #{saleuserid,jdbcType=BIGINT},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="points != null" >
+        #{points,jdbcType=NUMERIC},
+      </if>
+      <if test="memgrade != null" >
+        #{memgrade,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="remarks != null" >
+        #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="numberoflogins != null" >
+        #{numberoflogins,jdbcType=INTEGER},
+      </if>
+      <if test="createdon != null" >
+        #{createdon,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdby != null" >
+        #{createdby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdname != null" >
+        #{createdname,jdbcType=VARCHAR},
+      </if>
+      <if test="createdip != null" >
+        #{createdip,jdbcType=VARCHAR},
+      </if>
+      <if test="lastedon != null" >
+        #{lastedon,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastedby != null" >
+        #{lastedby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastedname != null" >
+        #{lastedname,jdbcType=VARCHAR},
+      </if>
+      <if test="lastedip != null" >
+        #{lastedip,jdbcType=VARCHAR},
+      </if>
+      <if test="inviterid != null" >
+        #{inviterid,jdbcType=BIGINT},
+      </if>
+      <if test="regfrom != null" >
+        #{regfrom,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="workaddress != null" >
+        #{workaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="homeaddress != null" >
+        #{homeaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="height != null" >
+        #{height,jdbcType=NUMERIC},
+      </if>
+      <if test="weight != null" >
+        #{weight,jdbcType=NUMERIC},
+      </if>
+      <if test="bmi != null" >
+        #{bmi,jdbcType=NUMERIC},
+      </if>
+      <if test="fitnessgoal != null" >
+        #{fitnessgoal,jdbcType=VARCHAR},
+      </if>
+      <if test="fitnessexperience != null" >
+        #{fitnessexperience,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.mydemo.pojo.UserBase" >
+    update user_base
+    <set >
+      <if test="companyid != null" >
+        companyid = #{companyid,jdbcType=BIGINT},
+      </if>
+      <if test="storeid != null" >
+        storeid = #{storeid,jdbcType=BIGINT},
+      </if>
+      <if test="tel != null" >
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null" >
+        sex = #{sex,jdbcType=CHAR},
+      </if>
+      <if test="refuserid != null" >
+        refuserid = #{refuserid,jdbcType=BIGINT},
+      </if>
+      <if test="saleuserid != null" >
+        saleuserid = #{saleuserid,jdbcType=BIGINT},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="points != null" >
+        points = #{points,jdbcType=NUMERIC},
+      </if>
+      <if test="memgrade != null" >
+        memgrade = #{memgrade,jdbcType=CHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="remarks != null" >
+        remarks = #{remarks,jdbcType=VARCHAR},
+      </if>
+      <if test="numberoflogins != null" >
+        numberoflogins = #{numberoflogins,jdbcType=INTEGER},
+      </if>
+      <if test="createdon != null" >
+        createdon = #{createdon,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdby != null" >
+        createdby = #{createdby,jdbcType=VARCHAR},
+      </if>
+      <if test="createdname != null" >
+        createdname = #{createdname,jdbcType=VARCHAR},
+      </if>
+      <if test="createdip != null" >
+        createdip = #{createdip,jdbcType=VARCHAR},
+      </if>
+      <if test="lastedon != null" >
+        lastedon = #{lastedon,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastedby != null" >
+        lastedby = #{lastedby,jdbcType=VARCHAR},
+      </if>
+      <if test="lastedname != null" >
+        lastedname = #{lastedname,jdbcType=VARCHAR},
+      </if>
+      <if test="lastedip != null" >
+        lastedip = #{lastedip,jdbcType=VARCHAR},
+      </if>
+      <if test="inviterid != null" >
+        inviterid = #{inviterid,jdbcType=BIGINT},
+      </if>
+      <if test="regfrom != null" >
+        regfrom = #{regfrom,jdbcType=INTEGER},
+      </if>
+      <if test="birthday != null" >
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="workaddress != null" >
+        workaddress = #{workaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="homeaddress != null" >
+        homeaddress = #{homeaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="height != null" >
+        height = #{height,jdbcType=NUMERIC},
+      </if>
+      <if test="weight != null" >
+        weight = #{weight,jdbcType=NUMERIC},
+      </if>
+      <if test="bmi != null" >
+        bmi = #{bmi,jdbcType=NUMERIC},
+      </if>
+      <if test="fitnessgoal != null" >
+        fitnessgoal = #{fitnessgoal,jdbcType=VARCHAR},
+      </if>
+      <if test="fitnessexperience != null" >
+        fitnessexperience = #{fitnessexperience,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where userid = #{userid,jdbcType=BIGINT}
+  </update>
+
+</mapper>

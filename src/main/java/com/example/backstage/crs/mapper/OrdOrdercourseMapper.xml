@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.OrdOrdercourseMapper">
+
+	<!--团课消课频次数:上团课数大于等于n节课的判断筛选后用户数量-->
+	<select id="selectLeagueNubmerByN"     resultType="java.util.HashMap">
+		select count(userid) as leagueNumber from (select count(userid) as number,userid from Ord_OrderCourse t1
+		left join  Crd_MembershipCard_Base cm on t1.cardno=cm.cardno
+		left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+		<where>
+			cmb.coursetype='${@com.backstage.crs.common.Constant@CARDTYPE_LEAGUE}'
+		and t1.SignState='1'
+		<![CDATA[ and t1.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+		<![CDATA[ and t1.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+		<if test="storeid!=null and storeid!=''">
+			and   t1.StoreId=#{storeid} :: bigint
+		</if>
+		</where>  group by t1.userid) as a
+			<where>
+			<if  test="number != null and number!=''" >
+				<![CDATA[ a.number >= #{number} :: bigint ]]>
+			</if>
+			</where>
+	</select>
+
+	<!--私教消课频次数:上私教数大于等于n节课的判断筛选后用户数量-->
+	<select id="selectPrivateNubmerByN"  parameterType="Integer"   resultType="java.util.HashMap">
+		select count(userid) as privateNumber from (select count(userid) as number,userid from Ord_OrderCourse t1
+		left join  Crd_MembershipCard_Base cm on t1.cardno=cm.cardno
+		left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+		<where>
+		 cmb.coursetype='${@com.backstage.crs.common.Constant@CARDTYPE_PRIVATE}'
+			and t1.SignState='1'
+			<![CDATA[ and  t1.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+			<![CDATA[ and t1.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+			<if test="storeid!=null and storeid!=''">
+				and   t1.StoreId=#{storeid} :: bigint
+			</if>
+		</where> group by userid) as a
+		<where>
+			<if  test="number != null and number!=''" >
+				<![CDATA[ a.number >= #{number} :: bigint ]]>
+			</if>
+		</where>
+	</select>
+
+	<!--总消费金额:总消费金额大于n的判断筛选后用户数量-->
+	<select id="slectTotalMoneyByMoney"   resultType="java.util.HashMap">
+		select count(userid) as totalMoney from (
+		select sum(sellingfee) as sellingfee,userid  from (
+		select sum(a.sellingfee) as sellingfee,ub.userid from(
+                 select a.sellingfee,a.cardno
+                 from crd_membershipcard_purchase a
+				<where>
+					<![CDATA[  a.CreatedOn>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+					<![CDATA[ and a.CreatedOn<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+					<if test="storeid!=null and storeid!=''">
+						and   a.StoreId=#{storeid} :: bigint
+					</if>
+				</where>
+                 UNION all
+                 select cms.fee as sellingfee,cms.cardno
+                 from Crd_MembershipCard_Stop cms
+                  left join  crd_membershipcard_purchase cmp on cmp.cardno=cms.cardno
+				 <where>
+				  cms.stoptype='${@com.backstage.crs.common.Constant@STOPTYP_TEMPORARY}'
+					 <![CDATA[  and cmp.CreatedOn>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+					 <![CDATA[ and cmp.CreatedOn<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+					 <if test="storeid!=null and storeid!=''">
+						 and   cmp.StoreId=#{storeid} :: bigint
+					 </if>
+				 </where>
+                 UNION all
+                 select cmr.recamount as sellingfee,cmr.cardno
+                 from Crd_MembershipCard_Reconciliation cmr
+                  left join  crd_membershipcard_purchase cmp on cmp.cardno=cmr.cardno
+			     <where>
+			       cmr.rectype='${@com.backstage.crs.common.Constant@RECTYPE_ADD}'
+					 <![CDATA[  and cmp.CreatedOn>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+					 <![CDATA[ and cmp.CreatedOn<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+					 <if test="storeid!=null and storeid!=''">
+						 and   cmp.StoreId=#{storeid} :: bigint
+					 </if>
+				 </where>
+                 union all
+                 select cmt.fee as sellingfee,cmt.cardno
+                 from Crd_MembershipCard_Transfer cmt
+                 left join  crd_membershipcard_purchase cmp on cmp.cardno=cmt.cardno
+				<where>
+					<![CDATA[  cmp.CreatedOn>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+					<![CDATA[ and cmp.CreatedOn<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+					<if test="storeid!=null and storeid!=''">
+						and   cmp.StoreId=#{storeid} :: bigint
+					</if>
+				</where>
+             ) as a
+             left join Crd_MembershipCard_User ab on ab.cardno=a.cardno
+             left join User_Base ub on ab.userid=ub.userid
+			group by ub.userid
+			union all
+			select sum(b.sellingfee),ub.userid from (
+				select (0-cms.fee) as sellingfee,cms.cardno
+				from Crd_MembershipCard_Stop cms
+				left join  crd_membershipcard_purchase cmp on cmp.cardno=cms.cardno
+				<where>
+					cms.stoptype='${@com.backstage.crs.common.Constant@CARDTYPE_PRIVATE}'
+					<![CDATA[  and cmp.CreatedOn>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+					<![CDATA[ and cmp.CreatedOn<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+					<if test="storeid!=null and storeid!=''">
+						and   cmp.StoreId=#{storeid} :: bigint
+					</if>
+				</where>
+				union all
+				select cmr.recamount as sellingfee,cmr.cardno
+				from Crd_MembershipCard_Reconciliation cmr
+			    left join  crd_membershipcard_purchase cmp on cmp.cardno=cmr.cardno
+				<where>  cmr.rectype='${@com.backstage.crs.common.Constant@RECTYPE_SUBTRACT}'
+					<![CDATA[  and cmp.CreatedOn>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+					<![CDATA[ and cmp.CreatedOn<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+					<if test="storeid!=null and storeid!=''">
+						and   cmp.StoreId=#{storeid} :: bigint
+					</if>
+				</where>
+										) as b
+
+			left join Crd_MembershipCard_User ab on ab.cardno=b.cardno
+			left join User_Base ub on ab.userid=ub.userid
+			group by ub.userid
+			) as c group by  userid
+    ) as d
+	<![CDATA[	where d.sellingfee>#{money}  :: bigint ]]>
+	</select>
+	
+	
+	<!--团课预约人数、团课签到人数、私教预约人数、私教签到人数-->
+	<select id="selectCourseNumber" resultType="java.util.HashMap">
+		select count(userid),'团课预约' as type from (
+		select count(a.userid) as number,a.userid from Ord_OrderCourse a
+		left join  Crd_MembershipCard_Base cm on a.cardno=cm.cardno
+		left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+		left join crd_membershipcard_purchase cmp on cmp.cardno=cm.cardno and cmp.BuyType='F'
+		<where>
+		  a.ordstate='${@com.backstage.crs.common.Constant@COURSE_RESERVED}'
+		  and cmb.coursetype='${@com.backstage.crs.common.Constant@CARDTYPE_LEAGUE}'
+			<![CDATA[ and a.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+			<![CDATA[ and a.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+			<if test="storeid!=null and storeid!=''">
+				and   cmp.storeid=#{storeid} :: bigint
+			</if>
+		</where>
+		group by a.userid
+		) as t
+		union all
+		select count(userid),'团课签到' as type from (
+		select count(a.userid) as number,a.userid from Ord_OrderCourse a
+		left join  Crd_MembershipCard_Base cm on a.cardno=cm.cardno
+		left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+		left join crd_membershipcard_purchase cmp on cmp.cardno=cm.cardno and cmp.BuyType='F'
+		<where>
+		  cmb.coursetype='${@com.backstage.crs.common.Constant@CARDTYPE_LEAGUE}'
+		  and a.signstate='${@com.backstage.crs.common.Constant@COURSE_SIGNIN}'
+			<![CDATA[ and a.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+			<![CDATA[ and a.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+			<if test="storeid!=null and storeid!=''">
+				and   cmp.storeid=#{storeid} :: bigint
+			</if>
+		</where>
+		group by a.userid
+		 ) as t1
+		union all
+		select count(userid),'私课预约' as type from (
+		select count(a.userid) as number, a.userid from Ord_OrderCourse a
+		left join Crd_MembershipCard_Base cm on a.cardno = cm.cardno
+		left join Crd_MembershipCardCategory_Base cmb on cmb.cardid = cm.cardid
+		left join crd_membershipcard_purchase cmp on cmp.cardno=cm.cardno and cmp.BuyType='F'
+		<where>
+		 cmb.coursetype = '${@com.backstage.crs.common.Constant@CARDTYPE_PRIVATE}'
+		 and a.ordstate='${@com.backstage.crs.common.Constant@COURSE_RESERVED}'
+			<![CDATA[ and a.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+			<![CDATA[ and a.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+			<if test="storeid!=null and storeid!=''">
+				and   cmp.storeid=#{storeid} :: bigint
+			</if>
+		</where>
+		group by a.userid
+		) as s
+		union all
+		select count(userid),'私课签到' as type from (
+		select count(a.userid) as number,a.userid from Ord_OrderCourse a
+		left join  Crd_MembershipCard_Base cm on a.cardno=cm.cardno
+		left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+		left join crd_membershipcard_purchase cmp on cmp.cardno=cm.cardno and cmp.BuyType='F'
+		<where>
+		 cmb.coursetype = '${@com.backstage.crs.common.Constant@CARDTYPE_PRIVATE}'
+		 and a.signstate = '${@com.backstage.crs.common.Constant@COURSE_SIGNIN}'
+			<![CDATA[ and a.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+			<![CDATA[ and a.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+			<if test="storeid!=null and storeid!=''">
+				and   cmp.storeid=#{storeid} :: bigint
+			</if>
+		</where>
+		group by a.userid
+		) as s1
+		union all
+		select count(userid),'团课签到4次及以上人数' as type from (
+		select count(a.userid) as number,a.userid from Ord_OrderCourse a
+	   left join  Crd_MembershipCard_Base cm on a.cardno=cm.cardno
+	   left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+	   left join crd_membershipcard_purchase cmp on cmp.cardno=cm.cardno and cmp.BuyType='F'
+		<where>
+		  cmb.coursetype='${@com.backstage.crs.common.Constant@CARDTYPE_LEAGUE}'
+		  and a.signstate='${@com.backstage.crs.common.Constant@COURSE_SIGNIN}'
+			<![CDATA[ and a.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+			<![CDATA[ and a.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+			<if test="storeid!=null and storeid!=''">
+				and   cmp.storeid=#{storeid} :: bigint
+			</if>
+		</where>
+		group by a.userid
+	) as t1 where number>=4
+		union all
+		select count(userid),'私课签到4次及以上人数' as type from (
+		select count(a.userid) as number,a.userid from Ord_OrderCourse a
+	   left join  Crd_MembershipCard_Base cm on a.cardno=cm.cardno
+	   left join Crd_MembershipCardCategory_Base cmb on cmb.cardid  =cm.cardid
+	   left join crd_membershipcard_purchase cmp on cmp.cardno=cm.cardno and cmp.BuyType='F'
+		<where>
+		cmb.coursetype = '${@com.backstage.crs.common.Constant@CARDTYPE_PRIVATE}'
+		and a.signstate = '${@com.backstage.crs.common.Constant@COURSE_SIGNIN}'
+			<![CDATA[ and a.CourseDate>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+			<![CDATA[ and a.CourseDate<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+			<if test="storeid!=null and storeid!=''">
+				and   cmp.storeid=#{storeid} :: bigint
+			</if>
+		group by a.userid
+		</where>
+		) as s1 where number>=4;
+	</select>
+</mapper>

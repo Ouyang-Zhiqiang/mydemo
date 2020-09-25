@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.SPMIntegralGoodsBaseMapper">
+    <insert id="insertSPMIntegralGoodsBase"  parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity"   keyProperty="goodscode" useGeneratedKeys="true">
+            insert into SPM_IntegralGoods_Base (name,imgid,imgurl,salespoint,storeid,storename,usedvaliditybegin,
+            usedvalidityend,salesstate,isremoved,createdon,createdby,createdname,createdip,lastedon,lastedby,lastedname,lastedip)
+            <trim prefix="values (" suffix=")" suffixOverrides="," >
+                #{name},
+                #{imgid},
+                #{imgurl},
+                #{salespoint},
+                #{storeid},
+                #{storename},
+                #{usedvaliditybegin},
+                #{usedvalidityend},
+                #{salesstate},
+                #{isremoved},
+                #{createdon},
+                #{createdby},
+                #{createdname},
+                #{createdip},
+                #{lastedon},
+                #{lastedby},
+                #{lastedname},
+                #{lastedip}
+                </trim>
+    </insert>
+
+
+    <update id="updateSPMIntegralGoodsBase"  parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity" >
+        UPDATE SPM_IntegralGoods_Base
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="imgid!=null">
+                imgid=#{imgid},
+            </if>
+            <if test="imgurl!=null">
+                imgurl=#{imgurl},
+            </if>
+            <if test="salespoint!=null">
+                salespoint=#{salespoint},
+            </if>
+            <if test="storeid!=null">
+                storeid=#{storeid},
+            </if>
+            <if test="storename!=null">
+                storename=#{storename},
+            </if>
+            <if test="usedvaliditybegin!=null">
+                usedvaliditybegin=#{usedvaliditybegin},
+            </if>
+            <if test="lastedon!=null">
+                lastedon=#{lastedon},
+            </if>
+            <if test="lastedby!=null">
+                lastedby=#{lastedby},
+            </if>
+            <if test="lastedname!=null">
+                lastedname=#{lastedname},
+            </if>
+            <if test="lastedip!=null">
+                lastedip=#{lastedip}
+            </if>
+        </trim>
+        WHERE goodscode=#{goodscode}
+    </update>
+
+    <delete  id="deleteSPMIntegralGoodsBase" parameterType="Integer" >
+            delete from SPM_IntegralGoods_Base where goodscode = #{goodscode}
+    </delete>
+
+
+    <update id="updateSPMIntegralGoodsBaseSalesState"  parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity" >
+        UPDATE SPM_IntegralGoods_Base
+        <trim prefix="SET" suffixOverrides=",">
+                salesstate=#{salesstate},
+            <if test="lastedon!=null">
+                lastedon=#{lastedon},
+            </if>
+            <if test="lastedby!=null">
+                lastedby=#{lastedby},
+            </if>
+            <if test="lastedname!=null">
+                lastedname=#{lastedname},
+            </if>
+            <if test="lastedip!=null">
+                lastedip=#{lastedip}
+            </if>
+        </trim>
+        WHERE goodscode=#{goodscode}
+    </update>
+
+</mapper>

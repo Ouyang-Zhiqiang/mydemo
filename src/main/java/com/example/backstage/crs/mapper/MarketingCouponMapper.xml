@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingCouponMapper">
+    <insert id="setMarketingCoupon" parameterType="com.example.backstage.crs.entity.MarketingCouponEntity">
+        insert into marketing_coupon (couponid,name,circulation,startdate,enddate,usertype,userlimit,
+        threshold,discount,useable,cards,createdon,createdby,updatedon,updatedby,isremoved,storesjson,explain)
+        values (
+            #{couponid},
+            #{name},
+            #{circulation},
+            #{startdate},
+            #{enddate},
+            #{usertype},
+            #{userlimit},
+            #{threshold},
+            #{discount},
+            #{useable},
+            #{cards},
+            current_date,
+            #{createdby},
+            current_date,
+            #{updatedby},
+            false,
+            #{storesjson},
+            #{explain}
+        )
+    </insert>
+
+    <update id="upMarketingCoupon" parameterType="com.example.backstage.crs.entity.MarketingCouponEntity">
+        update marketing_coupon set name=#{name},circulation=#{circulation},startdate=#{startdate},
+        enddate=#{enddate},usertype=#{usertype},userlimit=#{userlimit},threshold=#{threshold},
+        discount=#{discount},useable=#{useable},cards=#{cards},
+        updatedon=current_date,updatedby=#{updatedby},
+        storesjson=#{storesjson},explain=#{explain}
+        where couponid=#{couponid}
+    </update>
+</mapper>

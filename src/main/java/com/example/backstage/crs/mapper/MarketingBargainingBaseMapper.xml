@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingBargainingBaseMapper">
+    <insert id="setMarketingBargainingBase" parameterType="com.example.backstage.crs.entity.MarketingBargainingBaseEntity" useGeneratedKeys="true" keyProperty="bargainingid">
+        insert into Marketing_Bargaining_Base(membershipcardprice,bargainingprice,bargainingminprice,
+        bargainingmaxprice,bargainingnumber,effectivestartdate,effectiveenddate,bargainingtitle,
+        bargainingdescription,logoid,resurl,sharetitle,sharesubtitle,sharesmallpictures,sharesmallpicturesurl,
+        state,isremoved,createdon,createdby,createdname,createdip,lastedon,lastedby,lastedname,lastedip,cardname,cardid,actype)
+        values (
+                #{membershipcardprice},
+                #{bargainingprice},
+                #{bargainingminprice},
+                #{bargainingmaxprice},
+                #{bargainingnumber},
+                #{effectivestartdate},
+                #{effectiveenddate},
+                #{bargainingtitle},
+                #{bargainingdescription},
+                #{logoid},
+                #{resurl},
+                #{sharetitle},
+                #{sharesubtitle},
+                #{sharesmallpictures},
+                #{sharesmallpicturesurl},
+                #{state},
+                #{isremoved},
+                #{createdon},
+                #{createdby},
+                #{createdname},
+                #{createdip},
+                #{lastedon},
+                #{lastedby},
+                #{lastedname},
+                #{lastedip},
+                #{cardname},
+                #{cardid} :: INT8,
+                #{actype}
+        )
+    </insert>
+
+    <update id="upMarketingBargainingBase">
+        update Marketing_Bargaining_Base set
+                membershipcardprice=#{membershipcardprice},
+                bargainingprice=#{bargainingprice},
+                bargainingminprice=#{bargainingminprice},
+                bargainingmaxprice=#{bargainingmaxprice},
+                bargainingnumber=#{bargainingnumber},
+                effectivestartdate=#{effectivestartdate},
+                effectiveenddate=#{effectiveenddate},
+                bargainingtitle=#{bargainingtitle},
+                bargainingdescription=#{bargainingdescription},
+                logoid=#{logoid},
+                resurl=#{resurl},
+                sharetitle=#{sharetitle},
+                sharesubtitle=#{sharesubtitle},
+                sharesmallpictures=#{sharesmallpictures},
+                sharesmallpicturesurl=#{sharesmallpicturesurl},
+                state=#{state},
+                isremoved=#{isremoved},
+                lastedon=#{lastedon},
+                lastedby=#{lastedby},
+                lastedname=#{lastedname},
+                lastedip=#{lastedip}
+                where bargainingid=#{bargainingid}
+    </update>
+
+    <update id="deMarketingBargainingBase">
+        update Marketing_Bargaining_Base set isremoved=1,lastedip=#{hostAddress},
+        lastedon=current_date
+        where bargainingid=#{bargainingid}
+    </update>
+
+    <update id="stopMarketingBargainingBase">
+        update Marketing_Bargaining_Base set state=0,lastedip=#{hostAddress},
+        lastedon=current_date
+        where bargainingid=#{bargainingid}
+    </update>
+
+    <select id="selectMarketingBargainingBaseBybargainingid" parameterType="Integer" resultType="com.example.backstage.crs.entity.MarketingBargainingBaseEntity">
+        select * from Marketing_Bargaining_Base where bargainingid=#{bargainingid}
+    </select>
+</mapper>

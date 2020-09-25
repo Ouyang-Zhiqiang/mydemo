@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingSeckillBaseMapper">
+    <insert id="insertMarketingSeckillBase"   parameterType="com.example.backstage.crs.entity.MarketingSeckillBaseEntity"   keyProperty="seckillid" useGeneratedKeys="true">
+        insert into Marketing_Seckill_Base
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        membershipcardprice,seckillprice,seckillnumber,effectivestartdate,
+            effectiveenddate,seckilltitle,seckilldescription,
+            <if test="logoid!=null and logoid!=''">
+            logoid,
+            </if>
+            <if test="resurl!=null and resurl!=''">
+            resurl,
+            </if>
+            sharetitle,sharesubtitle,
+            <if test="sharesmallpictures!=null and sharesmallpictures!=''">
+            sharesmallpictures,
+            </if>
+            <if test="sharesmallpicturesurl!=null and sharesmallpicturesurl!=''">
+            sharesmallpicturesurl,
+            </if>
+            state,isremoved,createdon,
+            <if test="createdby!=null and createdby!=''">
+            createdby,
+            </if>
+            createdname,createdip,lastedon,
+            <if test="lastedby!=null and lastedby!=''">
+            lastedby,
+            </if>
+            lastedname,lastedip,cardid,cardname,
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{membershipcardprice} :: FLOAT8,
+            #{seckillprice}  :: FLOAT8,
+            #{seckillnumber}  ,
+            #{effectivestartdate},
+            #{effectiveenddate},
+            #{seckilltitle},
+            #{seckilldescription},
+                <if test="logoid!=null and logoid!=''">
+            #{logoid},
+                </if>
+                <if test="resurl!=null and resurl!=''">
+            #{resurl},
+                </if>
+            #{sharetitle},
+            #{sharesubtitle},
+                <if test="sharesmallpictures!=null and sharesmallpictures!=''">
+            #{sharesmallpictures},
+                </if>
+                <if test="sharesmallpicturesurl!=null and sharesmallpicturesurl!=''">
+            #{sharesmallpicturesurl},
+                </if>
+            1,
+            0 :: smallint,
+            now(),
+                <if test="createdby!=null and createdby!=''">
+            #{createdby},
+                </if>
+            #{createdname},
+            #{createdip},
+                now(),
+                <if test="lastedby!=null and lastedby!=''">
+            #{lastedby},
+                </if>
+            #{lastedname},
+            #{lastedip},
+            #{cardid} :: INT8,
+            #{cardname}
+            </trim>
+    </insert>
+
+    <update id="updateMarketingSeckillBase" parameterType="com.example.backstage.crs.entity.MarketingSeckillBaseEntity">
+        update Marketing_Seckill_Base
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="membershipcardprice!=null and membershipcardprice!=''">
+                membershipcardprice=#{membershipcardprice}  :: FLOAT8 ,
+            </if>
+            <if test="seckillprice!=null  and seckillprice!=''">
+                seckillprice=#{seckillprice}  :: FLOAT8,
+            </if>
+            <if test="cardid!=null  and cardid!=''">
+                cardid=#{cardid} :: INT8 ,
+            </if>
+            <if test="cardname!=null  and cardname!=''">
+                cardname=#{cardname},
+            </if>
+            <if test="seckillnumber!=null  and seckillnumber!=''">
+                seckillnumber=#{seckillnumber},
+            </if>
+            <if test="effectivestartdate!=null ">
+                effectivestartdate=#{effectivestartdate},
+            </if>
+            <if test="effectiveenddate!=null ">
+                effectiveenddate=#{effectiveenddate},
+            </if>
+            <if test="seckilltitle!=null  and seckilltitle!=''">
+                seckilltitle=#{seckilltitle},
+            </if>
+            <if test="seckilldescription!=null  and seckilldescription!=''">
+                seckilldescription=#{seckilldescription},
+            </if>
+            <if test="logoid!=null  and logoid!=''">
+                logoid=#{logoid},
+            </if>
+            <if test="resurl!=null  and resurl!=''">
+                resurl=#{resurl},
+            </if>
+            <if test="sharetitle!=null  and sharetitle!=''">
+                sharetitle=#{sharetitle},
+            </if>
+            <if test="sharesmallpictures!=null  and sharesmallpictures!=''">
+                sharesmallpictures=#{sharesmallpictures},
+            </if>
+            <if test="state!=null  and state!=''">
+                state=#{state},
+            </if>
+            <if test="sharesmallpicturesurl!=null  and sharesmallpicturesurl!=''">
+                sharesmallpicturesurl=#{sharesmallpicturesurl},
+            </if>
+            <if test="lastedon!=null ">
+                lastedon=#{lastedon},
+            </if>
+            <if test="lastedby!=null  and lastedby!=''">
+                lastedby=#{lastedby},
+            </if>
+            <if test="lastedname!=null  and lastedname!=''">
+                lastedname=#{lastedname},
+            </if>
+            <if test="lastedip!=null  and lastedip!=''">
+                lastedip=#{lastedip}
+            </if>
+        </trim>
+        where seckillid = #{seckillid} :: INT4
+    </update>
+
+    <select id="selectMarketingSeckillBaseList" resultType="java.util.HashMap">
+        select  seckillid,membershipcardprice,seckillprice,seckillnumber,effectivestartdate,
+            effectiveenddate,seckilltitle,seckilldescription,logoid,
+            resurl,sharetitle,sharesubtitle,sharesmallpictures,
+            sharesmallpicturesurl,state,isremoved,createdon,createdby,
+            createdname,createdip,lastedon,lastedby,lastedname,lastedip,cardid :: varchar ,cardname
+             from Marketing_Seckill_Base order by createdon  desc limit #{limit}  offset #{pages}
+    </select>
+
+    <select id="selectMarketingSeckillBaseCount" resultType="Integer">
+        select count(seckillid) as total from Marketing_Seckill_Base
+    </select>
+
+    <select id="selectMarketingSeckillBaseBySeckillid" parameterType="Integer" resultType="com.example.backstage.crs.entity.MarketingSeckillBaseEntity">
+        select seckillid,membershipcardprice,seckillprice,seckillnumber,effectivestartdate,
+            effectiveenddate,seckilltitle,seckilldescription,logoid,
+            resurl,sharetitle,sharesubtitle,sharesmallpictures,
+            sharesmallpicturesurl,state,isremoved,createdon,createdby,
+            createdname,createdip,lastedon,lastedby,lastedname,lastedip,cardid :: varchar ,cardname
+            from Marketing_Seckill_Base where seckillid=#{seckillid}
+    </select>
+</mapper>

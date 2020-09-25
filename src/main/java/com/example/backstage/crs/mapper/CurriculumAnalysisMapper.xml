@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.CurriculumAnalysisMapper">
+    <select id="sql1" resultType="map">
+        select count(*) from Cur_TeamSchedule
+        where scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
+        and isremoved=false and SignedNumber>0
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+    </select>
+
+    <select id="sql2" resultType="map">
+        select count(*) from Cur_PrivSchedule cp inner join cur_privcourse_base cpb
+        on cp.courseid=cpb.courseid
+        where scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
+        and cp.isremoved=false and cp.SignedNumber>0
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and cpb.coachid=#{coachid}::bigint
+        </if>
+    </select>
+
+    <select id="sql3" resultType="map">
+        select sum(TraineeNum) from Ord_OrderCourse
+        where CourseDate &gt;=#{begintime}::timestamp and CourseDate &lt;=#{endtime}::timestamp
+        and SignState='1'
+        and isremoved=false
+        and CardType='T'
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+    </select>
+
+    <select id="sql4" resultType="map">
+        select sum(TraineeNum) from Ord_OrderCourse
+        where CourseDate &gt;=#{begintime}::timestamp and CourseDate &lt;=#{endtime}::timestamp
+        and SignState='1'
+        and isremoved=false
+        and CardType='P'
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+    </select>
+
+    <select id="sql5" resultType="map">
+        select sum(o.CoursePrice) from Ord_OrderCourse o inner join Crd_MembershipCard_Base c
+        on o.cardno=c.cardno
+        where CourseDate &gt;=#{begintime}::timestamp and CourseDate &lt;=#{endtime}::timestamp
+        and c.cardtype='S'
+        and o.signstate='1'
+        and o.isremoved=false
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+    </select>
+
+    <select id="sql6" resultType="Integer">
+        select count(*) from Ord_OrderCourse
+        where CourseDate &gt;=#{begintime}::timestamp and CourseDate &lt;=#{endtime}::timestamp
+        and isremoved=false
+        and signstate='1'
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+        GROUP BY userid having count(*)=#{i}
+    </select>
+
+    <select id="sql7" resultType="Integer">
+        select count(*) from Ord_OrderCourse
+        where CourseDate &gt;=#{begintime}::timestamp and CourseDate &lt;=#{endtime}::timestamp
+        and isremoved=false
+        and signstate='1'
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+        GROUP BY userid having count(*)>=#{i}
+    </select>
+
+    <select id="ctCoursereport" resultType="map">
+        select ct.scheduledate as 日期,ct.coachname as 教练,
+        '团课' as 课程类型,ct.coursename as 课程名称,
+        ct.schedulebegin as 上课时间,ct.reservednumber+count(case when oo.ordstate='2' then 1 else null end) as 预约人次,
+        ct.signednumber as 签到人次,count(case when oo.ordstate='2' then 1 else null end) as 取消人次,
+        ct.reservablenumber as 可约人次,sum(case when oo.ordstate='1' then oo.courseprice else 0 end) as 课程价格,
+        case reservablenumber when 0 then 0 else round(signednumber::numeric/reservablenumber::numeric,2)*100 end as 满员率,
+        COUNT(1) OVER() as total
+        from Cur_TeamSchedule ct left join Ord_OrderCourse oo
+        on ct.ScheduleId=oo.ScheduleId
+        where ScheduleDate &gt;=#{begintime}::timestamp
+        and ScheduleDate &lt;=#{endtime}::timestamp
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+        group by ct.coachname,ct.scheduledate,ct.coachname,ct.coursename,ct.schedulebegin,
+        ct.reservednumber,ct.reservablenumber,ct.signednumber
+        order by ct.scheduledate desc
+        limit #{limit}::bigint offset #{page}::bigint
+    </select>
+
+    <select id="cpCoursereport" resultType="map">
+        select cp.scheduledate as 日期,cpb.coachname as 教练,
+        '私课' as 课程类型,cp.coursename as 课程名称,
+        cp.schedulebegin as 上课时间,cp.reservednumber as 预约人次,
+        count(case when oo.signstate='1' then 1 else null end) as 签到人次,
+        count(case when oo.ordstate='2' then 1 else null end) as 取消人次,
+        sum(case when oo.ordstate='1' then oo.courseprice else 0 end) as 课程价格,
+        COUNT(1) OVER() as total
+        from Cur_PrivSchedule cp left join Ord_OrderCourse oo
+        on cp.scheduleid=oo.scheduleid inner join Cur_PrivCourse_Base cpb
+        on cp.courseid=cpb.courseid
+        where cp.ScheduleDate &gt;=#{begintime}::timestamp
+        and cp.ScheduleDate &lt;=#{endtime}::timestamp
+        <if test="coachid !=null and coachid!=''">
+            and cpb.coachid=#{coachid}::bigint
+        </if>
+        group by cp.scheduledate,cpb.coachname,cp.coursename,
+        cp.schedulebegin,cp.reservednumber
+        order by cp.scheduledate desc
+        limit #{limit}::bigint offset #{page}::bigint
+    </select>
+
+
+</mapper>

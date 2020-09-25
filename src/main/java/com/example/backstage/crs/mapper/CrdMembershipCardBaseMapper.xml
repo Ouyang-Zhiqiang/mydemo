@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.CrdMembershipCardBaseMapper">
+    <select id="selectMemberShipCardByNameAndCreatedOn" resultType="java.util.HashMap">
+        select sum(totalfee) as totalfee,to_date(to_char(a.createdon,'yyyy-mm-dd'),'yyyy-mm-dd') as createdon from crd_membershipcard_base a
+        left join  crd_membershipcard_user  b on a.cardno=b.cardno
+        left join user_base  uc on uc.userid=b.userid
+        left join org_store os on uc.storeid=os.id
+        where os.name=#{name}
+        <![CDATA[ and a.createdon>= TO_TIMESTAMP(#{datebegin}, 'yyyy-mm-dd hh24:mi') ]]>
+        <![CDATA[ and a.createdon<=TO_TIMESTAMP(#{dateend}, 'yyyy-mm-dd hh24:mi') ]]>
+        group by a.createdon
+        ORDER BY
+        a.createdon asc
+    </select>
+
+
+
+    <select id="selectCardnumberOnlyOne" resultType="java.lang.String">
+        select userid from (
+        select count(cardno) as cardnumber,userid from  Crd_MembershipCard_User a
+        group by userid) as a where a.cardnumber=1;
+    </select>
+
+    <select id="selectUserNumberByToDay" resultType="java.lang.String">
+    select cmu.userid as usernumber   from crd_membershipcard_base cmb
+    left join Crd_MembershipCard_User cmu on cmb.cardno=cmu.cardno
+    left join Crd_MembershipCard_Purchase cmp on cmb.CardNo=cmp.CardNo
+    where userid in
+    <foreach collection="numberStr" item="id" open="(" close=")" separator=",">
+        #{id} ::bigint
+    </foreach>
+    <![CDATA[  and cmb.cardend<to_timestamp(#{today},'yyyy-mm-dd HH24:MI') ]]>
+    and cmb.State=0
+    <![CDATA[ and cmp.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+    <![CDATA[ and cmp.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+           and  cmp.storeid=#{storeid} :: bigint
+        </if>
+    </select>
+
+
+    <select id="selectRenewed"  resultType="java.lang.String">
+        select cm.userid from Crd_MembershipCard_Purchase cmp
+        left join Crd_MembershipCard_User cm on cm.cardno=cmp.cardno
+        <where>
+           cmp.BuyType='C'
+            <if test="userArray!=null and userArray.length>0">
+                and  cm.userid in
+                <foreach collection="userArray" item="userid" open="(" close=")" separator=",">
+                    #{userid} :: bigint
+                </foreach>
+            </if>
+            <![CDATA[ and cmp.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+            <![CDATA[ and cmp.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+            <if test="storeid!=null and storeid!=''">
+                and  cmp.storeid=#{storeid} :: bigint
+            </if>
+        group by  userid;
+        </where>
+    </select>
+
+    <!--一定时段中，已续费用户数量与应续费用户数量比例-->
+    <!--一定时段中，首次绑正式卡的用户中，2次及以上绑正式卡的用户比例-->
+    <!--一定时段中，首次绑正式卡的用户中，3次及以上绑正式卡的用户比例-->
+    <!--一定时段中，首次绑正式卡的用户中，4次及以上绑正式卡的用户比例-->
+    <select id="selectRenewal" resultType="java.lang.String">
+        select userid from(
+        select count(cm.UserId) as times,userid,buytype
+        from crd_membershipcard_purchase cmp
+        left join crd_membershipcardcategory_base c on cmp.cardid = c.cardid
+        left join Crd_MembershipCard_Base  cmsb on cmsb.cardno=cmp.cardno
+        left join Crd_MembershipCard_User cm on cm.cardno=cmp.cardno
+        where cmsb.isfree=false
+        <![CDATA[ and cmp.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+        <![CDATA[ and cmp.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+          and   cmp.storeid=#{storeid} :: bigint
+        </if>
+        group by cm.UserId,buytype) as a
+        <where>
+            <if test="times!=null and times!=''">
+                times>=#{times}
+            </if>
+            <if test="buytype!=null and buytype!=''">
+              and   buytype=#{buytype}
+            </if>
+            <if test="bindingCardUsersArray!=null and bindingCardUsersArray.length>0">
+                and  UserId in
+                <foreach collection="bindingCardUsersArray" item="userid" open="(" close=")" separator=",">
+                    #{userid} :: bigint
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <!--只绑定正式团课卡的用户中，又绑定私教卡的用户比例-->
+    <select id="selectLeagueAndPrivateCourseProportion" resultType="java.lang.String">
+        select  count(cm.userid)
+        from crd_membershipcard_purchase cmp
+        left join crd_membershipcardcategory_base c on cmp.cardid = c.cardid
+        left join Crd_MembershipCard_User cm on cm.cardno=cmp.cardno
+        left join Crd_MembershipCard_Base  cmsb on cmsb.cardno=cmp.cardno
+        where cmsb.isfree=false and cmp.buytype='F' and c.coursetype=#{coursetype}
+        <![CDATA[ and cmp.createdon>=to_timestamp(#{CourseDatestart},'yyyy-mm-dd HH24:MI') ]]>
+        <![CDATA[ and cmp.createdon<=to_timestamp(#{CourseDateend},'yyyy-mm-dd HH24:MI') ]]>
+        <if test="storeid!=null and storeid!=''">
+            and   cmp.storeid=#{storeid} :: bigint
+        </if>
+        <if test="leagueAndPrivateArray!=null and leagueAndPrivateArray.length>0">
+            and  cm.userid in
+            <foreach collection="leagueAndPrivateArray" item="userid" open="(" close=")" separator=",">
+                #{userid} :: bigint
+            </foreach>
+         </if>
+        group by userid
+    </select>
+
+    <select id="selectCrdMembershipcardBaseByCardNo" parameterType="String"  resultType="com.example.backstage.crs.entity.CrdMembershipcardBaseEntity">
+        select Times,Points,OriginalFee from Crd_MembershipCard_Base where CardNo=#{cardno}
+    </select>
+
+    <insert id="insertCrdMembershipcardBase" parameterType="com.example.backstage.crs.entity.CrdMembershipcardBaseEntity">
+        insert into crd_membershipcard_base
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            cardno,
+            cardid,
+            cardname,
+            cardtype,
+            isfree,
+            typeid,
+            originalfee,
+            isopen,
+            periodvalidity,
+            times,
+            points,
+            curtimes,
+            totaltimes,
+            totalfee,
+            createdon,
+           createdby,
+             createdname,
+             createdip,
+             lastedon,
+             lastedby,
+            lastedname,
+            lastedip
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+           #{cardno},
+            #{cardid},
+            #{cardname},
+            #{cardtype},
+            #{isfree},
+            #{typeid},
+            #{originalfee} :: FLOAT8,
+            #{isopen} ,
+            #{periodvalidity},
+            #{times},
+            #{points},
+            #{curtimes},
+            #{totaltimes},
+            #{totalfee} :: FLOAT8,
+            now(),
+            #{createdby},
+            #{createdname},
+            #{createdip},
+            now(),
+            #{lastedby},
+            #{lastedname},
+            #{lastedip}
+                    </trim>
+    </insert>
+
+
+</mapper>

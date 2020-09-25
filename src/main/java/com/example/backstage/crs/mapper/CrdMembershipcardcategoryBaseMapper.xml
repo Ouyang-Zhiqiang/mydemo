@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.CrdMembershipcardcategoryBaseMapper">
+    <insert id="insertCrdMembershipcardcategoryBase" parameterType="com.example.backstage.crs.entity.CrdMembershipcardcategoryBase"   keyProperty="cardid" useGeneratedKeys="true">
+        insert into Crd_MembershipCardCategory_Base
+    (cardname,cardtype,logoid,resurl,istransfer,seqno ,remarks,isremoved,labels,createdby,createdon,createdname,createdip,lastedip,lastedon,lastedby,lastedname,storesjson,ismulmem,isonlinebuy,isopenedbyfirst,coursetype,state,isfree)
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+                #{cardname},
+                #{cardtype},
+                #{logoid},
+                #{resurl},
+                #{istransfer},
+                #{seqno},
+                #{remarks},
+                #{isremoved},
+                #{labels},
+                #{createdby},
+                #{createdon,jdbcType=TIMESTAMP},
+                #{createdname},
+                #{createdip},
+                #{lastedip},
+                #{lastedon,jdbcType=TIMESTAMP},
+                #{lastedby},
+                #{lastedname},
+                #{storesjson} ::json,
+                #{ismulmem},
+                #{isonlinebuy},
+                #{isopenedbyfirst},
+                #{coursetype},
+                #{state},
+                #{isfree}
+        </trim>
+    </insert>
+
+
+
+    <insert id="insertCrdMembershipCardCategoryTypeCard" parameterType="java.util.List"  useGeneratedKeys="true">
+        insert into Crd_MembershipCardCategory_TypeCard
+        (
+        cardid,
+        cardtype,
+        times,
+        fee,
+        periodvalidity,
+        preferintros,
+        points,
+        createdby,
+        createdon,
+        createdname,
+        createdip,
+        lastedip,
+        lastedon,
+        lastedby,
+        lastedname,
+        state,
+        remarks,
+        isremoved
+        )
+        values
+        <foreach collection="list" item="item" index="index" open="" close="" separator=",">
+            (
+            #{item.cardid},
+            #{item.cardtype},
+            #{item.times},
+            #{item.fee},
+            #{item.periodvalidity},
+            #{item.preferintros},
+            #{item.points},
+            #{item.createdby},
+            #{item.createdon,jdbcType=TIMESTAMP},
+            #{item.createdname},
+            #{item.createdip},
+            #{item.lastedip},
+            #{item.lastedon,jdbcType=TIMESTAMP},
+            #{item.lastedby},
+            #{item.lastedname},
+            #{item.state},
+            #{item.remarks},
+            true
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertCrdMembershipCardCategoryTeamCourse" parameterType="java.util.List"   useGeneratedKeys="true">
+        insert into Crd_MembershipCardCategory_TeamCourse
+        (
+        cardid,
+        courseid,
+        coursename,
+        constimes,
+        preferconstimes,
+        state,
+        remarks,
+        createdby,
+        createdon,
+        createdname,
+        createdip,
+        lastedip,
+        lastedon,
+        lastedby,
+        lastedname,
+        isremoved
+        )
+        values
+        <foreach collection="list" item="item" index="index" open="" close="" separator=",">
+            (
+            #{item.cardid},
+            #{item.courseid},
+            #{item.coursename},
+            #{item.constimes},
+            #{item.preferconstimes},
+            #{item.state},
+            #{item.remarks},
+            #{item.createdby},
+            #{item.createdon,jdbcType=TIMESTAMP},
+            #{item.createdname},
+            #{item.createdip},
+            #{item.lastedip},
+            #{item.lastedon,jdbcType=TIMESTAMP},
+            #{item.lastedby},
+            #{item.lastedname},
+            true
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectCrdMembershipcardcategoryBaseByCardId" parameterType="Long"  resultType="com.example.backstage.crs.entity.CrdMembershipcardcategoryBase">
+        select cardid,cardname,cardtype,isfree from Crd_MembershipCardCategory_Base where cardid=#{cardid}
+    </select>
+</mapper>

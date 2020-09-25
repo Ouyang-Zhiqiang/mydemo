@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.CurRevenueServiceMapper">
+    <select id="getRevenuetotal" resultType="map">
+        select sum(s) as revenueService from (
+        (
+        select sum(SellingFee) as s from Crd_MembershipCard_Purchase
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        )
+        union all
+        (
+        select sum(case StopType when 'P' then -fee else fee end) as s from Crd_MembershipCard_Stop
+        cms left join (select distinct cardno,storeid from Crd_MembershipCard_Purchase) cmp on cms.cardno=cmp.cardno
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        )
+        union all
+        (
+        select sum(fee) as s from Crd_MembershipCard_Transfer
+        cmt left join (select distinct cardno,storeid from Crd_MembershipCard_Purchase) cmp on cmt.cardno=cmp.cardno
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        )
+        union all
+        (
+        select sum(recamount) as s from Crd_MembershipCard_Reconciliation
+        cmr left join (select distinct cardno,storeid from Crd_MembershipCard_Purchase) cmp on cmr.cardno=cmp.cardno
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        )
+        union all
+        (
+        select sum(SalesPrice) as s from SPM_Goods_SalesOrder
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        )
+        ) ss;
+    </select>
+
+    <select id="getCourseRevenuetotal" resultType="map">
+        select sum(s) as courseRevenuetotal from (
+        (
+        select sum(SellingFee) as s from Crd_MembershipCard_Purchase cmp
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and cmp.storeid=#{storeid}::bigint
+        </if>
+        )
+        union all
+        (
+        select sum(case StopType when 'P' then -fee else fee end) as s from Crd_MembershipCard_Stop
+        cms left join (select distinct cardno,storeid,BuyType from Crd_MembershipCard_Purchase) cmp on cms.cardno=cmp.cardno
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and cmp.storeid=#{storeid}::bigint
+        </if>
+        )
+        union all
+        (
+        select sum(fee) as s from Crd_MembershipCard_Transfer
+        cmt left join (select distinct cardno,storeid,BuyType from Crd_MembershipCard_Purchase) cmp on cmt.cardno=cmp.cardno
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and cmp.storeid=#{storeid}::bigint
+        </if>
+        )
+        union all
+        (
+        select sum(recamount) as s from Crd_MembershipCard_Reconciliation
+        cmr left join (select distinct cardno,storeid,BuyType from Crd_MembershipCard_Purchase) cmp on cmr.cardno=cmp.cardno
+        where CreatedOn  &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and cmp.storeid=#{storeid}::bigint
+        </if>
+        )
+        ) ss;
+    </select>
+
+    <select id="getCourseRevenueTotalFirst" resultType="map">
+        select sum(SellingFee) as courseRevenuetotal from Crd_MembershipCard_Purchase
+        where buytype='F'
+        and CreatedOn &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+    <select id="getCourseRevenueTotalContinue" resultType="map">
+        select sum(SellingFee) as courseRevenuetotal from Crd_MembershipCard_Purchase
+        where buytype='C'
+        and CreatedOn &gt;=#{begintime}::timestamp
+        and CreatedOn &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+    </select>
+    
+    <select id="getSingleSectionAveragePrice" resultType="map">
+        select (sum(SellingFee)/sum(BuyTimes)) as AveragePrice from Crd_MembershipCard_Purchase cmp
+        left join Crd_MembershipCard_Base cmb
+        on cmp.cardno=cmb.cardno
+        left join Crd_MembershipCardCategory_Base cmccb
+        on cmb.cardid=cmccb.cardid
+        where cmp.createdon &gt;=#{begintime}::timestamp
+        and cmp.createdon &lt;=#{endtime}::timestamp
+        and cmccb.cardtype='S'
+        and cmccb.coursetype=#{coursetype}
+        and cmp.isremoved=false
+        and cmb.isfree=false
+        <if test="storeid !=null and storeid!=''">
+            and cmp.storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+    <select id="getSubcardMoneyall" resultType="map">
+        select sum(o.CoursePrice) as money from Ord_OrderCourse o inner join Crd_MembershipCard_Base c
+        on o.cardno=c.cardno
+        where o.CourseDate &gt;=#{begintime}::timestamp  and o.CourseDate &lt;=#{endtime}::timestamp
+        and c.cardtype='S'
+        and o.signstate='1'
+        and o.isremoved=false
+        <if test="cardtype !=null and cardtype!=''">
+            and o.cardtype=#{cardtype}
+        </if>
+        <if test="storeid !=null and storeid!=''">
+            and o.storeid=#{storeid}::bigint
+        </if>
+    </select>
+    
+    <select id="getAverageunit" resultType="double">
+        select (t1.totalmoney/t2.headcount) as Averageunit from
+        (
+        select sum(sellingfee) as totalmoney from Crd_MembershipCard_Purchase cmp
+        left join (select distinct cardno,isfree from Crd_MembershipCard_Base) cmb on cmp.cardno=cmb.cardno
+        where isremoved=false and cmb.isfree=false
+        and cmp.createdon &gt;=#{begintime}::timestamp
+        and cmp.createdon &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and cmp.storeid=#{storeid}::bigint
+        </if>
+        ) as t1,
+        (
+        select count(*) as headcount from Crd_MembershipCard_Base cmb
+        left join (select distinct cardno,storeid,createdon from Crd_MembershipCard_Purchase) cmp on cmp.cardno=cmb.cardno
+        where isremoved=false and cmb.isfree=false
+        and cmp.createdon &gt;=#{begintime}::timestamp
+        and cmp.createdon &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and cmp.storeid=#{storeid}::bigint
+        </if>
+        ) as t2
+    </select>
+
+    <select id="getAverageUnitPrice" resultType="double">
+        select (sum(CoursePrice)/sum(TraineeNum)) as AverageUnitPrice from Ord_OrderCourse
+        where SignState=1 and CardType=#{CardType} and OrdType='U'
+        and CourseDate &gt;=#{begintime}::timestamp
+        and CourseDate &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+    <select id="getAveragePriceUnit" resultType="map">
+        select (t1.Amount/t2.total) as averageprice from
+        (
+        select sum(TotalFee) as Amount from Crd_MembershipCard_Base cmb left join
+        ( select
+        cardid,
+        CardType,
+        CourseType
+        from Crd_MembershipCardCategory_Base) cmccb
+        on cmb.cardid = cmccb.cardid
+        left join (select cardno,userid from Crd_MembershipCard_User) cmu
+        on cmb.cardno=cmu.cardno
+        left join (select userid,storeid from User_Base) ub
+        on cmu.userid=ub.userid
+        where cmb.isopen= true
+        and cmccb.cardtype='P'
+        and cmccb.CourseType=#{CourseType}
+        and state=1
+        and cardend &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        ) as t1,
+        (
+        select count(*) as total from Ord_OrderCourse oo left join
+        ( select
+        cardno,
+        CardType
+        from Crd_MembershipCard_Base) cmb
+        on oo.cardno = cmb.cardno
+        where oo.cardtype=#{CourseType}
+        and cmb.cardtype='P'
+        and isremoved=false
+        and SignState=1
+        and CourseDate &lt;=#{endtime}::timestamp
+        and OrdType='U'
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        ) as t2
+        ;
+    </select>
+
+    <select id="getTotalAmountofGoods" resultType="map">
+        select sum(salesprice*salescount) as money  from SPM_Goods_SalesOrder
+        where isremoved=false
+        and createdon &gt;=#{begintime}::timestamp
+        and createdon &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+    <select id="getCustomerPrice" resultType="map">
+        select sum(salesprice*salescount)/count(*) as CustomerPrice  from SPM_Goods_SalesOrder
+        where isremoved=false
+        and createdon &gt;=#{begintime}::timestamp
+        and createdon &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+    <select id="getGoodsnumber" resultType="map">
+        select sum(salescount) as Goodsnumber  from SPM_Goods_SalesOrder
+        where isremoved=false
+        and createdon &gt;=#{begintime}::timestamp
+        and createdon &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+    </select>
+
+    <select id="getSingleProductAmount" resultType="map">
+        select sum(salescount*salesprice) as SingleProductAmount from SPM_Goods_SalesOrder
+        where isremoved=false
+        and createdon &gt;=#{begintime}::timestamp
+        and createdon &lt;=#{endtime}::timestamp
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="sid !=null and sid!=''">
+            and GoodsCode=#{sid}::bigint
+        </if>
+        <if test="name !=null and name!=''">
+            and name like '%' ${name} '%'
+        </if>
+    </select>
+
+</mapper>

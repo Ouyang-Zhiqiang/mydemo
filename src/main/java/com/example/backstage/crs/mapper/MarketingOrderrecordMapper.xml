@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingOrderrecordMapper">
+    <insert id="setMarketingOrderrecord" parameterType="com.example.backstage.crs.entity.MarketingOrderrecordEntity" useGeneratedKeys="true" keyProperty="orderrecordid">
+        insert into marketing_orderrecord (bindingstate,creadtime,lastedtime,ordermoney,category,remark,creadname)
+        values
+        (
+            #{bindingstate},
+            #{creadtime},
+            #{lastedtime},
+            #{ordermoney},
+            #{category},
+            #{remark},
+            #{creadname}
+        )
+    </insert>
+</mapper>

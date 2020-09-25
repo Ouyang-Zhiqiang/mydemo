@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.MarketingMakeupgroupBaseMapper">
+    <insert id="insertMarketingMakeupgroupBase"   parameterType="com.example.backstage.crs.entity.MarketingMakeupgroupBaseEntity"   keyProperty="groupid" useGeneratedKeys="true">
+        insert  into Marketing_Makeupgroup_Base
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            membershipcardprice,grouppurchaseprice,groupsize,grouptime,
+            effectivestartdate,effectiveenddate,grouptitle,groupdescription,
+            logoid,resurl,sharetitle,sharesubtitle,sharesmallpictures,
+            sharesmallpicturesurl,state,isremoved,createdon,actype,
+            createdname,createdip,lastedon,lastedname,lastedip,cardid,cardname
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{membershipcardprice},
+            #{grouppurchaseprice},
+            #{groupsize},
+            #{grouptime},
+            #{effectivestartdate},
+            #{effectiveenddate},
+            #{grouptitle},
+            #{groupdescription},
+            #{logoid},
+            #{resurl},
+            #{sharetitle},
+            #{sharesubtitle},
+            #{sharesmallpictures},
+            #{sharesmallpicturesurl},
+            #{state},
+            #{isremoved} :: smallint,
+            now(),
+            #{actype},
+            #{createdname},
+            #{createdip},
+            now(),
+            #{lastedname},
+            #{lastedip},
+            #{cardid},
+            #{cardname}
+        </trim>
+    </insert>
+
+    <!--  修改团购  -->
+    <update id="updateMarketingMakeupgroupBase"   parameterType="com.example.backstage.crs.entity.MarketingMakeupgroupBaseEntity"  >
+        update Marketing_Makeupgroup_Base
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="membershipcardprice!=null and membershipcardprice!=''">
+                membershipcardprice=#{membershipcardprice},
+            </if>
+            <if test="grouppurchaseprice!=null  and grouppurchaseprice!=''">
+                grouppurchaseprice=#{grouppurchaseprice},
+            </if>
+            <if test="groupsize!=null  and groupsize!=''">
+                groupsize=#{groupsize},
+            </if>
+            <if test="grouptime!=null  and grouptime!=''">
+                grouptime=#{grouptime},
+            </if>
+            <if test="effectivestartdate!=null ">
+                effectivestartdate=#{effectivestartdate},
+            </if>
+            <if test="effectiveenddate!=null ">
+                effectiveenddate=#{effectiveenddate},
+            </if>
+            <if test="grouptitle!=null  and grouptitle!=''">
+                grouptitle=#{grouptitle},
+            </if>
+            <if test="groupdescription!=null  and groupdescription!=''">
+                groupdescription=#{groupdescription},
+            </if>
+            <if test="logoid!=null  and logoid!=''">
+                logoid=#{logoid},
+            </if>
+            <if test="resurl!=null  and resurl!=''">
+                resurl=#{resurl},
+            </if>
+            <if test="sharetitle!=null  and sharetitle!=''">
+                sharetitle=#{sharetitle},
+            </if>
+            <if test="sharesmallpictures!=null  and sharesmallpictures!=''">
+                sharesmallpictures=#{sharesmallpictures},
+            </if>
+            <if test="state!=null  and state!=''">
+                state=#{state},
+            </if>
+            <if test="sharesmallpicturesurl!=null  and sharesmallpicturesurl!=''">
+                sharesmallpicturesurl=#{sharesmallpicturesurl},
+            </if>
+            <if test="lastedon!=null ">
+                lastedon=#{lastedon},
+            </if>
+            <if test="lastedby!=null  and lastedby!=''">
+                lastedby=#{lastedby},
+            </if>
+            <if test="cardid!=null">
+                cardid=#{cardid},
+            </if>
+            <if test="cardname!=null  and cardname!=''">
+                cardname=#{cardname},
+            </if>
+            <if test="lastedname!=null  and lastedname!=''">
+                lastedname=#{lastedname},
+            </if>
+            <if test="lastedip!=null  and lastedip!=''">
+                lastedip=#{lastedip}
+            </if>
+        </trim>
+        where groupid = #{groupid}
+    </update>
+
+
+    <select id="marketingMakeupgroupBaseMapperList" resultType="java.util.HashMap">
+        select groupid,membershipcardprice,grouppurchaseprice,groupsize,grouptime,
+            effectivestartdate,effectiveenddate,grouptitle,groupdescription,
+            logoid,resurl,sharetitle,sharesubtitle,sharesmallpictures,
+            sharesmallpicturesurl,createdon,
+            createdname,createdip,lastedon,lastedname,lastedip,cardid  :: varchar,cardname
+             from Marketing_Makeupgroup_Base order by createdon desc limit #{limit}  offset #{pages}
+    </select>
+
+    <select id="selectmarketingMakeupgroupBaseById" parameterType="Integer" resultType="com.example.backstage.crs.entity.MarketingMakeupgroupBaseEntity">
+        select groupid,membershipcardprice,grouppurchaseprice,groupsize,grouptime,
+            effectivestartdate,effectiveenddate,grouptitle,groupdescription,
+            logoid,resurl,sharetitle,sharesubtitle,sharesmallpictures,
+            sharesmallpicturesurl,createdon,
+            createdname,createdip,lastedon,lastedname,lastedip,cardid  :: varchar,cardname
+            from Marketing_Seckill_Base where groupid=#{groupid}
+    </select>
+
+
+
+    <!--查询总条数-->
+    <select id="selectTotalList" resultType="Integer">
+        select count(groupid ) from Marketing_Makeupgroup_Base
+    </select>
+
+    <select id="selectMarketingMakeupgroupBaseEntityByGroupId"   parameterType="Long"   resultType="com.example.backstage.crs.entity.MarketingMakeupgroupBaseEntity">
+        select * from Marketing_Makeupgroup_Base where groupid=#{groupid} and effectiveenddate>now()
+    </select>
+</mapper>
