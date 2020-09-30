@@ -111,7 +111,7 @@
         where ScheduleDate &gt;=#{begintime}::timestamp
         and ScheduleDate &lt;=#{endtime}::timestamp
         <if test="coachid !=null and coachid!=''">
-            and coachid=#{coachid}::bigint
+            and ct.coachid=#{coachid}::bigint
         </if>
         group by ct.coachname,ct.scheduledate,ct.coachname,ct.coursename,ct.schedulebegin,
         ct.reservednumber,ct.reservablenumber,ct.signednumber

@@ -5,6 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
 @Controller
 @RequestMapping("/web/CCourse/")
 public class CurCourseController {
@@ -51,6 +55,19 @@ public class CurCourseController {
     @ResponseBody
     public String getNumberOfPrivateLessons(Param param) throws Exception {
         return curCourseService.getNumberOfPrivateLessons(param);
+    }
+
+    @RequestMapping(value = "RegUserSendvcode",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String RegUserSendvcode(Param param) throws Exception {
+        String code=(Math.random()*100+"").substring(0,1)+(new Date().getTime()+"").substring(8);
+        param.setCode(code);
+        curCourseService.sendNotice(param.getPhonenum(),"您在颜身运动请求的注册绑定验证码是："+code);
+        if (true) {
+            return curCourseService.RegUserSendvcode(param);
+        }else {
+            return "{\"status\":false}";
+        }
     }
 
 }

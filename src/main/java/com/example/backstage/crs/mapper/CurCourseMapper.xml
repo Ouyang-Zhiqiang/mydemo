@@ -9,7 +9,7 @@
             where isremoved=false
             and SignedNumber>=1 and ScheduleDate &gt;= #{begintime}::timestamp and ScheduleDate &lt;= #{endtime}::timestamp
             <if test="storeid !=null and storeid!=''">
-                and storeid=#{storeid}
+                and storeid=#{storeid}::bigint
             </if>
           ) as t1,
           (
@@ -132,7 +132,7 @@
         where IsRemoved=false and SignedNumber>0
         and scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
         <if test="storeid !=null and storeid!=''">
-            and ub.storeid=#{storeid}::bigint
+            and storeid=#{storeid}::bigint
         </if>
     </select>
 
@@ -141,8 +141,13 @@
         where IsRemoved=false and SignedNumber>0
         and scheduledate &gt;=#{begintime}::timestamp and scheduledate &lt;=#{endtime}::timestamp
         <if test="storeid !=null and storeid!=''">
-            and ub.storeid=#{storeid}::bigint
+            and storeid=#{storeid}::bigint
         </if>
     </select>
+
+    <insert id="RegUserSendvcode">
+        insert into res_phonemessage(sendid,senddate,mobile,sendtype,sendcode,effecminutes,enddate,senddetails,content,createdon,createdby,createdname,createdip)
+         values(#{id},now(),#{num},1,#{code},30,now() + '30 min','【颜身运动】您在颜身运动请求的注册绑定验证码是：'+#{code}+'会员在小程序注册绑定',now(),#{num},#{num},'::1')
+    </insert>
 
 </mapper>
