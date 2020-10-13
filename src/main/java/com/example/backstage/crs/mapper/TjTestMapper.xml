@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.backstage.crs.mapper.TjTestMapper">
+    <select id="selectAllTest">
+        select * from tj_test
+    </select>
+
+    <update id="updateAllTest" parameterType="java.util.List">
+        <foreach collection="list" separator=";" item="item">
+            update testrevenue set mdys=#{item.mdys} :: numeric,cost=#{item.cost}:: numeric,mdlr=#{item.mdlr}:: numeric,zbys=#{item.zbys} :: numeric
+            ,zbcost=#{item.zbcost}:: numeric,zblr=#{item.zblr}:: numeric,zys=#{item.zys}:: numeric,zlr=#{item.zlr}:: numeric
+            where month=#{item.month}
+        </foreach>
+    </update>
+</mapper>

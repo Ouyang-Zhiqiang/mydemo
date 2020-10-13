@@ -233,4 +233,5 @@
     <select id="selectUserIdByPhone" parameterType="String" resultType="String">
         select ub.userid from user_base ub where ub.tel=#{tel}
     </select>
+
 </mapper>

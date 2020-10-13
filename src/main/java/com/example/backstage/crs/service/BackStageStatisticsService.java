@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.backstage.crs.common.Constant;
-import com.example.backstage.crs.entity.CrdMembershipcardUserEntity;
-import com.example.backstage.crs.entity.CrdMembershipcardcategoryBase;
-import com.example.backstage.crs.entity.CrdMembershipcardcategoryTeamcourseEntity;
-import com.example.backstage.crs.entity.CrdMembershipcardcategoryTypecardEntity;
+import com.example.backstage.crs.entity.*;
 import com.example.backstage.crs.mapper.*;
 import com.example.backstage.crs.util.DataUtil;
 import com.example.backstage.crs.util.Utils;
@@ -37,6 +34,8 @@ public class BackStageStatisticsService  {
     protected CrdMembershipcardcategoryBaseMapper crdMembershipcardcategoryBaseMapper;
     @Autowired
     protected CrdMembershipcardPurchaseMapper crdMembershipcardPurchaseMapper;
+    @Autowired
+    protected TjTestMapper tjTestMapper;
     protected Utils utils;
 
 
@@ -431,4 +430,11 @@ public class BackStageStatisticsService  {
         return result;
     }
 
+    public  List<Map<String,String>>  selectAllTest() {
+        return tjTestMapper.selectAllTest();
+    }
+
+    public int updateAllTest(List<TjTestEntity> list) {
+        return tjTestMapper.updateAllTest(list);
+    }
 }
