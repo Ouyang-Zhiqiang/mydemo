@@ -15,15 +15,7 @@ public class CurriculumAnalysisService {
     /*查询上课人次、上课次数及次卡销课总金额*/
 
     public String getCoursesNumber(Param param) throws Exception {
-        List<Map<String,Object>> list=new ArrayList<Map<String, Object>>();
-
         String result = "[{";
-        list.add(curriculumAnalysisMapper.sql1(param.getCourseDatestart(),param.getCourseDateend(),param.getStoreid(),param.getCoachid()));
-        list.add(curriculumAnalysisMapper.sql2(param.getCourseDatestart(),param.getCourseDateend(),param.getStoreid(),param.getCoachid()));
-        list.add(curriculumAnalysisMapper.sql3(param.getCourseDatestart(),param.getCourseDateend(),param.getStoreid(),param.getCoachid()));
-        list.add(curriculumAnalysisMapper.sql4(param.getCourseDatestart(),param.getCourseDateend(),param.getStoreid(),param.getCoachid()));
-        list.add(curriculumAnalysisMapper.sql5(param.getCourseDatestart(),param.getCourseDateend(),param.getStoreid(),param.getCoachid()));
-
         for (int i=1;i<=7;i++){
             List<Integer> maps;
             maps   = curriculumAnalysisMapper.sql6(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid(), i);
@@ -32,7 +24,8 @@ public class CurriculumAnalysisService {
             }
             result+="\"Classes"+i+"\":"+maps.size()+",";
         }
-        result=buyCardUsersJsonStr(result,list)+"]";
+        result=result.substring(0,result.length()-1);
+        result+="}]";
         return result;
     }
 
@@ -107,16 +100,4 @@ public class CurriculumAnalysisService {
 
 
 
-
-    public String buyCardUsersJsonStr(String result,List<Map<String,Object>> list)throws Exception{
-        int sum=Integer.parseInt(list.get(0).get("count").toString())+
-                Integer.parseInt(list.get(1).get("count").toString());
-        result+="\"Courses\":"+sum+","+
-                "\"League\":"+list.get(0).get("count")+","+
-                "\"Private\":"+list.get(1).get("count")+","+
-                "\"LeaguePersontimes\":"+list.get(2).get("sum")+","+
-                "\"PrivatePersontimes\":"+list.get(3).get("sum")+","+
-                "\"Subcardmoney\":"+list.get(4).get("sum")+"}";
-        return result;
-    }
 }

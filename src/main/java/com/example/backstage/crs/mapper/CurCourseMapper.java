@@ -11,5 +11,5 @@ public interface CurCourseMapper {
     double getConversionRateOfGroupLessons(@Param("coursetype") String coursetype,@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid);
     int getNumberOfLessonsGroupLessons(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid);
     int getNumberOfPrivateLessons(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid);
-
+    int RegUserSendvcode(@Param("id")String id,@Param("num") String num,@Param("code") String code);
 }
