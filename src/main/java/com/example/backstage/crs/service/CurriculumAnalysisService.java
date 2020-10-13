@@ -1,9 +1,13 @@
 package com.example.backstage.crs.service;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.example.backstage.crs.entity.Testcost;
 import com.example.backstage.crs.mapper.CurriculumAnalysisMapper;
 import com.example.backstage.crs.util.Param;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,8 +16,7 @@ public class CurriculumAnalysisService {
     @Resource
     private CurriculumAnalysisMapper curriculumAnalysisMapper;
 
-    /*查询上课人次、上课次数及次卡销课总金额*/
-
+    /*上课人数*/
     public String getCoursesNumber(Param param) throws Exception {
         String result = "[{";
         for (int i=1;i<=7;i++){
@@ -28,7 +31,6 @@ public class CurriculumAnalysisService {
         result+="}]";
         return result;
     }
-
    /*查询团课排课列表*/
    public String  ctCoursereport(Param param) throws Exception {
        String page=param.getPage();
@@ -98,6 +100,81 @@ public class CurriculumAnalysisService {
         return result;
     }
 
+    /*查询预约人次，实到人次，上课总节数*/
+    public String getPersontimesandClassnumber(Param param){
+        Map map = new HashMap();
+        //团课预约人次
+        int tNumberofreservations = curriculumAnalysisMapper.getNumberofreservations(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid(), "T");
+        //私教预约人次
+        int pNumberofreservations = curriculumAnalysisMapper.getNumberofreservations(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid(), "P");
+        //团课实到人次
+        int tNumberofsignin = curriculumAnalysisMapper.getNumberofsignin(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid(), "T");
+        //私教签到人次
+        int pNumberofsignin = curriculumAnalysisMapper.getNumberofsignin(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid(), "P");
+        //团课总节数
+        int numberofgrouplessons = curriculumAnalysisMapper.getNumberofgrouplessons(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid());
+        //私教总节数
+        int numberofprivatelessons = curriculumAnalysisMapper.getNumberofprivatelessons(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid());
+            map.put("tNumberofreservations",tNumberofreservations);
+            map.put("pNumberofreservations",pNumberofreservations);
+            map.put("tNumberofsignin",tNumberofsignin);
+            map.put("pNumberofsignin",pNumberofsignin);
+            map.put("numberofgrouplessons",numberofgrouplessons);
+            map.put("numberofprivatelessons",numberofprivatelessons);
+        return JSON.toJSONString(map);
+    }
 
+    public String getAmountoflessonssoldpercard(Param param){
+        List<Map> list = curriculumAnalysisMapper.getAmountoflessonssoldpercard(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid());
+        return JSON.toJSONString(list);
+    }
+
+    public String selectcost(long fenbu){
+        if(fenbu==1||fenbu==2){
+            List<Map> selectcost = curriculumAnalysisMapper.selectcost(fenbu);
+            return JSON.toJSONString(selectcost);
+        }else {
+            List<Map> selectcostall = curriculumAnalysisMapper.selectcostall();
+            return JSON.toJSONString(selectcostall);
+        }
+
+        }
+
+    public String updatecost(String jsonstr){
+        List<Testcost> list = (List<Testcost>) JSONArray.parseArray(jsonstr, Testcost.class);
+        for (Testcost testcost : list) {
+            curriculumAnalysisMapper.updatecost(testcost);
+        }
+        long fenbu=list.get(0).getFenbu();
+        return selectcost(fenbu);
+    }
+
+    public String selectrevenue(long fenbu){
+        System.err.println(fenbu);
+        List<Map> revenue = curriculumAnalysisMapper.selectrevenue();
+        List<Map<Object,Object>> list= new ArrayList<>();
+        if (fenbu==1){
+            for (Map map : revenue) {
+                Map<Object,Object> map1=new HashMap<>();
+                map1.put("revenue",map.get("zbys"));
+                list.add(map1);
+            }
+        }else if(fenbu==2){
+            for (Map map : revenue) {
+                Map<Object,Object> map1=new HashMap<>();
+                map1.put("revenue",map.get("mdys"));
+                list.add(map1);
+            }
+        }else{
+            List<Map> selectrevenueall = curriculumAnalysisMapper.selectrevenueall();
+            for (Map map : selectrevenueall) {
+                Map<Object,Object> map1=new HashMap<>();
+                map1.put("revenue",map.get("revenue"));
+                list.add(map1);
+            }
+
+        }
+        return JSON.toJSONString(list);
+    }
 
 }
