@@ -6,10 +6,11 @@ import com.example.backstage.crs.mapper.CurriculumAnalysisMapper;
 import com.example.backstage.crs.util.Param;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class CurriculumAnalysisService {
@@ -44,7 +45,7 @@ public class CurriculumAnalysisService {
            page=String.valueOf(Integer.parseInt(page)-1);
            page=String.valueOf(Integer.parseInt(param.getLimit())*Integer.parseInt(page));
        }
-       List<Map> maps = curriculumAnalysisMapper.ctCoursereport(param.getCourseDatestart(), param.getCourseDateend(), param.getCoachid(), limit, page);
+       List<Map> maps = curriculumAnalysisMapper.ctCoursereport(param.getCourseDatestart(), param.getCourseDateend(), param.getCoachid(), param.getStoreid(),limit, page);
        String result = "[";
        for (Map<String, Object> map : maps) {
            result+="{\"Date\":\""+map.get("日期")+"\","
@@ -80,7 +81,7 @@ public class CurriculumAnalysisService {
             page=String.valueOf(Integer.parseInt(page)-1);
             page=String.valueOf(Integer.parseInt(param.getLimit())*Integer.parseInt(page));
         }
-        List<Map> maps = curriculumAnalysisMapper.cpCoursereport(param.getCourseDatestart(), param.getCourseDateend(), param.getCoachid(), limit, page);
+        List<Map> maps = curriculumAnalysisMapper.cpCoursereport(param.getCourseDatestart(), param.getCourseDateend(), param.getCoachid(),param.getStoreid(), limit, page);
         String result = "[";
         for (Map<String, Object> map : maps) {
             result+="{\"Date\":\""+map.get("日期")+"\","
@@ -172,9 +173,30 @@ public class CurriculumAnalysisService {
                 map1.put("revenue",map.get("revenue"));
                 list.add(map1);
             }
-
         }
         return JSON.toJSONString(list);
+    }
+
+    public String getNumberofreservation(String array,Param param) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MM-dd");
+        array = array.substring(1);
+        array = array.substring(0,array.length() - 1);
+        array= array.replace("\"", "");
+        String [] arr= array.split(",");
+        List<Integer> list = new ArrayList<>();
+        if(arr[0].length()>5) {
+            for (String s : arr) {
+                Date date = sdf.parse(s);
+                Calendar cld = Calendar.getInstance();
+                cld.setTime(date);
+                cld.add(Calendar.DATE, 1);
+                date = cld.getTime();
+                String nextDay = sdf.format(date);
+                list.add(curriculumAnalysisMapper.getNumberofreservation(s, nextDay, param.getStoreid(), param.getCoachid()));
+            }
+            return JSON.toJSONString(list);
+        }
+        return "";
     }
 
 }
