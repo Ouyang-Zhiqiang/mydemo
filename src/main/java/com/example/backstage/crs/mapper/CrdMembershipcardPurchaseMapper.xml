@@ -241,7 +241,10 @@
         left join Crd_MembershipCard_User ab on ab.cardno=a.cardno
         left join User_Base ub on ub.userid=ab.userid
         <where>
+            a.isremoved=false
+            <if test="salerid!=null and salerid!='' ">
              a.salerid=#{salerid} ::bigint
+            </if>
             <if test="storeid!=null and storeid!='' ">
                 and a.storeid=#{storeid}::bigint
             </if>
