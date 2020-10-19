@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.example.backstage.crs.entity.Testcost;
 import com.example.backstage.crs.mapper.CurriculumAnalysisMapper;
 import com.example.backstage.crs.util.Param;
+import com.example.backstage.crs.util.Send;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.lang.reflect.Array;
@@ -197,6 +199,135 @@ public class CurriculumAnalysisService {
             return JSON.toJSONString(list);
         }
         return "";
+    }
+
+    public void bindingvenue(Param param){
+        curriculumAnalysisMapper.bindingvenue(param.getStoreid(),param.getUserid());
+    }
+
+    // 购卡（续卡）BuyCard
+    public String BuyCard(Param param)throws Exception{
+        String result= null;
+            if(param.getUserid().equals("")||param.getCardid().equals("")){
+                result= "{\"state\":0,\"remarks\":\"参数为空\"}";
+                return (new ObjectMapper()).writeValueAsString(result);
+            }
+            Long userid = Long.parseLong(param.getUserid());
+            Long cardid = Long.parseLong(param.getCardid());
+            Long tid = Long.parseLong(param.getTid());
+            Double fee = Double.parseDouble(param.getFee());
+            String buytype = "F";
+            String cardno = param.getCardno();
+            String qy1 = "select isopenedbyfirst from crd_membershipcardcategory_base where cardid=?";
+            Map<String,Object> map = curriculumAnalysisMapper.qy1(cardid.toString());
+            Integer a2=0,a3=0,a4=0,a5=0,a6;
+            result = "";
+            String qytype = "select cardtype,state from crd_membershipcardcategory_base where cardid=?";
+            Map<String,Object> type = curriculumAnalysisMapper.qytype(cardid.toString());
+            String cardtype = type.get("cardtype").toString();
+            String state = type.get("state").toString();
+            if (state.equals("0")){
+                result = "{\"state\":0,\"remarks\":\"此卡种已被禁用\"}";
+                return (new ObjectMapper()).writeValueAsString(result);
+            }
+            if (map !=null && map.size()>0){
+                if (map.get("isopenedbyfirst")!=null){
+                    String isf = map.get("isopenedbyfirst").toString();
+                    //System.out.println("【31.2】isopenedbyfirst:"+isf);
+                    //System.out.println("【31.3】cardtype:"+cardtype);
+                    String  str = "0";
+                    Map<String, Object> store = curriculumAnalysisMapper.selectstorename(userid.toString());
+                    if (cardtype.equalsIgnoreCase("S")){
+                        str = "trunc(b.fee/b.times,2)";
+                    }
+                    SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
+                    String newid = sdf2.format(new Date())+(System.currentTimeMillis()+"").substring(8, 13);
+                    if ("false".equalsIgnoreCase(isf)){
+
+                        a2 = curriculumAnalysisMapper.qy2(cardno,userid.toString(),str,tid.toString(),cardid.toString());
+                        a3 = curriculumAnalysisMapper.qy3(newid,cardno,buytype,fee.toString(),store.get("storeid").toString(),store.get("storename").toString(),userid.toString(),tid.toString(),cardid.toString());
+                    }else {
+                        a4 = curriculumAnalysisMapper.qy4(cardno,userid.toString(),str,tid.toString(),cardid.toString());
+                        a5 = curriculumAnalysisMapper.qy5(newid,cardno,buytype,fee.toString(),store.get("storeid").toString(),store.get("storename").toString(),userid.toString(),tid.toString(),cardid.toString());
+                    }
+                    Integer a7 = curriculumAnalysisMapper.qy7(cardno,userid.toString());
+                    Map<String,Object> map1 = curriculumAnalysisMapper.points(tid.toString());
+                    // 添加积分变动日志
+                    logPoints(userid,map1.get("points").toString(),"会员购卡:"+cardid+","+map1.get("points"),"+","购卡奖励","");
+                    //System.out.println("【31.9】logPoints");
+
+                    String qy6 = "update user_base set points=points+(select points from crd_membershipcardcategory_typecard where tid=?),lastedon=now(),lastedby=?,lastedname=name,lastedip='::1' where userid=?";
+                    a6 = curriculumAnalysisMapper.qy6(tid.toString(),userid.toString());
+
+                    //System.out.println("【31.10】加积分points=points+|a6:"+a6);
+
+                    if (("false".equalsIgnoreCase(isf) && a2>0 && a3>0 && a6>0)|| (a4>0 && a5>0 && a6>0)){
+                        result = "{\"state\":1,\"remarks\":\"\"}";
+                    }else {
+                        result = "{\"state\":0,\"remarks\":\"开卡失败\"}";
+                    }
+                }else {
+                    result = "{\"state\":0,\"remarks\":\"此卡不存在\"}";
+                }
+            }else {
+                result = "{\"state\":0,\"remarks\":\"此卡不存在\"}";
+            }
+            System.out.println("【31.12】result:"+result);
+
+        return (new ObjectMapper()).writeValueAsString(result);
+    }
+    // 操作积分日志
+    public boolean logPoints(Long uid,String optpts,String rks,String opt,String optrks,String str)throws Exception{
+        SimpleDateFormat sdf2 = new SimpleDateFormat("yyyyMMddHHmmss");
+        String newid = sdf2.format(new Date())+(System.currentTimeMillis()+"").substring(8, 13);
+        Long logid = Long.parseLong(newid);
+        Long userid = uid;
+        Map<String,Object> map = curriculumAnalysisMapper.qysalespoint(userid.toString());
+        Double points = Double.parseDouble(optpts);
+        String remarks = rks;
+        Date createdon = new Date();
+        String createdby = uid+"";
+        String createdname;
+        if (str.length() > 0){
+            createdname = str;
+        }else {
+            createdname = curriculumAnalysisMapper.storeidOrTel(userid.toString()).get("name").toString();
+        }
+        String createdip = "::1";
+        String actionstate = opt;
+        String changeaction = optrks;
+        Double currentpoints;
+        Double surpluspoints;
+        if (map!=null&& map.size()>0 && map.get("points")!=null) {
+            currentpoints = Double.parseDouble(map.get("points").toString());
+        }else {
+            currentpoints = 0d;
+        }
+        if ("+".equals(opt)){
+            surpluspoints = currentpoints + points;
+        }else {
+            if (currentpoints>points){
+                surpluspoints = currentpoints - points;
+            }else {
+                surpluspoints = 0d;
+            }
+
+        }
+        //System.out.println("logid|0|userid|1|currentpoints|2|points|3|surpluspoints|4|remarks|5|createdon|6|createdby|7|createdname|8|createdip|9|actionstate|10|changeaction|11|");
+        //System.out.println(logid+",|0|"+userid+",|1|"+currentpoints+",|2|"+points+",|3|"+surpluspoints+",|4|"+remarks+",|5|"+createdon+",|6|"+createdby+",|7|"+createdname+",|8|"+createdip+",|9|"+actionstate+",|10|"+changeaction+"|11|");
+        Integer a1 = curriculumAnalysisMapper.logqy(logid.toString(),userid.toString(),currentpoints.toString(),points.toString(),
+                surpluspoints.toString(),remarks,
+                createdon.toString(),createdby,createdname,createdip,actionstate,changeaction);
+        if (a1>0){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    public String selectstorename(Param param){
+        Map<String, Object> selectstorename = curriculumAnalysisMapper.selectstorename(param.getUserid());
+        return JSON.toJSONString(selectstorename);
+
     }
 
 }

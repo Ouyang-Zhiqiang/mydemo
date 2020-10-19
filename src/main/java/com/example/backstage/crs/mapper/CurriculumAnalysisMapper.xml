@@ -277,4 +277,102 @@
         </if>
     </select>
 
+    <update id="bindingvenue">
+        update user_base set storeid=#{storeid}::bigint where userid=#{userid}::bigint
+    </update>
+
+    <select id="qy1" resultType="map">
+        select isopenedbyfirst from crd_membershipcardcategory_base where cardid=#{cardid}::bigint
+    </select>
+
+    <select id="qytype" resultType="map">
+        select cardtype,state from crd_membershipcardcategory_base where cardid=#{cardid}::bigint
+    </select>
+
+    <insert id="qy2">
+        insert into crd_membershipcard_base(cardno,cardpwd,cardid,cardname,cardtype,isfree,typeid,originalfee,isopen,cardbegin,
+        periodvalidity,cardend,times,points,curtimes,remarks,state,isremoved,createdon,createdby,
+        createdname,createdip,totaltimes,totalfee,lastedon,lastedby,lastedname,lastedip,timefee)
+        select #{cardno},'123456',a.cardid,a.cardname,a.cardtype,a.isfree,b.tid,b.fee,true,now(),
+        b.periodvalidity,(now()+(b.periodvalidity||' day')::interval),
+        b.times,b.points,b.times,'小程序购卡',1,'f',now(),#{userid}::bigint,
+        (select name from user_base where userid=#{userid}::bigint),'::1',b.times,b.fee,now(),
+        #{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',
+        case when #{timefee}='S' then trunc(b.fee/b.times,2) else 0 end
+        from crd_membershipcardcategory_base as a inner join crd_membershipcardcategory_typecard as b
+        on b.cardid=a.cardid and b.tid=#{tid}::bigint where a.cardid=#{cardid}::bigint
+    </insert>
+
+    <insert id="qy3">
+        insert into crd_membershipcard_purchase(purchaseid,cardno,cardid,cardname,buytype,buytimes,
+        points,sellingfee,payment,storeid,storename,cardbegin,cardend,
+        remarks,isremoved,createdon,createdby,createdname,createdip,lastedon,lastedby,lastedname,
+        lastedip) select #{newid}::bigint,#{cardno},a.cardid,a.cardname,#{buytype},b.times,b.points,#{fee}::numeric,
+        5,#{storeid}::bigint,#{storename},now(),(now()+(b.periodvalidity||' day')::interval),'小程序购卡','f',
+        now(),#{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',now(),#{userid}::bigint,
+        (select name from user_base where userid=#{userid}::bigint),'::1'
+        from crd_membershipcardcategory_base as a inner join crd_membershipcardcategory_typecard as b
+        on b.cardid=a.cardid and b.tid=#{tid}::bigint where a.cardid=#{cardid}::bigint
+    </insert>
+
+    <insert id="qy4">
+        insert into crd_membershipcard_base(cardno,cardpwd,cardid,cardname,cardtype,isfree,
+        typeid,originalfee,isopen,periodvalidity,times,points,curtimes,
+        remarks,state,isremoved,createdon,createdby,createdname,createdip,totaltimes,
+        totalfee,lastedon,lastedby,lastedname,lastedip,timefee) select #{cardno},'123456',a.cardid,a.cardname,a.cardtype,a.isfree,
+        b.tid,b.fee,false,b.periodvalidity,b.times,b.points,b.times,'小程序购卡',1,
+        'f',now(),#{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',b.times,b.fee,
+        now(),#{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',
+        case when #{timefee}='S' then trunc(b.fee/b.times,2) else 0 end
+        from crd_membershipcardcategory_base as a inner join crd_membershipcardcategory_typecard as b
+        on b.cardid=a.cardid and b.tid=#{tid}::bigint where a.cardid=#{cardid}::bigint
+    </insert>
+
+    <insert id="qy5">
+        insert into crd_membershipcard_purchase(purchaseid,cardno,cardid,cardname,buytype,
+        buytimes,points,sellingfee,payment,storeid,storename,remarks,isremoved,
+        createdon,createdby,createdname,createdip,lastedon,lastedby,lastedname,lastedip)
+         select #{newid}::bigint,#{cardno},a.cardid,a.cardname,#{buytype},b.times,b.points,#{fee}::numeric,5,#{storeid}::bigint,#{storename},
+        '小程序购卡','f',now(),#{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',now(),
+        #{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1' from crd_membershipcardcategory_base as a
+        inner join crd_membershipcardcategory_typecard as b on b.cardid=a.cardid and b.tid=#{tid}::bigint where a.cardid=#{cardid}::bigint
+    </insert>
+
+    <select id="selectstorename" resultType="map">
+        select o.id as storeid,o.name as storename from user_base u
+        inner join Org_Store o
+        on u.storeid=o.id
+        where u.userid=#{userid}::bigint
+    </select>
+
+    <select id="qy7" resultType="Integer">
+        insert into crd_membershipcard_user(userid,cardno,ispoint,remarks,state,isremoved,createdon,createdby,createdname,createdip,
+        lastedon,lastedby,lastedname,lastedip) select userid,#{cardno},'t','会员小程序购卡',1,'f',now(),userid,name,'::1',now(),userid,name,'::1'
+        from user_base where userid=#{userid}::bigint
+    </select>
+
+    <select id="points" resultType="map">
+        select points from crd_membershipcardcategory_typecard where tid=#{tid}::bigint
+    </select>
+
+    <select id="qysalespoint" resultType="map">
+        select points from user_base where userid=#{userid}::bigint
+    </select>
+
+    <select id="storeidOrTel" resultType="map">
+        select storeid,tel,name,status,memgrade,points from user_base where status=1 and userid = #{userid}::bigint
+    </select>
+
+    <insert id="logqy">
+        insert into log_user_points(logid,userid,currentpoints,points,surpluspoints,remarks,
+                createdon,createdby,createdname,createdip,actionstate,changeaction)values(#{logid}::bigint, #{userid}::bigint, #{currentpoints}::numeric,
+                 #{points}::numeric, #{surpluspoints}::numeric, #{remarks},
+                #{createdon}::timestamp, #{createdby}, #{createdname}, #{createdip}, #{actionstate}, #{changeaction})
+    </insert>
+
+    <update id="qy6">
+        update user_base set points=points+(select points from crd_membershipcardcategory_typecard where tid=#{tid}::bigint),
+        lastedon=now(),lastedby=#{userid}::bigint,lastedname=name,lastedip='::1' where userid=#{userid}::bigint
+    </update>
+
 </mapper>

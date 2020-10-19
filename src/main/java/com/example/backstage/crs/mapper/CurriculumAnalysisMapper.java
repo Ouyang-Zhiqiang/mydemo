@@ -3,6 +3,7 @@ package com.example.backstage.crs.mapper;
 import com.example.backstage.crs.entity.Testcost;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.data.relational.core.sql.In;
 
 import java.util.List;
 import java.util.Map;
@@ -29,4 +30,26 @@ public interface CurriculumAnalysisMapper {
     List<Map> selectrevenue();
     List<Map> selectrevenueall();
     int getNumberofreservation(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid);
+    void bindingvenue(@Param("storeid") String storeid,@Param("userid") String userid);
+    Map<String,Object> qy1(@Param("cardid") String cardid);
+    Map<String,Object> qytype(@Param("cardid") String cardid);
+
+    Integer qy2(@Param("cardno")String cardno,@Param("userid")String userid,@Param("timefee")String timefee,@Param("tid")String tid,@Param("cardid")String cardid);
+    Integer qy3(@Param("newid")String newid,@Param("cardno")String cardno,@Param("buytype")String buytype,@Param("fee")String fee,@Param("storeid")String storeid
+            ,@Param("storename")String storename,@Param("userid")String userid,@Param("tid")String tid,@Param("cardid")String cardid
+    );
+    Map<String,Object> selectstorename(@Param("userid") String userid);
+    Integer qy4(@Param("cardno")String cardno,@Param("userid")String userid,@Param("timefee")String timefee,@Param("tid")String tid,@Param("cardid")String cardid);
+    Integer qy5(@Param("newid")String newid,@Param("cardno")String cardno,@Param("buytype")String buytype,@Param("fee")String fee,@Param("storeid")String storeid
+            ,@Param("storename")String storename,@Param("userid")String userid,@Param("tid")String tid,@Param("cardid")String cardid
+    );
+    Integer qy7(@Param("cardno")String cardno,@Param("userid") String userid);
+    Map<String,Object> points(@Param("tid") String tid);
+    Map<String,Object> qysalespoint(@Param("userid") String userid);
+    Map<String,Object> storeidOrTel(@Param("userid") String userid);
+    Integer logqy(@Param("logid")String logid,@Param("userid")String userid,@Param("currentpoints")String currentpoints,
+                  @Param("points")String points,@Param("surpluspoints")String surpluspoints,@Param("remarks")String remarks,
+                  @Param("createdon")String createdon,@Param("createdby")String createdby,@Param("createdname")String createdname,
+                  @Param("createdip")String createdip,@Param("actionstate")String actionstate,@Param("changeaction")String changeaction);
+    Integer qy6(@Param("tid")String tid,@Param("userid") String userid);
 }
