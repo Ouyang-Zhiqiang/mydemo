@@ -113,6 +113,9 @@
         <if test="coachid !=null and coachid!=''">
             and ct.coachid=#{coachid}::bigint
         </if>
+        <if test="storeid !=null and storeid!=''">
+            and ct.storeid=#{storeid}::bigint
+        </if>
         group by ct.coachname,ct.scheduledate,ct.coachname,ct.coursename,ct.schedulebegin,
         ct.reservednumber,ct.reservablenumber,ct.signednumber
         order by ct.scheduledate desc
@@ -134,6 +137,9 @@
         and cp.ScheduleDate &lt;=#{endtime}::timestamp
         <if test="coachid !=null and coachid!=''">
             and cpb.coachid=#{coachid}::bigint
+        </if>
+        <if test="storeid !=null and storeid!=''">
+            and cp.storeid=#{storeid}::bigint
         </if>
         group by cp.scheduledate,cpb.coachname,cp.coursename,
         cp.schedulebegin,cp.reservednumber
@@ -259,6 +265,16 @@
         order by sequence asc
     </select>
 
-
+    <select id="getNumberofreservation" resultType="Integer">
+        select COALESCE(sum(traineenum),0) from ord_ordercourse
+        where createdon &gt;=#{begintime}::timestamp
+          and createdon &lt;#{endtime}::timestamp
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+    </select>
 
 </mapper>

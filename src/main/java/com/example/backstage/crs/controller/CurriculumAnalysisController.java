@@ -2,10 +2,12 @@ package com.example.backstage.crs.controller;
 import com.example.backstage.crs.service.CurriculumAnalysisService;
 import com.example.backstage.crs.util.Param;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
+import java.text.ParseException;
 
 @Controller
 @RequestMapping("/web/CAnalysis/")
@@ -63,4 +65,10 @@ public class CurriculumAnalysisController {
         return cAnalysisService.selectrevenue(param.getAccountid());
     }
 
+
+    @RequestMapping(value = "getNumberofreservation",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String getNumberofreservation(String array,Param param) throws ParseException {
+        return cAnalysisService.getNumberofreservation(array,param);
+    }
 }

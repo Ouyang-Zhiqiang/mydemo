@@ -16,8 +16,8 @@ public interface CurriculumAnalysisMapper {
     Map<String, Object> sql5(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid);
     List<Integer> sql6(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid,@Param("i") int i);
     List<Integer> sql7(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid,@Param("i") int i);
-    List<Map> cpCoursereport(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("coachid") String coachid,@Param("limit") String limit,@Param("page") String page);
-    List<Map> ctCoursereport(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("coachid") String coachid,@Param("limit") String limit,@Param("page") String page);
+    List<Map> cpCoursereport(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("coachid") String coachid, @Param("storeid") String storeid,@Param("limit") String limit,@Param("page") String page);
+    List<Map> ctCoursereport(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("coachid") String coachid, @Param("storeid") String storeid,@Param("limit") String limit,@Param("page") String page);
     int getNumberofreservations(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid,@Param("cardtype") String cardtype);
     int getNumberofsignin(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid,@Param("cardtype") String cardtype);
     int getNumberofgrouplessons(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid);
@@ -28,4 +28,5 @@ public interface CurriculumAnalysisMapper {
     void updatecost(Testcost testcost);
     List<Map> selectrevenue();
     List<Map> selectrevenueall();
+    int getNumberofreservation(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid,@Param("coachid") String coachid);
 }
