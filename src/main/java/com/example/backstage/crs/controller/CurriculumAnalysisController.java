@@ -71,4 +71,26 @@ public class CurriculumAnalysisController {
     public String getNumberofreservation(String array,Param param) throws ParseException {
         return cAnalysisService.getNumberofreservation(array,param);
     }
+
+    @RequestMapping(value = "bindingvenue",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public void bindingvenue(Param param){
+        cAnalysisService.bindingvenue(param);
+    }
+
+
+    @RequestMapping(value = "BuyCard",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String BuyCard(Param param) throws Exception {
+        return cAnalysisService.BuyCard(param);
+    }
+
+    @RequestMapping(value = "selectstorename",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String selectstorename(Param param){
+        System.err.println(param.getUserid());
+        return cAnalysisService.selectstorename(param);
+    }
+
+
 }
