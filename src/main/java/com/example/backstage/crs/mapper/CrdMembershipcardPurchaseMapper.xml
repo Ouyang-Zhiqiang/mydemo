@@ -206,10 +206,10 @@
                 and a.storeid=#{storeid}::bigint
             </if>
             <if test="datebegin!=null and datebegin!=''">
-                <![CDATA[and to_timestamp(createdon, 'yyyy-mm-dd hh24:mi')>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+                <![CDATA[and to_timestamp(createdon, 'yyyy-mm-dd')>=to_timestamp(#{datebegin}, 'yyyy-mm-dd')]]>
             </if>
             <if test="dateend!=null and dateend!=''">
-                <![CDATA[and to_timestamp( createdon, 'yyyy-mm-dd hh24:mi')<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+                <![CDATA[and to_timestamp( createdon, 'yyyy-mm-dd')<=to_timestamp(#{dateend}, 'yyyy-mm-dd')]]>
             </if>
         </where>
         order by createdon desc limit #{limits} offset #{pages}
@@ -226,10 +226,10 @@
                 and a.storeid=#{storeid}::bigint
             </if>
             <if test="datebegin!=null and datebegin!=''">
-                <![CDATA[and a.createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+                <![CDATA[and a.createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd')]]>
             </if>
             <if test="dateend!=null and dateend!=''">
-                <![CDATA[and a.createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+                <![CDATA[and a.createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd')]]>
             </if>
         </where>
     </select>
@@ -243,16 +243,16 @@
         <where>
             a.isremoved=false
             <if test="salerid!=null and salerid!='' ">
-             a.salerid=#{salerid} ::bigint
+            and a.salerid=#{salerid} ::bigint
             </if>
             <if test="storeid!=null and storeid!='' ">
                 and a.storeid=#{storeid}::bigint
             </if>
             <if test="datebegin!=null and datebegin!=''">
-                <![CDATA[and a.createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd hh24:mi')]]>
+                <![CDATA[and a.createdon>=to_timestamp(#{datebegin}, 'yyyy-mm-dd')]]>
             </if>
             <if test="dateend!=null and dateend!=''">
-                <![CDATA[and a.createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd hh24:mi')]]>
+                <![CDATA[and a.createdon<=to_timestamp(#{dateend}, 'yyyy-mm-dd')]]>
             </if>
         </where>
         order by createdon desc limit #{limits} offset #{pages}
