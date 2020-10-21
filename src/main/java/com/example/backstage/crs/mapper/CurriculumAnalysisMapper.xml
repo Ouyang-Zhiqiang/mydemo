@@ -109,7 +109,7 @@
         from Cur_TeamSchedule ct left join Ord_OrderCourse oo
         on ct.ScheduleId=oo.ScheduleId
         where ScheduleDate &gt;=#{begintime}::timestamp
-        and ScheduleDate &lt;=#{endtime}::timestamp
+        and ScheduleDate &lt;#{endtime}::timestamp + interval '1 day'
         <if test="coachid !=null and coachid!=''">
             and ct.coachid=#{coachid}::bigint
         </if>
@@ -374,5 +374,47 @@
         update user_base set points=points+(select points from crd_membershipcardcategory_typecard where tid=#{tid}::bigint),
         lastedon=now(),lastedby=#{userid}::bigint,lastedname=name,lastedip='::1' where userid=#{userid}::bigint
     </update>
+
+    <select id="userCard" resultType="map">
+        select cardname,originalfee,cardend from crd_membershipcard_base where cardno = #{carno}
+    </select>
+
+    <select id="isSendOrNot" resultType="map">
+        select isopen from tmp_notic where tmpcode = #{tmpcode}
+    </select>
+
+    <select id="tmpNotic" resultType="map">
+        SELECT tmpcode, tmptype, tmpcategory, rulename, rulevalue, prenoticcontents, noticecontents,
+        lstnoticecontents, isnoticesupervisor, isnoticecoach, isnoticemanager, isopen FROM tmp_notic where tmpcode = #{tmpcode}
+    </select>
+
+    <insert id="insertLogMobileMeta">
+        insert into log_mobile_meta(id,platform,mobilenum,msg,localip,longitude,
+        latitude,createdon)values(
+        #{newid}::bigint, #{platform}, #{mobilenum}, #{msg},
+         #{localip}, #{longitude}, #{latitude}, now()
+        )
+    </insert>
+    
+    <insert id="insertLogMobileReceived">
+        INSERT INTO log_mobile_received(id, platform, mobilenum, msg, localip, longitude, latitude, thridplatform,
+        recivedstate, recivedinfos, createdon)VALUES (
+        #{newid}::bigint, #{platform}, #{mobilenum}, #{msg},
+        #{localip}, #{longitude}, #{latitude},
+        #{thridplatform},#{recivedstate},#{recivedinfos},now()
+        )
+    </insert>
+
+    <select id="userStaffPhone1" resultType="map">
+        select roleid from scr_role where deleteflag = 0 and rolename = #{rolename}
+    </select>
+
+    <select id="userStaffPhone2" resultType="map">
+        select userid,roleid from user_staff where status = 1 and storeid like '%${storeid}%' and roleid like '%${roleid}%'
+    </select>
+
+    <select id="isSendOrNotByRole" resultType="map">
+        select isnoticesupervisor,isnoticecoach,isnoticemanager from tmp_notic where tmpcode = #{tmpcode}
+    </select>
 
 </mapper>

@@ -108,7 +108,7 @@
     </select>
 
     <select id="getCourseRevenueTotalContinue" resultType="map">
-        select sum(SellingFee) as courseRevenuetotal from Crd_MembershipCard_Purchase
+        select COALESCE(sum(SellingFee),0) as courseRevenuetotal from Crd_MembershipCard_Purchase
         where buytype='C'
         and CreatedOn &gt;=#{begintime}::timestamp
         and CreatedOn &lt;=#{endtime}::timestamp
@@ -227,7 +227,7 @@
     </select>
 
     <select id="getTotalAmountofGoods" resultType="map">
-        select sum(salesprice*salescount) as money  from SPM_Goods_SalesOrder
+        select COALESCE(sum(salesprice*salescount),0) as money  from SPM_Goods_SalesOrder
         where isremoved=false
         and createdon &gt;=#{begintime}::timestamp
         and createdon &lt;=#{endtime}::timestamp
@@ -247,7 +247,7 @@
     </select>
 
     <select id="getGoodsnumber" resultType="map">
-        select sum(salescount) as Goodsnumber  from SPM_Goods_SalesOrder
+        select COALESCE(sum(salescount),0) as Goodsnumber  from SPM_Goods_SalesOrder
         where isremoved=false
         and createdon &gt;=#{begintime}::timestamp
         and createdon &lt;=#{endtime}::timestamp

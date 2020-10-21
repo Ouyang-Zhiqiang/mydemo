@@ -52,4 +52,16 @@ public interface CurriculumAnalysisMapper {
                   @Param("createdon")String createdon,@Param("createdby")String createdby,@Param("createdname")String createdname,
                   @Param("createdip")String createdip,@Param("actionstate")String actionstate,@Param("changeaction")String changeaction);
     Integer qy6(@Param("tid")String tid,@Param("userid") String userid);
+    Map<String,Object> userCard(@Param("carno") String carno);
+    Map<String,Object> isSendOrNot(@Param("tmpcode") String tmpcode);
+    Map<String,Object> tmpNotic(@Param("tmpcode")String tmpcode);
+    Integer insertLogMobileMeta(@Param("newid")String newid,@Param("platform")String platform,@Param("mobilenum")String mobilenum,
+    @Param("msg")String msg,@Param("localip") String localip,@Param("longitude")String longitude,@Param("latitude")String latitude);
+    Integer insertLogMobileReceived(@Param("newid")String newid,@Param("platform")String platform,@Param("mobilenum")String mobilenum,
+    @Param("msg")String msg,@Param("localip") String localip,@Param("longitude")String longitude,
+    @Param("latitude")String latitude,@Param("thridplatform")String thridplatform,@Param("recivedstate")String recivedstate,
+    @Param("recivedinfos")String recivedinfos);
+    Map<String,Object> userStaffPhone1(@Param("rolename")String rolename);
+    List<Map<String,Object>> userStaffPhone2(@Param("storeid")String storeid,@Param("roleid")String roleid);
+    Map<String,Object> isSendOrNotByRole(@Param("tmpcode")String tmpcode);
 }

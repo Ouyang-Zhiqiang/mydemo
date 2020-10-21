@@ -146,8 +146,7 @@ public String getCourseRevenuetotal(Param param){
     }
 
 
-/*   * 课程营收金额
-    * */
+    /*课程营收金额*/
 
 
     /*团课单节平均价（次卡）、私教单节平均价（次卡）*/
