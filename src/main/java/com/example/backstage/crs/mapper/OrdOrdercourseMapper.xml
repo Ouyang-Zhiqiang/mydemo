@@ -237,4 +237,9 @@
 		</where>
 		) as s1 where number>=4;
 	</select>
+
+	<!--查询课程信息-->
+	<select id="selectOrderCourseByOrdid"  resultType="java.util.HashMap">
+		select coursedate,coursetime,coursename,courseendtime,cardtype from ord_ordercourse where ordid = #{ordid}
+	</select>
 </mapper>
