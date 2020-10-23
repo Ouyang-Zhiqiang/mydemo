@@ -17,4 +17,6 @@ public interface OrdOrdercourseMapper {
     Map<String,Object> slectTotalMoneyByMoney(@Param("CourseDatestart") String CourseDatestart, @Param("CourseDateend") String CourseDateend, @Param("storeid") String storeid, @Param("money") String money);
 
     List<Map<String,Object>> selectCourseNumber(@Param("CourseDatestart") String CourseDatestart, @Param("CourseDateend") String CourseDateend, @Param("storeid") String storeid);
+
+    Map<String, Object> selectOrderCourseByOrdid(@Param("ordid") Long ordid);
 }

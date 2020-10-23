@@ -3,8 +3,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.example.backstage.crs.entity.LogMobileMetaEntity;
+import com.example.backstage.crs.entity.OrdOrdercourseEntity;
 import com.example.backstage.crs.entity.Testcost;
 import com.example.backstage.crs.mapper.CurriculumAnalysisMapper;
+import com.example.backstage.crs.mapper.OrdOrdercourseMapper;
 import com.example.backstage.crs.util.MsgParam;
 import com.example.backstage.crs.util.Param;
 import com.example.backstage.crs.util.Send;
@@ -21,6 +23,8 @@ import java.util.*;
 public class CurriculumAnalysisService {
     @Resource
     private CurriculumAnalysisMapper curriculumAnalysisMapper;
+    @Resource
+    private OrdOrdercourseMapper ordOrdercourseMapper;
 
     /*上课人数*/
     public String getCoursesNumber(Param param) throws Exception {
@@ -599,5 +603,54 @@ public class CurriculumAnalysisService {
         }
         return ret;
 
+    }
+
+
+    /*预约课程成功后发送短信给教练和会员*/
+    public void SendSMS( OrdOrdercourseEntity orderCourseEntity )throws Exception{
+        Long userid=Long.valueOf(orderCourseEntity.getUserid());
+        String varmsg = getYMD(orderCourseEntity.getCoursedate())+orderCourseEntity.getCoursetime().toString().substring(0,5)+"-"+orderCourseEntity.getCourseendtime().toString().substring(0,5)+orderCourseEntity.getCoursename();
+        String varmsg2 = orderCourseEntity.getStorename()+getYMD(orderCourseEntity.getCoursedate())+orderCourseEntity.getCoursename();
+        // 通知约课会员
+        if (isSendOrNot("hyyktz")) {
+            sendNotice(storeidOrTel(userid, "tel"), "hyyktz", varmsg, storeidOrTel(userid, "name"));
+        }
+        // 通知约课员工
+        if (isSendOrNot("ygyktz")) {
+            // noticeAllStaff/25团课约课
+            noticeAllStaff(userid,String.valueOf(orderCourseEntity.getCoachid()), "ygyktz", varmsg2, storeidOrTel(userid, "name"));
+        }
+
+//        return "";
+    }
+
+    // 获取年月日
+    public String getYMD(Date date)throws Exception{
+        Calendar now = Calendar.getInstance();
+        now.setTime(date);
+        return now.get(Calendar.YEAR)+"年"+(now.get(Calendar.MONTH) + 1)+"月"+now.get(Calendar.DAY_OF_MONTH)+"日";
+    }
+
+    public void CancelCourseOrdersByOrderIdAndUserId(Long userid,String coachid,Long ordid)throws Exception{
+        String varmsg = getYMD(new SimpleDateFormat("yyyy-MM-dd").parse(orderCourse(ordid,"coursedate")))+orderCourse(ordid,"coursetime").substring(0,5)+orderCourse(ordid,"courseendtime").substring(0,5)+orderCourse(ordid,"coursename");
+        // 取消约课通知会员
+        if (isSendOrNot("hyqxtz1")) {
+            sendNotice(storeidOrTel(userid, "tel"), "hyqxtz1", varmsg, "");
+        }
+        // 取消约课通知员工
+        if (isSendOrNot("ygqxtz1")) {
+            // noticeAllStaff/30取消订单约课
+            noticeAllStaff(userid,coachid, "ygqxtz1", varmsg, storeidOrTel(userid, "name"));
+        }
+    }
+
+    // 获取需要的课程信息
+    public String orderCourse(Long orderid,String course)throws Exception{
+        Map<String,Object> map = ordOrdercourseMapper.selectOrderCourseByOrdid(orderid);
+        if (map.get(course)!=null){
+            return map.get(course).toString();
+        }else {
+            return "";
+        }
     }
 }
