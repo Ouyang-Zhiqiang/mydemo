@@ -70,5 +70,10 @@ public class CurCourseController {
         }
     }
 
+    @RequestMapping(value = "getcourseinformation",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String getcourseinformation(Param param){
+        return curCourseService.getcourseinformation(param);
+    }
 }
 

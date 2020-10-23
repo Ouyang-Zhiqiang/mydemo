@@ -52,23 +52,25 @@ public class CurriculumAnalysisService {
        }
        List<Map> maps = curriculumAnalysisMapper.ctCoursereport(param.getCourseDatestart(), param.getCourseDateend(), param.getCoachid(), param.getStoreid(),limit, page);
        String result = "[";
+       if(maps!=null&&maps.size()>0) {
        for (Map<String, Object> map : maps) {
-           result+="{\"Date\":\""+map.get("日期")+"\","
-                   +"\"Coach\":\""+map.get("教练")+"\","
-                   +"\"Curriculumtype\":\""+map.get("课程类型")+"\","
-                   +"\"Curriculumname\":\""+map.get("课程名称")+"\","
-                   +"\"Curriculumtime\":\""+map.get("上课时间")+"\","
-                   +"\"Makeanappointment\":"+map.get("预约人次")+","
-                   +"\"Signin\":"+map.get("签到人次")+","
-                   +"\"Cancel\":"+map.get("取消人次")+","
-                   +"\"Appointmentavailable\":"+map.get("可约人次")+","
-                   +"\"CurriculumPrice\":\""+map.get("课程价格")+"\","
-                   +"\"Fullcapacityrate\":\""+map.get("满员率")+"%"+"\","
+           result+="{\"Date\":\""+map.get("scheduledate")+"\","
+                   +"\"Coach\":\""+map.get("coachname")+"\","
+                   +"\"Curriculumtype\":\""+map.get("coursetype")+"\","
+                   +"\"Curriculumname\":\""+map.get("coursename")+"\","
+                   +"\"Curriculumtime\":\""+map.get("schedulebegin")+"\","
+                   +"\"Makeanappointment\":"+map.get("makeanappointment")+","
+                   +"\"Signin\":"+map.get("signednumber")+","
+                   +"\"Cancel\":"+map.get("cancel")+","
+                   +"\"Appointmentavailable\":"+map.get("reservablenumber")+","
+                   +"\"CurriculumPrice\":\""+map.get("curriculumprice")+"\","
+                   +"\"Fullcapacityrate\":\""+map.get("fullcapacityrate")+"%"+"\","
                    +"\"total\":"+map.get("total")+""
                    +"},";
        }
        result=result.substring(0,result.length()-1);
-       result+="]";
+       }
+       result += "]";
        return result;
    }
 
@@ -88,21 +90,23 @@ public class CurriculumAnalysisService {
         }
         List<Map> maps = curriculumAnalysisMapper.cpCoursereport(param.getCourseDatestart(), param.getCourseDateend(), param.getCoachid(),param.getStoreid(), limit, page);
         String result = "[";
-        for (Map<String, Object> map : maps) {
-            result+="{\"Date\":\""+map.get("日期")+"\","
-                    +"\"Coach\":\""+map.get("教练")+"\","
-                    +"\"Curriculumtype\":\""+map.get("课程类型")+"\","
-                    +"\"Curriculumname\":\""+map.get("课程名称")+"\","
-                    +"\"Curriculumtime\":\""+map.get("上课时间")+"\","
-                    +"\"Makeanappointment\":"+map.get("预约人次")+","
-                    +"\"Signin\":"+map.get("签到人次")+","
-                    +"\"Cancel\":"+map.get("取消人次")+","
-                    +"\"CurriculumPrice\":\""+map.get("课程价格")+"\","
-                    +"\"total\":"+map.get("total")+""
-                    +"},";
+        if(maps!=null&&maps.size()>0) {
+            for (Map<String, Object> map : maps) {
+                result += "{\"Date\":\"" + map.get("scheduledate") + "\","
+                        + "\"Coach\":\"" + map.get("coachname") + "\","
+                        + "\"Curriculumtype\":\"" + map.get("coursetype") + "\","
+                        + "\"Curriculumname\":\"" + map.get("coursename") + "\","
+                        + "\"Curriculumtime\":\"" + map.get("schedulebegin") + "\","
+                        + "\"Makeanappointment\":" + map.get("reservednumber") + ","
+                        + "\"Signin\":" + map.get("signednumber") + ","
+                        + "\"Cancel\":" + map.get("cancel") + ","
+                        + "\"CurriculumPrice\":\"" + map.get("curriculumprice") + "\","
+                        + "\"total\":" + map.get("total") + ""
+                        + "},";
+            }
+            result = result.substring(0, result.length() - 1);
         }
-        result=result.substring(0,result.length()-1);
-        result+="]";
+        result += "]";
         return result;
     }
 
@@ -127,6 +131,7 @@ public class CurriculumAnalysisService {
             map.put("pNumberofsignin",pNumberofsignin);
             map.put("numberofgrouplessons",numberofgrouplessons);
             map.put("numberofprivatelessons",numberofprivatelessons);
+        System.err.println(map);
         return JSON.toJSONString(map);
     }
 
@@ -221,11 +226,8 @@ public class CurriculumAnalysisService {
             Double fee = Double.parseDouble(param.getFee());
             String buytype = "F";
             String cardno = param.getCardno();
-            String qy1 = "select isopenedbyfirst from crd_membershipcardcategory_base where cardid=?";
             Map<String,Object> map = curriculumAnalysisMapper.qy1(cardid.toString());
             Integer a2=0,a3=0,a4=0,a5=0,a6;
-            result = "";
-            String qytype = "select cardtype,state from crd_membershipcardcategory_base where cardid=?";
             Map<String,Object> type = curriculumAnalysisMapper.qytype(cardid.toString());
             String cardtype = type.get("cardtype").toString();
             String state = type.get("state").toString();

@@ -150,4 +150,14 @@
          values(#{id},now(),#{num},1,#{code},30,now() + '30 min','【颜身运动】您在颜身运动请求的注册绑定验证码是：'+#{code}+'会员在小程序注册绑定',now(),#{num},#{num},'::1')
     </insert>
 
+    <select id="getcourseinformation" resultType="map">
+        select ub.name,ub.tel,oo.traineenum,cmb.cardname,oo.SignState,
+            oo.OrdState,oo.Remarks,oo.createdon,ct.reservablenumber
+        from Cur_TeamSchedule ct
+        inner join Ord_OrderCourse oo on ct.scheduleid=oo.scheduleid
+        inner join user_base ub on oo.userid=ub.userid
+        inner join Crd_MembershipCard_Base cmb on oo.cardno=cmb.cardno
+        where ct.ScheduleId=#{ScheduleId}::bigint
+    </select>
+
 </mapper>

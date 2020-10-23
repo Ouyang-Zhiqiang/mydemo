@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -114,6 +115,12 @@ public class CurCourseService {
         msgParam.setMsg(varmsg);
         msgParam.setMobilenum(phonenum);
         sendOneMessageByYunTree(msgParam);
+    }
+
+    public String  getcourseinformation(Param param){
+        System.err.println(param.getScheduleid());
+        List<Map> maps = curCourseMapper.getcourseinformation(param.getScheduleid());
+        return JSON.toJSONStringWithDateFormat(maps,"yyyy-MM-dd HH:mm");
     }
 
 

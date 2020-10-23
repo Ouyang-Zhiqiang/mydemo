@@ -99,17 +99,19 @@
     </select>
 
     <select id="ctCoursereport" resultType="map">
-        select ct.scheduledate as 日期,ct.coachname as 教练,
-        '团课' as 课程类型,ct.coursename as 课程名称,
-        ct.schedulebegin as 上课时间,ct.reservednumber+count(case when oo.ordstate='2' then 1 else null end) as 预约人次,
-        ct.signednumber as 签到人次,count(case when oo.ordstate='2' then 1 else null end) as 取消人次,
-        ct.reservablenumber as 可约人次,sum(case when oo.ordstate='1' then oo.courseprice else 0 end) as 课程价格,
-        case reservablenumber when 0 then 0 else round(signednumber::numeric/reservablenumber::numeric,2)*100 end as 满员率,
+        select ct.scheduledate,ct.coachname,
+        '团课' as coursetype,ct.coursename,
+        ct.schedulebegin,ct.reservednumber+count(case when oo.ordstate='2' then 1 else null end) as Makeanappointment,
+        ct.signednumber,count(case when oo.ordstate='2' then 1 else null end) as Cancel,
+        ct.reservablenumber,
+        cast(sum(case when oo.ordstate='1' then oo.courseprice else 0 end) AS decimal(10,2)) as CurriculumPrice,
+        case reservablenumber when 0 then 0 else round(signednumber::numeric/reservablenumber::numeric,2)*100 end as Fullcapacityrate,
         COUNT(1) OVER() as total
         from Cur_TeamSchedule ct left join Ord_OrderCourse oo
         on ct.ScheduleId=oo.ScheduleId
         where ScheduleDate &gt;=#{begintime}::timestamp
         and ScheduleDate &lt;#{endtime}::timestamp + interval '1 day'
+        and ct.isremoved=false
         <if test="coachid !=null and coachid!=''">
             and ct.coachid=#{coachid}::bigint
         </if>
@@ -123,18 +125,19 @@
     </select>
 
     <select id="cpCoursereport" resultType="map">
-        select cp.scheduledate as 日期,cpb.coachname as 教练,
-        '私课' as 课程类型,cp.coursename as 课程名称,
-        cp.schedulebegin as 上课时间,cp.reservednumber as 预约人次,
-        count(case when oo.signstate='1' then 1 else null end) as 签到人次,
-        count(case when oo.ordstate='2' then 1 else null end) as 取消人次,
-        sum(case when oo.ordstate='1' then oo.courseprice else 0 end) as 课程价格,
+        select cp.scheduledate,cpb.coachname,
+        '私课' as coursetype,cp.coursename,
+        cp.schedulebegin,cp.reservednumber,
+        count(case when oo.signstate='1' then 1 else null end) as signednumber,
+        count(case when oo.ordstate='2' then 1 else null end) as Cancel,
+        cast(sum(case when oo.ordstate='1' then oo.courseprice else 0 end) AS decimal(10,2)) as curriculumprice,
         COUNT(1) OVER() as total
         from Cur_PrivSchedule cp left join Ord_OrderCourse oo
         on cp.scheduleid=oo.scheduleid inner join Cur_PrivCourse_Base cpb
         on cp.courseid=cpb.courseid
         where cp.ScheduleDate &gt;=#{begintime}::timestamp
-        and cp.ScheduleDate &lt;=#{endtime}::timestamp
+        and cp.ScheduleDate &lt;#{endtime}::timestamp + interval '1 day'
+        and cp.isremoved=false
         <if test="coachid !=null and coachid!=''">
             and cpb.coachid=#{coachid}::bigint
         </if>
@@ -150,9 +153,8 @@
     <select id="getNumberofreservations" resultType="Integer">
         select CASE WHEN sum(TraineeNum) is null then 0 else sum(TraineeNum) end  from Ord_OrderCourse
         where CourseDate &gt;=#{begintime}::timestamp
-        and CourseDate &lt;=#{endtime}::timestamp
+        and CourseDate &lt;#{endtime}::timestamp+ interval '1 day'
         and IsRemoved=false
-        and OrdState=1
         and CardType=#{cardtype}
         <if test="coachid !=null and coachid!=''">
             and coachid=#{coachid}::bigint
@@ -165,7 +167,7 @@
     <select id="getNumberofsignin" resultType="Integer">
         select CASE WHEN sum(TraineeNum)  is null then 0 else sum(TraineeNum) end from Ord_OrderCourse
         where CourseDate &gt;=#{begintime}::timestamp
-        and CourseDate &lt;=#{endtime}::timestamp
+        and CourseDate &lt;#{endtime}::timestamp+ interval '1 day'
         and IsRemoved=false
         and OrdState=1
         and SignState=1
@@ -181,9 +183,8 @@
     <select id="getNumberofgrouplessons" resultType="Integer">
         select CASE WHEN count(*) is null then 0 else count(*) end from Cur_TeamSchedule
         where isremoved=false
-        and SignedNumber>0
         and ScheduleDate &gt;=#{begintime}::timestamp
-        and ScheduleDate &lt;=#{endtime}::timestamp
+        and ScheduleDate &lt;#{endtime}::timestamp+ interval '1 day'
         <if test="coachid !=null and coachid!=''">
             and coachid=#{coachid}::bigint
         </if>
@@ -198,9 +199,8 @@
         left join Cur_PrivCourse_Base cpb on
         cp.CourseId=cpb.courseid
         where cp.isremoved=false
-        and SignedNumber>0
         and ScheduleDate &gt;=#{begintime}::timestamp
-        and ScheduleDate &lt;=#{endtime}::timestamp
+        and ScheduleDate &lt;#{endtime}::timestamp+ interval '1 day'
         <if test="coachid !=null and coachid!=''">
             and cpb.coachid=#{coachid}::bigint
         </if>
@@ -210,19 +210,18 @@
     </select>
 
     <select id="getAmountoflessonssoldpercard" resultType="map">
-        select ctb.CateTitle as CourseTitle,sum(CoursePrice) as CourseAmount from Ord_OrderCourse oo
+        select ctb.CateTitle as CourseTitle,
+        cast(sum(CoursePrice) AS decimal(10,2)) as CourseAmount
+        from Ord_OrderCourse oo
         inner join Cur_TeamSchedule ct on oo.ScheduleId=ct.ScheduleId
         inner join Cur_TeamCourseCategory_Base ctb on ct.cid=ctb.cid
         inner join Crd_MembershipCard_Base cmb on oo.CardNo=cmb.cardno
         inner join Crd_MembershipCardCategory_Base cmcb on cmcb.cardid=cmb.cardid
         where ct.isremoved=false
         and oo.isremoved=false
-        and cmcb.CardType='S'
         and ct.ScheduleDate &gt;=#{begintime}::timestamp
-        and ct.ScheduleDate &lt;=#{endtime}::timestamp
-        and oo.CardType='T'
+        and ct.ScheduleDate &lt;#{endtime}::timestamp + interval '1 day'
         and oo.OrdState=1
-
         <if test="coachid !=null and coachid!=''">
             and oo.coachid=#{coachid}::bigint
         </if>
@@ -297,8 +296,7 @@
         b.periodvalidity,(now()+(b.periodvalidity||' day')::interval),
         b.times,b.points,b.times,'小程序购卡',1,'f',now(),#{userid}::bigint,
         (select name from user_base where userid=#{userid}::bigint),'::1',b.times,b.fee,now(),
-        #{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',
-        case when #{timefee}='S' then trunc(b.fee/b.times,2) else 0 end
+        #{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',(CASE when #{timefee}='0' then 0 else trunc(b.fee/b.times,2) end)
         from crd_membershipcardcategory_base as a inner join crd_membershipcardcategory_typecard as b
         on b.cardid=a.cardid and b.tid=#{tid}::bigint where a.cardid=#{cardid}::bigint
     </insert>
@@ -322,8 +320,7 @@
         totalfee,lastedon,lastedby,lastedname,lastedip,timefee) select #{cardno},'123456',a.cardid,a.cardname,a.cardtype,a.isfree,
         b.tid,b.fee,false,b.periodvalidity,b.times,b.points,b.times,'小程序购卡',1,
         'f',now(),#{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',b.times,b.fee,
-        now(),#{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',
-        case when #{timefee}='S' then trunc(b.fee/b.times,2) else 0 end
+        now(),#{userid}::bigint,(select name from user_base where userid=#{userid}::bigint),'::1',(CASE when #{timefee}='0' then 0 else trunc(b.fee/b.times,2) end)
         from crd_membershipcardcategory_base as a inner join crd_membershipcardcategory_typecard as b
         on b.cardid=a.cardid and b.tid=#{tid}::bigint where a.cardid=#{cardid}::bigint
     </insert>
