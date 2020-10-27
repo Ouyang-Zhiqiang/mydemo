@@ -16,4 +16,9 @@ public interface CurCourseMapper {
     int getNumberOfPrivateLessons(@Param("begintime") String begintime, @Param("endtime") String endtime, @Param("storeid") String storeid);
     int RegUserSendvcode(@Param("id")String id,@Param("num") String num,@Param("code") String code);
     List<Map> getcourseinformation(@Param("ScheduleId")String ScheduleId);
+    List<Map> privatelessonschedule(@Param("begintime")String begintime,@Param("endtime")String endtime,@Param("storeid")String storeid,@Param("coachid")String coachid);
+    Integer sijiaoyuyuerenshu(@Param("scheduleid")String scheduleid);
+    int xiugaijifen(@Param("points")String points,@Param("userid")String userid);
+    int goukasongjifen(@Param("userid")String userid,@Param("points")String points,@Param("remarks")String remarks,
+    @Param("createdby")String createdby,@Param("createdname")String createdname,@Param("createdip")String createdip);
 }
