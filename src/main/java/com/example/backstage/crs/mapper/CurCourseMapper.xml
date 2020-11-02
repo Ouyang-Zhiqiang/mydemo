@@ -162,7 +162,7 @@
 
     <select id="privatelessonschedule" resultType="map">
         select to_char(a.ScheduleDate,'yyyy-mm-dd') ScheduleDate,to_char(a.ScheduleBegin,'hh24:mi') ScheduleBegin,to_char(a.ScheduleEnd,'hh24:mi') ScheduleEnd,
-        a.CourseName,a.ReservableNumber,a.ReservedNumber,a.SignedNumber,b.CoachName,a.ScheduleId
+        a.CourseId,a.CourseName,a.ReservableNumber,a.ReservedNumber,a.SignedNumber,b.coachid,b.CoachName,a.ScheduleId,a.StoreId,a.StoreName
         from Cur_PrivSchedule a left join Cur_PrivCourse_Base b on a.courseid=b.courseid
         where ScheduleDate &gt;=#{begintime}::timestamp
         and ScheduleDate  &lt;#{endtime}::timestamp+ interval '1 day' and a.isremoved=false
@@ -183,6 +183,8 @@
         and cp.scheduleid=#{scheduleid}::bigint
     </select>
 
+
+
     <update id="xiugaijifen">
         update user_base set Points=Points+#{points}::numeric
         where userid=#{userid}::bigint
@@ -200,5 +202,12 @@
         #{createdname},#{createdip},'+',
         '购卡送积分');
     </insert>
+
+    <select id="ticeliebiao" resultType="map">
+        select testname,testvalue,to_char(createdon,'yyyy-MM-dd') createdon from Org_PhysicalTest_User
+        where userid=#{userid}::bigint
+        and isremoved=false
+        order by createdon asc
+    </select>
 
 </mapper>

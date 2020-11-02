@@ -3,6 +3,7 @@ package com.example.backstage.crs.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.backstage.crs.entity.LogMobileMetaEntity;
+import com.example.backstage.crs.entity.TiceEntity;
 import com.example.backstage.crs.mapper.CurCourseMapper;
 import com.example.backstage.crs.util.MsgParam;
 import com.example.backstage.crs.util.Param;
@@ -13,10 +14,7 @@ import javax.annotation.Resource;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CurCourseService {
@@ -138,16 +136,39 @@ public class CurCourseService {
         InetAddress address = InetAddress.getLocalHost();
         String createdip = address.getHostAddress();
         String remarks="购买"+param.getRemarks()+"赠积分";
-        System.err.println(param.getUserid());
-        System.err.println(param.getPoints());
-        System.err.println(remarks);
-        System.err.println(param.getCreatedby());
-        System.err.println(param.getCreatedname());
-        System.err.println(createdip);
         curCourseMapper.xiugaijifen(param.getPoints(),param.getUserid());
         curCourseMapper.goukasongjifen(param.getUserid(),param.getPoints(),remarks,param.getCreatedby(),param.getCreatedname(),createdip);
         return "ok";
     }
+
+    public String ticeliebiao(Param param){
+        List<Map> maps = curCourseMapper.ticeliebiao(param.getUserid());
+        List<Map> list =new LinkedList<>();
+        Map map=new HashMap();
+        for (int i = 0; i < maps.size(); i++) {
+            map.put(maps.get(i).get("testname"),maps.get(i).get("testvalue"));
+            if(i==maps.size()-1){
+                map.put("时间",maps.get(i).get("createdon"));
+                list.add(map);
+                break;
+            }
+            if(!maps.get(i).get("createdon").equals(maps.get(i+1).get("createdon"))){
+                map.put("时间",maps.get(i).get("createdon"));
+                list.add(map);
+                map=new HashMap();
+            }
+        }
+        System.err.println(list);
+        return JSON.toJSONStringWithDateFormat(list,"yyyy-MM-dd HH:mm");
+    }
+
+    public void addtice(Param param,TiceEntity tice){
+        System.err.println(tice);
+        System.err.println(param.getUserid());
+        System.err.println(param.getCreatedby());
+        System.err.println(param.getCreatedname());
+    }
+
 
 
 }

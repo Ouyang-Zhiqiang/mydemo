@@ -21,4 +21,6 @@ public interface CurCourseMapper {
     int xiugaijifen(@Param("points")String points,@Param("userid")String userid);
     int goukasongjifen(@Param("userid")String userid,@Param("points")String points,@Param("remarks")String remarks,
     @Param("createdby")String createdby,@Param("createdname")String createdname,@Param("createdip")String createdip);
+    List<Map> ticeliebiao(@Param("userid") String userid);
+
 }

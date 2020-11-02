@@ -1,5 +1,6 @@
 package com.example.backstage.crs.util;
 
+import com.example.backstage.crs.entity.TiceEntity;
 import lombok.Data;
 
 /**

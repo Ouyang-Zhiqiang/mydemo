@@ -1,4 +1,5 @@
 package com.example.backstage.crs.controller;
+import com.example.backstage.crs.entity.TiceEntity;
 import com.example.backstage.crs.service.CurCourseService;
 import com.example.backstage.crs.util.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/web/CCourse/")
@@ -88,6 +92,19 @@ public class CurCourseController {
     public String goukasongjifen(Param param) throws UnknownHostException {
         return curCourseService.goukasongjifen(param);
     }
+
+    @RequestMapping(value = "ticeliebiao",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String ticeliebiao(Param param){
+       return curCourseService.ticeliebiao(param);
+    }
+
+    @RequestMapping(value = "addtice",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public void addtice(TiceEntity tice,Param param){
+        curCourseService.addtice(param,tice);
+    }
+
 
 
 
