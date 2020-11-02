@@ -152,12 +152,53 @@
 
     <select id="getcourseinformation" resultType="map">
         select ub.name,ub.tel,oo.traineenum,cmb.cardname,oo.SignState,
-            oo.OrdState,oo.Remarks,oo.createdon,ct.reservablenumber
+            oo.OrdState,oo.Remarks,oo.createdon,ct.reservablenumber,oo.ordid,oo.userid,oo.cardno
         from Cur_TeamSchedule ct
         inner join Ord_OrderCourse oo on ct.scheduleid=oo.scheduleid
         inner join user_base ub on oo.userid=ub.userid
         inner join Crd_MembershipCard_Base cmb on oo.cardno=cmb.cardno
         where ct.ScheduleId=#{ScheduleId}::bigint
     </select>
+
+    <select id="privatelessonschedule" resultType="map">
+        select to_char(a.ScheduleDate,'yyyy-mm-dd') ScheduleDate,to_char(a.ScheduleBegin,'hh24:mi') ScheduleBegin,to_char(a.ScheduleEnd,'hh24:mi') ScheduleEnd,
+        a.CourseName,a.ReservableNumber,a.ReservedNumber,a.SignedNumber,b.CoachName,a.ScheduleId
+        from Cur_PrivSchedule a left join Cur_PrivCourse_Base b on a.courseid=b.courseid
+        where ScheduleDate &gt;=#{begintime}::timestamp
+        and ScheduleDate  &lt;#{endtime}::timestamp+ interval '1 day' and a.isremoved=false
+        <if test="storeid !=null and storeid!=''">
+            and storeid=#{storeid}::bigint
+        </if>
+        <if test="coachid !=null and coachid!=''">
+            and coachid=#{coachid}::bigint
+        </if>
+        order by ScheduleDate,ScheduleBegin
+    </select>
+
+    <select id="sijiaoyuyuerenshu" resultType="Integer">
+        select count(*) from ord_ordercourse oo
+        inner join Cur_PrivSchedule cp
+        on oo.scheduleid=cp.scheduleid
+        where oo.ordstate=1 and oo.isremoved=false
+        and cp.scheduleid=#{scheduleid}::bigint
+    </select>
+
+    <update id="xiugaijifen">
+        update user_base set Points=Points+#{points}::numeric
+        where userid=#{userid}::bigint
+    </update>
+
+    <insert id="goukasongjifen">
+        INSERT INTO log_user_points
+        (userid,currentpoints,points,surpluspoints,remarks,createdon,createdby,createdname,
+        createdip,actionstate,changeaction)
+        VALUES
+        (#{userid}::bigint,(select Points from user_base where userid=#{userid}::bigint)+#{points}::numeric,
+        #{points}::numeric,
+        (select Points from user_base where userid=#{userid}::bigint)+#{points}::numeric,
+        #{remarks},now(),#{createdby},
+        #{createdname},#{createdip},'+',
+        '购卡送积分');
+    </insert>
 
 </mapper>

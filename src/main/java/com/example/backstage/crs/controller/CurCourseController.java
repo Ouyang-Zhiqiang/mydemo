@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.UnknownHostException;
 import java.util.Date;
 
 @Controller
@@ -75,5 +76,21 @@ public class CurCourseController {
     public String getcourseinformation(Param param){
         return curCourseService.getcourseinformation(param);
     }
+
+    @RequestMapping(value = "privatelessonschedule",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String privatelessonschedule(Param param){
+        return curCourseService.privatelessonschedule(param);
+    }
+
+    @RequestMapping(value = "goukasongjifen",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String goukasongjifen(Param param) throws UnknownHostException {
+        return curCourseService.goukasongjifen(param);
+    }
+
+
+
+
 }
 

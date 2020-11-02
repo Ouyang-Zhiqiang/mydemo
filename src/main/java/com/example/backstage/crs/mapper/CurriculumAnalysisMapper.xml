@@ -120,7 +120,7 @@
         </if>
         group by ct.coachname,ct.scheduledate,ct.coachname,ct.coursename,ct.schedulebegin,
         ct.reservednumber,ct.reservablenumber,ct.signednumber
-        order by ct.scheduledate desc
+        order by ct.scheduledate desc,ct.ScheduleBegin asc
         limit #{limit}::bigint offset #{page}::bigint
     </select>
 
@@ -146,7 +146,7 @@
         </if>
         group by cp.scheduledate,cpb.coachname,cp.coursename,
         cp.schedulebegin,cp.reservednumber
-        order by cp.scheduledate desc
+        order by cp.scheduledate desc,cp.ScheduleBegin asc
         limit #{limit}::bigint offset #{page}::bigint
     </select>
 

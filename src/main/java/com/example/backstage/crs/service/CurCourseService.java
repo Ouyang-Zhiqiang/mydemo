@@ -10,6 +10,8 @@ import com.example.backstage.crs.util.Send;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -123,6 +125,29 @@ public class CurCourseService {
         return JSON.toJSONStringWithDateFormat(maps,"yyyy-MM-dd HH:mm");
     }
 
+    public String privatelessonschedule(Param param){
+        List<Map> maps = curCourseMapper.privatelessonschedule(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid());
+        for (Map map : maps) {
+            map.put("reservednumber",curCourseMapper.sijiaoyuyuerenshu(map.get("scheduleid").toString()));
+            map.put("scheduleid",map.get("scheduleid").toString());
+        }
+        return JSON.toJSONString(maps);
+    }
+
+    public String goukasongjifen(Param param) throws UnknownHostException {
+        InetAddress address = InetAddress.getLocalHost();
+        String createdip = address.getHostAddress();
+        String remarks="购买"+param.getRemarks()+"赠积分";
+        System.err.println(param.getUserid());
+        System.err.println(param.getPoints());
+        System.err.println(remarks);
+        System.err.println(param.getCreatedby());
+        System.err.println(param.getCreatedname());
+        System.err.println(createdip);
+        curCourseMapper.xiugaijifen(param.getPoints(),param.getUserid());
+        curCourseMapper.goukasongjifen(param.getUserid(),param.getPoints(),remarks,param.getCreatedby(),param.getCreatedname(),createdip);
+        return "ok";
+    }
 
 
 }
