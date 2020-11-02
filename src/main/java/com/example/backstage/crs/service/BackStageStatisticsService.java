@@ -92,17 +92,17 @@ public class BackStageStatisticsService  {
     }
 
     /*根据条件查询列表*/
-    public String selectMemberCardList(String storeid,String salerid,String datebegin,String dateend,String page,String limit) throws Exception{
+    public String selectMemberCardList(String storeid,String salerid,String datebegin,String dateend,String page,String limit,String name) throws Exception{
         List<Map<String, Object>> list=new ArrayList<>();
         Integer limits=Integer.parseInt(limit);
         Integer pages=(Integer.parseInt(page)-1)*limits;
         Integer total=0;
         if(!salerid.equalsIgnoreCase("")&&salerid!=null&&salerid.length()>0){
-            total=crdMembershipcardPurchaseMapper.selectStaticListBySaleridCount(storeid,salerid,datebegin,dateend);
-            list=crdMembershipcardPurchaseMapper.selectStaticListBySalerid(storeid,salerid,datebegin,dateend,limits,pages);
+            total=crdMembershipcardPurchaseMapper.selectStaticListBySaleridCount(storeid,salerid,datebegin,dateend,name);
+            list=crdMembershipcardPurchaseMapper.selectStaticListBySalerid(storeid,salerid,datebegin,dateend,limits,pages,name);
         }else{
-            total=crdMembershipcardPurchaseMapper.selectStaticListCount(storeid,salerid,datebegin,dateend);
-            list=crdMembershipcardPurchaseMapper.selectStaticList(storeid,salerid,datebegin,dateend,limits,pages);
+            total=crdMembershipcardPurchaseMapper.selectStaticListCount(storeid,salerid,datebegin,dateend,name);
+            list=crdMembershipcardPurchaseMapper.selectStaticList(storeid,salerid,datebegin,dateend,limits,pages,name);
         }
         Map<String,Object> pageTotal=new HashMap<String, Object>();
         if(total>0){
