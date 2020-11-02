@@ -34,9 +34,10 @@ public class BsMembershipCardController {
     @RequestMapping(value = "selectMemberCardList",produces = {"text/json;charset=UTF-8"})
     @ResponseBody
     public String selectMemberCardList(@RequestParam("storeid")String storeid,@RequestParam("saleuserid") String saleuserid,
-                                       @RequestParam("datebegin") String datebegin,@RequestParam("dateend")String dateend,@RequestParam("page")String page,@RequestParam("limit")String limit) throws Exception {
+                                       @RequestParam("datebegin") String datebegin,@RequestParam("dateend")String dateend,@RequestParam("page")String page,@RequestParam("limit")String limit
+    ,@RequestParam("name") String name) throws Exception {
         /*场馆名、销售人员名称、开始时间、结束时间*/
-        return backstagestatisticsService.selectMemberCardList(storeid,saleuserid,datebegin,dateend,page,limit);
+        return backstagestatisticsService.selectMemberCardList(storeid,saleuserid,datebegin,dateend,page,limit,name);
     }
 
     /*用户画像（单）*/

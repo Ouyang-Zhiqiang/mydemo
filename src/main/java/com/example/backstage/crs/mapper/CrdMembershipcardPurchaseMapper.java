@@ -23,13 +23,13 @@ public interface CrdMembershipcardPurchaseMapper {
 
     List<Map<String, Object>> selectMembershipcardReconciliation(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend);
 
-    Integer selectStaticListCount(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend);
+    Integer selectStaticListCount(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend,@Param("name")String name);
 
-    List<Map<String, Object>> selectStaticList(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend, @Param("limits") Integer limits, @Param("pages") Integer pages);
+    List<Map<String, Object>> selectStaticList(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend, @Param("limits") Integer limits, @Param("pages") Integer pages,@Param("name")String name);
 
-    Integer selectStaticListBySaleridCount(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend);
+    Integer selectStaticListBySaleridCount(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend,@Param("name")String name);
 
-    List<Map<String, Object>> selectStaticListBySalerid(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend, @Param("limits") Integer limits, @Param("pages") Integer page);
+    List<Map<String, Object>> selectStaticListBySalerid(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend, @Param("limits") Integer limits, @Param("pages") Integer page,@Param("name")String name);
 
     List<Map<String, Object>> selectThirdaccount(String openid);
 }
