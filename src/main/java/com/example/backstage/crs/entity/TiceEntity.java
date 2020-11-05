@@ -2,6 +2,8 @@ package com.example.backstage.crs.entity;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class TiceEntity {
     private String tizhi;
@@ -19,4 +21,8 @@ public class TiceEntity {
     private String gugeji;
     private String yaowei;
     private String tunwei;
+    private String userid;
+    private String createdby;
+    private String createdname;
+    private String createdon;
 }

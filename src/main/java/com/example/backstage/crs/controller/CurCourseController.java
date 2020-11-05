@@ -99,15 +99,30 @@ public class CurCourseController {
        return curCourseService.ticeliebiao(param);
     }
 
-    @RequestMapping(value = "addtice",produces = {"text/json;charset=UTF-8"})
+    @RequestMapping(value = "inserttice",produces = {"text/json;charset=UTF-8"})
     @ResponseBody
-    public void addtice(TiceEntity tice,Param param){
-        curCourseService.addtice(param,tice);
+    public void addtice(TiceEntity tice){
+        curCourseService.inserttice(tice);
     }
 
 
+    @RequestMapping(value = "xiaochengxukeyonghuiyanka",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String xiaochengxukeyonghuiyanka(Param param) throws Exception {
+        return curCourseService.xiaochengxukeyonghuiyanka(param);
+    }
 
+    @RequestMapping(value = "deletetice",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public void deletetice(String time,String userid){
+        curCourseService.deletetice(time, userid);
+    }
 
+    @RequestMapping(value = "updatetice",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public void updatetice(TiceEntity tice){
+        curCourseService.updatetice(tice);
+    }
 
 }
 

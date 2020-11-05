@@ -141,6 +141,122 @@ public class CurCourseService {
         return "ok";
     }
 
+    public String xiaochengxukeyonghuiyanka(Param param) throws Exception {
+        String result = "";
+        List<Map<String, Object>> list = curCourseMapper.xiaochengxukeyonghuiyanka(param.getUserid(), param.getScheduleid());
+        if(list!=null&&list.size()>0){
+            if (list.get(0)!=null&&list.get(0).size()>0){
+                result += courseAndCardJsonStr("", list.get(0));
+            }else {
+                result = "[]";
+            }
+        }else {
+            result = "[]";
+        }
+        System.err.println(result);
+        return result;
+    }
+
+    public String courseAndCardJsonStr(String result,Map<String,Object> map)throws Exception{
+
+        String str = "[";
+        if("".equals(map.get("cards")+"")||"null".equals(map.get("cards")+"")||"[]".equals(map.get("cards")+"")){
+            str =  "[]";
+        }else {
+            String[] strings = map.get("cards").toString().replace("[","").replace("]","").split(",\\{");
+            for (String strs:strings){
+                if (strs.startsWith("{")){
+
+                }else {
+                    strs = "{" + strs;
+                }
+                JSONObject json = JSON.parseObject(strs);
+                String f1 = json.getString("f1");
+                String f2 = json.getString("f2");
+                String f3 = json.getString("f3");
+                String f4 = json.getString("f4");
+                String f5 = json.getString("f5");
+                String f6 = json.getString("f6");
+
+                if (f6.equalsIgnoreCase("P")){
+
+                    Map<String,Object> map1 = curCourseMapper.selectcardtime(f1);
+                    Long _f4 = 0l;
+                    if (map1.get("cardend")!=null && (map1.get("cardend")+"").length()>0){
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                        Date date = new Date();
+                        String begindate = sdf.format(date);
+                        _f4 = getDaySub(begindate,map1.get("cardend").toString()) ;
+                        if (_f4<=0){
+                            _f4 = 0l;
+                        }
+                        f4 = _f4 + "";
+                    }else {
+                        f4 = _f4 + "";
+                    }
+                }
+                str += "{\"f1\":\""+f1+"\",\"f2\":\""+f2+"\",\"f3\":"+httpResurl(f3)+",\"f4\":"+f4+",\"f5\":"+f5+",\"f6\":\""+f6+"\"},";
+            }
+            str = str.substring(0, str.length() - 1) +"]";
+        }
+        String schedulebegin = "";
+        String scheduleend = "";
+        if (map.get("schedulebegin")!=null){
+            schedulebegin = map.get("schedulebegin").toString().substring(0,map.get("schedulebegin").toString().length()-3);
+            scheduleend = map.get("scheduleend").toString().substring(0,map.get("scheduleend").toString().length()-3);
+        }
+        result += "{\"scheduleid\":" + "\"" + map.get("scheduleid").toString() + "\""
+                + ",\"courseid\":"  +  "\"" + map.get("courseid").toString() + "\""
+                + ",\"coursename\":" +  "\"" + map.get("coursename").toString() + "\""
+                + ",\"schedulebegin\":" + "\"" + schedulebegin + "\""
+                + ",\"scheduleend\":"+ "\"" + scheduleend + "\""
+                + ",\"resurl\":" + httpResurl(isMapKey(map,"resurl"))
+                + ",\"labels\":" + "\"" + map.get("labels").toString() + "\""
+                + ",\"coachid\":" + "\"" + map.get("coachid").toString() + "\""
+                + ",\"coachname\":" + "\"" + map.get("coachname").toString() + "\""
+                + ",\"cards\":"  + str
+                + "}";
+        return result;
+    }
+
+    public Long getDaySub(String beginDateStr,String endDateStr)throws Exception {
+        Long day = 0l;
+        java.text.SimpleDateFormat format = new java.text.SimpleDateFormat("yyyy-MM-dd");
+
+        Date beginDate = format.parse(beginDateStr);
+        Date endDate= format.parse(endDateStr);
+        day = (endDate.getTime()-beginDate.getTime())/(24*60*60*1000l);
+        return day + 1;
+    }
+
+    public static String httpResurl(String resurl){
+        if (resurl==null){
+            return "\"\"";
+        }
+        if (resurl.toLowerCase().indexOf("http://")==0||resurl.toLowerCase().indexOf("https://")==0){
+            return "\""+resurl+"\"";
+        }else {
+            String http = "https://res.facebodyfitness.com/facebody";
+            if (resurl != null) {
+                if (resurl.length() > 0) {
+                    return "\"" + http + resurl + "\"";
+                } else {
+                    return "\"\"";
+                }
+            } else {
+                return "\"\"";
+            }
+        }
+    }
+
+    public static String isMapKey(Map<String,Object> map,String key){
+        if (map.get(key)!=null){
+            return map.get(key).toString();
+        }else {
+            return "";
+        }
+    }
+
     public String ticeliebiao(Param param){
         List<Map> maps = curCourseMapper.ticeliebiao(param.getUserid());
         List<Map> list =new LinkedList<>();
@@ -162,13 +278,79 @@ public class CurCourseService {
         return JSON.toJSONStringWithDateFormat(list,"yyyy-MM-dd HH:mm");
     }
 
-    public void addtice(Param param,TiceEntity tice){
-        System.err.println(tice);
-        System.err.println(param.getUserid());
-        System.err.println(param.getCreatedby());
-        System.err.println(param.getCreatedname());
+    public void inserttice(TiceEntity tice){
+            curCourseMapper.inserttice(tice.getUserid(),"11","体脂率","%",tice.getTizhi(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"7","身高","cm",tice.getShengao(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"8","体重","kg",tice.getTizhong(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"10","基础代谢","cal",tice.getJichudaixie(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"7","大腿围L","cal",tice.getDatuiweil(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"20","大腿围R","cal",tice.getDatuiweir(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"5","小腿L","cal",tice.getXiaotuil(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"6","小腿R","cal",tice.getXiaotuir(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"8","手臂L","cal",tice.getShoubil(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"9","手臂R","cal",tice.getShoubir(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"14","胸围","cal",tice.getXiongwei(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"12","脂肪含量","cal",tice.getZhifang(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"13","骨骼肌含量","cal",tice.getGugeji(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"15","腰围","cal",tice.getYaowei(),tice.getCreatedby(),tice.getCreatedname());
+            curCourseMapper.inserttice(tice.getUserid(),"16","臀围","cal",tice.getTunwei(),tice.getCreatedby(),tice.getCreatedname());
     }
 
+    public void deletetice(String time,String userid){
+        curCourseMapper.deletetice(time,userid);
+    }
+
+    public void updatetice(TiceEntity tice){
+        
+        List<Map> maps = curCourseMapper.selecttice(tice.getCreatedon(), tice.getUserid());
+        for (Map map : maps) {
+            if(map.get("testname").equals("体脂率")){
+                curCourseMapper.updatetice(tice.getTizhi(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"体脂率");
+            }
+            if(map.get("testname").equals("身高")){
+                curCourseMapper.updatetice(tice.getShengao(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"身高");
+            }
+            if(map.get("testname").equals("体重")){
+                curCourseMapper.updatetice(tice.getTizhong(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"体重");
+            }
+            if(map.get("testname").equals("基础代谢")){
+                curCourseMapper.updatetice(tice.getJichudaixie(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"基础代谢");
+            }
+            if(map.get("testname").equals("大腿围L")){
+                curCourseMapper.updatetice(tice.getDatuiweil(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"大腿围L");
+            }
+            if(map.get("testname").equals("大腿围R")){
+                curCourseMapper.updatetice(tice.getDatuiweir(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"大腿围R");
+            }
+            if(map.get("testname").equals("小腿L")){
+                curCourseMapper.updatetice(tice.getXiaotuil(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"小腿L");
+            }
+            if(map.get("testname").equals("小腿R")){
+                curCourseMapper.updatetice(tice.getXiaotuir(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"小腿R");
+            }
+            if(map.get("testname").equals("手臂L")){
+                curCourseMapper.updatetice(tice.getShoubil(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"手臂L");
+            }
+            if(map.get("testname").equals("手臂R")){
+                curCourseMapper.updatetice(tice.getShoubir(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"手臂R");
+            }
+            if(map.get("testname").equals("胸围")){
+                curCourseMapper.updatetice(tice.getXiongwei(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"胸围");
+            }
+            if(map.get("testname").equals("脂肪含量")){
+                curCourseMapper.updatetice(tice.getZhifang(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"脂肪含量");
+            }
+            if(map.get("testname").equals("骨骼肌含量")){
+                curCourseMapper.updatetice(tice.getGugeji(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"骨骼肌含量");
+            }
+            if(map.get("testname").equals("腰围")){
+                curCourseMapper.updatetice(tice.getYaowei(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"腰围");
+            }
+            if(map.get("testname").equals("臀围")){
+                curCourseMapper.updatetice(tice.getTunwei(),tice.getCreatedby(),tice.getCreatedname(),tice.getUserid(),tice.getCreatedon(),"臀围");
+            }
+        }
+    }
 
 
 }

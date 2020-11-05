@@ -92,4 +92,7 @@ public class Param {
     private String points;
     private String createdby;
     private String createdname;
+    private String schedulebegin;
+    private String coursename;
+    private String templatetype;
 }

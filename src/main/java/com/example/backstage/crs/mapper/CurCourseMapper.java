@@ -22,5 +22,11 @@ public interface CurCourseMapper {
     int goukasongjifen(@Param("userid")String userid,@Param("points")String points,@Param("remarks")String remarks,
     @Param("createdby")String createdby,@Param("createdname")String createdname,@Param("createdip")String createdip);
     List<Map> ticeliebiao(@Param("userid") String userid);
-
+    int inserttice(@Param("userid")String userid,@Param("testtypeid")String testtypeid,@Param("testname")String testname,@Param("testunit")String testunit,
+    @Param("testvalue")String testvalue,@Param("createdby")String createdby,@Param("createdname")String createdname);
+    List<Map<String,Object>> xiaochengxukeyonghuiyanka(@Param("userid")String userid,@Param("scheduleid")String scheduleid);
+    Map<String,Object> selectcardtime(@Param("cardno")String cardno);
+    int deletetice(@Param("time")String time,@Param("userid")String userid);
+    int updatetice(@Param("testvalue")String testvalue,@Param("lastedby")String lastedby,@Param("lastedname")String lastedname,@Param("userid")String userid,@Param("time")String time,@Param("testname")String testname);
+    List<Map> selecttice(@Param("time")String time,@Param("userid")String userid);
 }
