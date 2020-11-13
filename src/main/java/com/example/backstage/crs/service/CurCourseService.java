@@ -126,7 +126,6 @@ public class CurCourseService {
     public String privatelessonschedule(Param param){
         List<Map> maps = curCourseMapper.privatelessonschedule(param.getCourseDatestart(), param.getCourseDateend(), param.getStoreid(), param.getCoachid());
         for (Map map : maps) {
-            map.put("reservednumber",curCourseMapper.sijiaoyuyuerenshu(map.get("scheduleid").toString()));
             map.put("scheduleid",map.get("scheduleid").toString());
         }
         return JSON.toJSONString(maps);
