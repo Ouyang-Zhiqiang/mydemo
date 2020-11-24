@@ -271,9 +271,18 @@
     </update>
 
     <select id="getopenid" resultType="map">
-        select b.bindcode openid from user_base a
-        inner join User_Bind_ThirdAccount b
-        on a.userid=b.userid where a.userid=#{userid}::bigint
+        select edopenid as openid from User_Bind_ThirdAccount_WXLog a
+        inner join User_Bind_ThirdAccount b on a.nickname=b.bindinfor1
+        where b.userid=#{userid}::bigint
+        limit 1
+    </select>
+    <select id="wxlogin" resultType="map">
+        select a.userid,a.roleid,a.storeid,b.name,c.BindInfor2 as resurl,
+        to_char(a.createdon,'yyyy-mm-dd') createdon,b.tel
+        from user_staff a
+        left join user_base b on a.userid=b.userid
+        left join User_Bind_ThirdAccount c on c.userid=b.userid
+        where c.bindinfor4=#{unionid} and b.status=1 and a.status=1
     </select>
 
 </mapper>

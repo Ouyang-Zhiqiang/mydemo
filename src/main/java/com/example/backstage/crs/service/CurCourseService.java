@@ -120,6 +120,9 @@ public class CurCourseService {
     public String  getcourseinformation(Param param){
         System.err.println(param.getScheduleid());
         List<Map> maps = curCourseMapper.getcourseinformation(param.getScheduleid());
+        for (Map map : maps) {
+            map.put("ordid",map.get("ordid").toString());
+        }
         return JSON.toJSONStringWithDateFormat(maps,"yyyy-MM-dd HH:mm");
     }
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -19,5 +20,17 @@ public class WxRemindController {
     @ResponseBody
     public String geiWxRemind(Param param){
         return wxRemindService.geiWxRemind(param);
+    }
+
+    @RequestMapping(value = "/wxLogin",produces = {"text/json;charset=UTF-8"},method = RequestMethod.POST)
+    @ResponseBody
+    public String wxLogin(Param param) throws Exception {
+        System.err.println(param.getCode());
+        if (null!=param.getCode()&&""!=param.getCode()){
+            return wxRemindService.getOpenid(param.getCode());
+        }else {
+            return "登录异常";
+        }
+
     }
 }

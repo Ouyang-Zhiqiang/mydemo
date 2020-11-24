@@ -95,4 +95,6 @@ public class Param {
     private String schedulebegin;
     private String coursename;
     private String templatetype;
+    private String cardname;
+    private String time;
 }
