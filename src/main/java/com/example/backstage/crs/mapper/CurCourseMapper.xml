@@ -157,7 +157,7 @@
         inner join Ord_OrderCourse oo on ct.scheduleid=oo.scheduleid
         inner join user_base ub on oo.userid=ub.userid
         inner join Crd_MembershipCard_Base cmb on oo.cardno=cmb.cardno
-        where ct.ScheduleId=#{ScheduleId}::bigint
+        where oo.cardtype='T' and  ct.ScheduleId=#{ScheduleId}::bigint
     </select>
 
     <select id="privatelessonschedule" resultType="map">
@@ -206,21 +206,31 @@
     <select id="xiaochengxukeyonghuiyanka" resultType="map">
         select u.scheduleid,u.courseid,u.coursename,u.schedulebegin,u.scheduleend,w.resurl,w.labels,u.coachid,u.coachname
         ,COALESCE((select array_to_json(array_agg(row_to_json(row(
-        b.cardno,c.cardname,c.resurl,b.curtimes,COALESCE((select favconstimes from cur_teamschedule_membercard_favprice where scheduleid=e.scheduleid and cardid=c.cardid and isused is TRUE),d.constimes),c.cardtype
-        ))))from crd_membershipcard_user as a inner join crd_membershipcard_base as b on b.cardno=a.cardno and b.state = 1 and b.isremoved is FALSE
+        b.cardno,c.cardname,c.resurl,b.curtimes,COALESCE((select favconstimes from cur_teamschedule_membercard_favprice
+        where scheduleid=e.scheduleid and cardid=c.cardid and isused is TRUE),d.constimes),c.cardtype
+        ))))from crd_membershipcard_user as a inner join crd_membershipcard_base as b on b.cardno=a.cardno
+        and b.state = 1 and b.isremoved is FALSE
         and b.isopen is true
         and b.curtimes>0 and (
         ((to_char(current_date,'YYYY-MM-DD')
-        BETWEEN COALESCE(to_char(b.cardbegin,'YYYY-MM-DD'),'2000-01-01') and COALESCE(to_char(b.cardend,'YYYY-MM-DD'),'2050-12-31')))) and (to_char(current_date,'YYYY-MM-DD')&lt;COALESCE(to_char(b.disablebegin,'YYYY-MM-DD'),'2050-12-31') or to_char(current_date,'YYYY-MM-DD')>COALESCE(to_char(b.disableend,'YYYY-MM-DD'),'2000-01-01'))
-        inner join crd_membershipcardcategory_base as c on c.cardid=b.cardid and c.isremoved is FALSE and c.coursetype='T' inner join crd_membershipcardcategory_teamcourse
-        as d on d.cardid=c.cardid and d.cardid=b.cardid and d.isremoved is FALSE inner join cur_teamschedule as e on e.cid=d.courseid and e.isremoved is FALSE and e.scheduleid=u.scheduleid
-        inner join (select cardid,json_array_elements(storesjson) as data from crd_membershipcardcategory_base where isremoved is FALSE order by seqno asc) as t on t.cardid=b.cardid and
-        t.cardid=d.cardid and (t.data::json#>>'{StoreId}')=e.storeid||'' where a.userid=#{userid}::bigint  and a.state=1 and a.isremoved is FALSE ),'[]') as cards
+        BETWEEN COALESCE(to_char(b.cardbegin,'YYYY-MM-DD'),'2000-01-01')
+        and COALESCE(to_char(b.cardend,'YYYY-MM-DD'),'2050-12-31'))))
+        and (to_char(current_date,'YYYY-MM-DD')&lt;COALESCE(to_char(b.disablebegin,'YYYY-MM-DD'),'2050-12-31')
+        or to_char(current_date,'YYYY-MM-DD')>COALESCE(to_char(b.disableend,'YYYY-MM-DD'),'2000-01-01'))
+        inner join crd_membershipcardcategory_base as c on c.cardid=b.cardid
+        and c.isremoved is FALSE and c.coursetype='T' inner join crd_membershipcardcategory_teamcourse
+        as d on d.cardid=c.cardid and d.cardid=b.cardid and d.isremoved is FALSE
+         inner join cur_teamschedule as e on e.cid=d.courseid and e.isremoved is FALSE and e.scheduleid=u.scheduleid
+        inner join (select cardid,json_array_elements(storesjson) as data from crd_membershipcardcategory_base
+        where isremoved is FALSE order by seqno asc) as t on t.cardid=b.cardid and
+        t.cardid=d.cardid and (t.data::json#>>'{StoreId}')=e.storeid||'' where a.userid=#{userid}::bigint
+        and a.state=1 and a.isremoved is FALSE ),'[]') as cards
         from Cur_TeamSchedule
         as u INNER JOIN cur_teamcourse_base as v on v.courseid=u.courseid and v.state=1 and v.isremoved is FALSE
         INNER JOIN Cur_TeamCourseCategory_Base as w on w.cid=v.cid
         where u.isremoved is FALSE and u.isopened is TRUE
-        and to_char(now(),'yyyy-MM-dd HH24:MI:00')&lt;(u.scheduledate || ' ' || u.schedulebegin) and u.reservablenumber>u.reservednumber and u.scheduleid=#{scheduleid} ::bigint
+        and to_char(now(),'yyyy-MM-dd HH24:MI:00')&lt;(u.scheduledate || ' ' || u.schedulebegin)
+        and u.reservablenumber>u.reservednumber and u.scheduleid=#{scheduleid} ::bigint
 
     </select>
 
@@ -232,7 +242,7 @@
         select testname,testvalue,to_char(createdon,'yyyy-MM-dd') createdon from Org_PhysicalTest_User
         where userid=#{userid}::bigint
         and isremoved=false
-        order by createdon asc
+        order by createdon desc
     </select>
 
     <insert id="inserttice">
@@ -259,5 +269,11 @@
         where userid=#{userid}::bigint and createdon &gt;=#{time}::timestamp and createdon &lt;#{time}::timestamp+ interval '1 day'
         and testname=#{testname}
     </update>
+
+    <select id="getopenid" resultType="map">
+        select b.bindcode openid from user_base a
+        inner join User_Bind_ThirdAccount b
+        on a.userid=b.userid where a.userid=#{userid}::bigint
+    </select>
 
 </mapper>

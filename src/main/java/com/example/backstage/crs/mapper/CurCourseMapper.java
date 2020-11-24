@@ -29,4 +29,5 @@ public interface CurCourseMapper {
     int deletetice(@Param("time")String time,@Param("userid")String userid);
     int updatetice(@Param("testvalue")String testvalue,@Param("lastedby")String lastedby,@Param("lastedname")String lastedname,@Param("userid")String userid,@Param("time")String time,@Param("testname")String testname);
     List<Map> selecttice(@Param("time")String time,@Param("userid")String userid);
+    Map<String,Object> getopenid(@Param("userid")String userid);
 }
