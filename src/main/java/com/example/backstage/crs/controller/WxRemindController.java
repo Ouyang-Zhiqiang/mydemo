@@ -15,7 +15,7 @@ public class WxRemindController {
     @Autowired
     private WxRemindService wxRemindService;
 
-    @GetMapping(value = "/geiWxRemind",produces = {"text/json;charset=UTF-8"})
+    @RequestMapping(value = "/geiWxRemind",produces = {"text/json;charset=UTF-8"})
     @ResponseBody
     public String geiWxRemind(Param param){
         return wxRemindService.geiWxRemind(param);

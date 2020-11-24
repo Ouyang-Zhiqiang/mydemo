@@ -55,8 +55,14 @@ public class WxRemindService {
             list.add(new TemplateParam("time3",param.getSchedulebegin()));
             list.add(new TemplateParam("name1",param.getCoursename()));
             wxMssVo.setTemplate_id("kAtadGTe9w_WA4VT3rMrDHj-ecj1aPt1AVBOzxOb0Tc");
+        }else if(param.getTemplatetype().equals("3")){
+            list.add(new TemplateParam("time3",param.getSchedulebegin()));
+            list.add(new TemplateParam("thing1","飞燕"));
+            list.add(new TemplateParam("thing4",param.getCoursename()));
+            wxMssVo.setTemplate_id("t2wEM3FhCIQC6n4ibc6wjtzTIk1Llbodywa_RdQkNlw");
         }
         wxMssVo.setTemplateParamList(list);
+        System.err.println(wxMssVo.toJSON());
         return wxMssVo.toJSON();
     }
 
