@@ -1,6 +1,8 @@
 package com.example.backstage.crs.mapper;
 
 
+import com.example.backstage.crs.entity.UserBaseEntity;
+import com.example.mydemo.pojo.UserBase;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -40,4 +42,17 @@ public interface UserBaseMappers {
     List<Map<String, Object>> selectIsfreeTrueByCardNumber(@Param("CourseDatestart") String CourseDatestart, @Param("CourseDateend") String CourseDateend, @Param("storeid") String storeid, @Param("idArray") String[] idArray);
 
     String selectUserIdByPhone(String tel);
+
+
+    List<UserBaseEntity> selectClassNumberOfMonth(String dateStr);
+
+    int updateClassNumber(Long userid);
+
+    List<UserBaseEntity> selectUserByInteger(Long[] longs);
+
+    int updateClassNumberNotMemgrade(Long userid);
+
+    int updateClassNumberNotClassnumber(long userid);
+
+    int updateReduce(Long[] useridArray);
 }

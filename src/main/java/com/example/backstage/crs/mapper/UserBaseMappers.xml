@@ -234,4 +234,45 @@
         select ub.userid from user_base ub where ub.tel=#{tel}
     </select>
 
+    <!--查询当月会员上课次数-->
+    <select id="selectClassNumberOfMonth" resultType="com.example.backstage.crs.entity.UserBaseEntity">
+        select * from(
+        select count(oo.userid) as cuserid,oo.userid,ub.memgrade ::int4 as memgradeone,ub.classnumber from ord_ordercourse  oo
+        left join user_base ub on oo.userid = ub.userid
+        where to_char(oo.coursedate,'yyyy-MM')=#{dateStr} and oo.ordstate='1' and oo.signstate='1'
+        group by oo.userid,ub.memgrade,ub.classnumber ) a
+        <where>
+            <![CDATA[ case when a.memgradeone=4 then 1!=1 when a.memgradeone=3 then a.cuserid>=6 when  a.memgradeone<3 then a.cuserid>=12 end ]]>
+        </where>
+    </select>
+
+    <update id="updateClassNumber" parameterType="Integer">
+            update
+            user_base
+            set
+                    classnumber = 0,
+                    MemGrade=MemGrade+1
+            WHERE
+            userid = #{userid}
+    </update>
+
+    <update id="updateClassNumberNotMemgrade" parameterType="Long">
+            update
+            user_base
+            set
+                    classnumber = classnumber+1
+            WHERE
+            userid = #{userid}
+    </update>
+
+    <update id="updateClassNumberNotClassnumber" parameterType="Long">
+            update
+            user_base
+            set
+                    classnumber = classnumber+1
+            WHERE
+            userid = #{userid}
+    </update>
+
+
 </mapper>
