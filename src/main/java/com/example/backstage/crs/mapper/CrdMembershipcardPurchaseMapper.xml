@@ -155,7 +155,7 @@
         left join User_Base ub on ab.userid=ub.userid
         left join crd_membershipcard_purchase cmp on cmr.cardno=cmp.cardno and cmp.BuyType='F'
         union all
-        select to_char(cmt.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmt.cardname,ub.name,cmt.fee as sellingfee,case cmt.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'转卡' as buytype ,cmp.createdname as lastedname,cmp.remarks
+        select to_char(cmt.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmt.cardname,ub.name,cmt.fee as sellingfee,case cmt.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'转卡' as buytype  ,cmt.createdname as lastedname,cmt.remarks
         from Crd_MembershipCard_Transfer cmt
         left join Crd_MembershipCard_User ab on ab.cardno=cmt.cardno
         left join User_Base ub on ab.userid=ub.userid
@@ -197,7 +197,7 @@
         left join User_Base ub on ab.userid=ub.userid
         left join crd_membershipcard_purchase cmp on cmr.cardno=cmp.cardno and cmp.BuyType='F'
         union all
-        select to_char(cmt.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmt.cardname,ub.name,cmt.fee as sellingfee,case cmt.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'转卡' as buytype ,cmp.createdname as lastedname,cmp.remarks
+        select to_char(cmt.createdon,'yyyy-mm-dd HH24:MI') as createdon,cmt.cardname,ub.name,cmt.fee as sellingfee,case cmt.payments when 1 then '扫码支付' when 2 then  '转账' when 3 then  '刷卡' else '其他' end  as payment,'0' as buytimes,'无销售' as salername,cmp.storeid,cmp.storename,'转卡' as buytype ,cmt.createdname as lastedname,cmt.remarks
         from Crd_MembershipCard_Transfer cmt
         left join Crd_MembershipCard_User ab on ab.cardno=cmt.cardno
         left join User_Base ub on ab.userid=ub.userid

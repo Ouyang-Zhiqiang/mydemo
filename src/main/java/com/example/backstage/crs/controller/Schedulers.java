@@ -61,11 +61,11 @@ public class Schedulers {
 //        }
 //    }
 
-//    //每天09:05执行
+    //每天09:05执行
 //    @SneakyThrows
-//    @Scheduled(cron = "0 36 16 23 1/1 ? ")//0 0 0 1 1/1 ?
+//    @Scheduled(cron = "* 0 10 * * ?")//0 0 0 1 1/1 ?
 //     public void testTasksOnMonth() {
-////        System.out.println("打印");
+//        System.out.println("打印");
 //         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM");
 //        Calendar date1 = Calendar.getInstance();
 //        date1.add(Calendar.MONTH,-1);
@@ -79,15 +79,15 @@ public class Schedulers {
 //        lastTwoC1.add(Calendar.MONTH,-3);
 //        //前两个月日期
 //        String lastTwoMonth=format.format(lastTwoC1.getTime());
-//        /*查询出每个会员本月上次次数*/
+        /*查询出每个会员本月上课次数*/
 //        List<UserBaseEntity> list= userBasesService.selectClassNumberOfMonth(dateStr);
 //        if(list.size()>0&&list!=null){
 //            for (UserBaseEntity userBaseEntity : list) {
 //                Integer mer =userBaseEntity.getMemgradeone();
-//                if (mer < 3 && userBaseEntity.getClassnumber() >= 12) {
+//                if (mer < 3 && userBaseEntity.getClassnumber() == 8) {
 //                    int result = userBasesService.updateClassNumber(userBaseEntity.getUserid());
 //                }
-//                else if(userBaseEntity.getClassnumber() >= 7 && mer == 3){
+//                else if(userBaseEntity.getClassnumber() == 6 && mer == 3){
 //                    int result = userBasesService.updateClassNumberNotClassnumber(userBaseEntity.getUserid());
 //                }
 //                else {
@@ -95,10 +95,17 @@ public class Schedulers {
 //                }
 //            }
 //        }
-//
-//        /*查询出前三个月未上过课的会员：会员等级降一级*/
+
+        /*查询出前三个月未上过课的会员：会员等级降一级*/
 //        List<Long> list1=orderCourseService.selectOnCourseThreeMonth(dateStr,lastOneMonth,lastTwoMonth);
-//        Long[] useridArray=list1.toArray(new Long[list1.size()]);
-//        int success=userBasesService.updateReduce(useridArray);
+//        //初始化需要得到的数组
+//        Long[] useridArray = new Long[list1.size()];
+//
+//        //使用for循环得到数组
+//        for(int i = 0; i < list1.size();i++){
+//            useridArray[i] = list1.get(i);
+//        }
+//        int success=orderCourseService.updateReduce(useridArray);
+//        System.out.println("成功！");
 //    }
 }

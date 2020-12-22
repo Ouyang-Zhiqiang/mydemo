@@ -34,7 +34,5 @@ public class UserBasesService {
         return userBaseMappers.updateClassNumberNotClassnumber(userid);
     }
 
-    public int updateReduce(Long[] useridArray) {
-        return userBaseMappers.updateReduce(useridArray);
-    }
+
 }

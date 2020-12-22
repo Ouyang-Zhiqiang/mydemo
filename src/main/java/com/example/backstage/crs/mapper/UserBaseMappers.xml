@@ -242,7 +242,7 @@
         where to_char(oo.coursedate,'yyyy-MM')=#{dateStr} and oo.ordstate='1' and oo.signstate='1'
         group by oo.userid,ub.memgrade,ub.classnumber ) a
         <where>
-            <![CDATA[ case when a.memgradeone=4 then 1!=1 when a.memgradeone=3 then a.cuserid>=6 when  a.memgradeone<3 then a.cuserid>=12 end ]]>
+            <![CDATA[ case when a.memgradeone=4 then 1!=1 when a.memgradeone=3 then a.cuserid>=15 when  a.memgradeone<3 then a.cuserid>=12 end ]]>
         </where>
     </select>
 
@@ -269,7 +269,7 @@
             update
             user_base
             set
-                    classnumber = classnumber+1
+                     MemGrade=MemGrade+1
             WHERE
             userid = #{userid}
     </update>
