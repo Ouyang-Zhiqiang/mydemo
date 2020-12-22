@@ -245,18 +245,19 @@
 
 	<select id="selectOnCourseThreeMonth" resultType="Long">
 		select userid from ord_ordercourse where to_char(coursedate,'yyyy-MM')=#{fristMonth}
-				and userid in (select userid from ord_ordercourse where to_char(coursedate,'yyyy-MM')=#{twoMonth})
-				and userid in (select userid from ord_ordercourse where to_char(coursedate,'yyyy-MM')=#{threeMonth})
-		group by userid;
+				and userid in (select userid from ord_ordercourse where to_char(coursedate,'yyyy-MM')=#{twoMonth} and ordstate='1' and signstate='1')
+				and userid in (select userid from ord_ordercourse where to_char(coursedate,'yyyy-MM')=#{threeMonth} and ordstate='1' and signstate='1')
+				and ordstate='1' and signstate='1'
+		group by userid
 	</select>
 
 	<update id="updateReduce" parameterType="Long">
-		update User_Base set memgrade=memgrade-1
+		update User_Base set memgrade=(memgrade ::int-1)::varchar
 		where userid not in
 		<foreach collection="useridArray" item="userid" open="(" close=")" separator=",">
 			#{userid} ::bigint
 		</foreach>
-		and memgrade>1
+		and memgrade::int>1
 	</update>
 
 </mapper>

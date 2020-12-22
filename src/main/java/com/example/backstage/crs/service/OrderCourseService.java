@@ -16,4 +16,8 @@ public class OrderCourseService {
     public List<Long> selectOnCourseThreeMonth(String dateStr, String lastOneMonth, String lastTwoMonth) {
         return ordOrdercourseMapper.selectOnCourseThreeMonth(dateStr,lastOneMonth,lastTwoMonth);
     }
+
+    public int updateReduce(Long[] useridArray) {
+        return ordOrdercourseMapper.updateReduce(useridArray);
+    }
 }

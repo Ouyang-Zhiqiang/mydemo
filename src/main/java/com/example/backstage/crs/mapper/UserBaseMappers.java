@@ -54,5 +54,4 @@ public interface UserBaseMappers {
 
     int updateClassNumberNotClassnumber(long userid);
 
-    int updateReduce(Long[] useridArray);
 }
