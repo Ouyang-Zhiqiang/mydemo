@@ -153,6 +153,42 @@ public class WxRemindService {
         return JSON.toJSONString(courseMapper.wxlogin(unionId));
     }
 
+    public String getunionId(String code){
+        String unionId="";
+        String strAppId = "wx334468183654cf80";//就是appid
+        String strSecret= "f5af5ed7bbaffe216534bb577b84b836";//就是secret
+        String strUrl =" https://api.weixin.qq.com/sns/jscode2session";
+        strUrl += "?appid=" + strAppId;
+        strUrl += "&secret=" + strSecret;
+        strUrl += "&js_code=" + code; //微信反馈的code
+        strUrl += "&grant_type=authorization_code";
+        byte[] res = null;
+        org.apache.http.client.HttpClient httpclient = new DefaultHttpClient();
+        HttpGet httpget = new HttpGet();
+        try {
+            URL url = new URL(strUrl);
+            URI uri = new URI(url.getProtocol(), url.getHost(), url.getPath(), url.getQuery(), null);
+            httpget = new HttpGet(uri);
+            HttpResponse response = null;
+            response = httpclient.execute(httpget);
+            res = IOUtils.toByteArray(response.getEntity().getContent());
+        } catch (Exception e) {
+
+        } finally {
+            if (httpget != null) {
+                httpget.abort();
+            }
+            httpclient.getConnectionManager().shutdown();
+        }
+        try {
+            JSONObject jsonObject = JSONObject.fromObject(new String(res, "utf-8"));
+            unionId = jsonObject.getString("unionid");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return unionId;
+    }
+
 
 
 
