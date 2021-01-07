@@ -38,6 +38,7 @@ public class WxRemindService {
         //https发送消息
         String url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=" + getAccessToken();
         JSONObject jsonResult = CommonUtil.httpsRequest(url, "POST", setWxMssVo(param));
+        System.err.println(jsonResult);
         if(jsonResult!=null){
             int errorCode=jsonResult.getInt("errcode");
             if(errorCode==0){
@@ -97,6 +98,7 @@ public class WxRemindService {
             wxMssVo.setTemplate_id("hClZVlmGN_wmRlymc47YPDY-U_iRz-MaFSNO8TjUXb0");
         }
         wxMssVo.setTemplateParamList(list);
+        System.err.println(wxMssVo);
         return wxMssVo.toJSON();
     }
 

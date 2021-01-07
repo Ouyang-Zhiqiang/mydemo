@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.backstage.crs.mapper.CrdMembershipcardPurchaseMapper">
+
     <insert id="insertCrdMembershipCardPurchase"   parameterType="com.example.backstage.crs.entity.CrdMembershipcardPurchaseEntity"   keyProperty="purchaseid" useGeneratedKeys="true">
         insert into Crd_MembershipCard_Purchase
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -273,4 +274,157 @@
     <select id="selectThirdaccount" resultType="java.util.HashMap">
         select userid from user_bind_thirdaccount where bindinfor4=#{openid}
     </select>
+
+    <select id="GetAllListSpecialChar"   resultType="com.example.backstage.crs.entity.CrdMembershipcardPurchaseEntity" >
+        SELECT to_char(createdon,'yyyy-MM-dd') as createdname,SUM(sellingfee) as sellingfee from (
+        SELECT a.cardno, a.cardid, sellingfee , buytimes,
+        (case when buytype='F' then '首次购卡' else '续卡' end ) as cardpwd ,a.createdon,a.createdname , 0 as transtype,a.remarks
+        FROM crd_membershipcard_purchase a
+        <where> 1=1
+            <if test="startDate!=null and startDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="endDate!=null and endDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="storeId!=null and storeId!=''">
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+            </if>
+        </where>
+        union
+        SELECT a.cardno, a.cardid,
+        (case when stoptype='P' then -fee else fee end ) as sellingfee,
+        (case when stoptype='P' then 0 else 1 end ) as buytimes,
+        (case when stoptype='P' then '永久停卡' else '临时停卡' end ) ,a.createdon ,a.createdname ,(case when stoptype='P' then 1 else 0 end ) as isremoved, a.remarks
+        FROM crd_membershipcard_stop a left join Crd_MembershipCard_Purchase b on a.cardno=b.cardno
+        <where> 1=1
+            <if test="startDate!=null and startDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="endDate!=null and endDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="storeId!=null and storeId!=''">
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+            </if>
+        </where>
+        union
+        SELECT a.cardno, a.cardid, fee as sellingfee,0 as buytimes, '转卡'as cardpwd, a.createdon ,a.createdname ,0 as transtype, a.remarks
+        FROM crd_membershipcard_transfer a left join Crd_MembershipCard_Purchase b on a.cardno=b.cardno
+        <where> 1=1
+            <if test="startDate!=null and startDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="endDate!=null and endDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="storeId!=null and storeId!=''">
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+            </if>
+        </where>
+        union
+        SELECT a.cardno, a.cardid, recamount as sellingfee,0 as buytimes, '平账'as cardpwd,a.createdon,a.createdname ,(case when rectype='A' then 0 else 1 end )as transtype, a.remarks
+        FROM crd_membershipcard_reconciliation a left join Crd_MembershipCard_Purchase b on a.cardno=b.cardno
+        <where> 1=1
+            <if test="startDate!=null and startDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="endDate!=null and endDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="storeId!=null and storeId!=''">
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+            </if>
+        </where>
+        union
+        SELECT cardno, cardid, 0 as sellingfee,0 as buytimes, '期限变更'as cardpwd, createdon ,createdname ,0 as transtype, remarks
+        FROM crd_membershipcard_changeperiod a
+        <where> 1=1
+            <if test="startDate!=null and startDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="endDate!=null and endDate!=''">
+                <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+            <if test="storeId!=null and storeId!=''">
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+            </if>
+        </where>
+      ) as t
+        <where> 1=1
+            <if test="startDate!=null and startDate!=''">
+                <![CDATA[  AND to_char(createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd')]]>
+            </if>
+            <if test="endDate!=null and endDate!=''">
+                <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
+            </if>
+        </where>
+        GROUP BY to_char(createdon,'yyyy-MM-dd');
+    </select>
+
+    <select id="GetAllListByPayWay"   resultType="com.example.backstage.crs.entity.CrdMembershipcardPurchaseEntity"  >
+      SELECT a.payments as payment,SUM(a.sellingfee) as sellingfee FROM (
+      SELECT payment as payments,SUM(sellingfee) as sellingfee FROM crd_membershipcard_purchase
+      <where> 1=1
+       <if test="startDate!=null and startDate!=''">
+        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+       </if>
+       <if test="endDate!=null and endDate!=''">
+           <![CDATA[AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
+       </if>
+       <if test="storeId!=null and storeId!=''">
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+       </if>
+       </where>
+      GROUP BY payment
+
+      UNION
+
+      SELECT payments,SUM(CASE when stoptype='P' THEN -fee else fee END) as sellingfee FROM crd_membershipcard_stop
+      <where> 1=1
+       <if test="startDate!=null and startDate!=''">
+        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+       </if>
+       <if test="endDate!=null and endDate!=''">
+           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
+       </if>
+       <if test="storeId!=null and storeId!=''">
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+       </if>
+       </where>
+      GROUP BY payments
+
+      UNION
+      SELECT 4 as payments,SUM(fee) as sellingfee FROM crd_membershipcard_transfer
+      <where> 1=1
+       <if test="startDate!=null and startDate!=''">
+        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+       </if>
+       <if test="endDate!=null and endDate!=''">
+           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
+       </if>
+       <if test="storeId!=null and storeId!=''">
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+       </if>
+       </where>
+      GROUP BY payments
+
+      UNION
+      SELECT 4 as payments,SUM(recamount) as sellingfee FROM crd_membershipcard_reconciliation
+      <where> 1=1
+       <if test="startDate!=null and startDate!=''">
+        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+       </if>
+       <if test="endDate!=null and endDate!=''">
+           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
+       </if>
+       <if test="storeId!=null and storeId!=''">
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+       </if>
+       </where>
+      GROUP BY payments
+      ) a
+      GROUP BY a.payments
+    </select>
+
 </mapper>
