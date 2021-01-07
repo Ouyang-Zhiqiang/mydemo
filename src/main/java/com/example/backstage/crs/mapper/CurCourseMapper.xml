@@ -162,7 +162,7 @@
 
     <select id="privatelessonschedule" resultType="map">
         select to_char(a.ScheduleDate,'yyyy-mm-dd') ScheduleDate,to_char(a.ScheduleBegin,'hh24:mi') ScheduleBegin,to_char(a.ScheduleEnd,'hh24:mi') ScheduleEnd,
-        a.CourseId,a.CourseName,a.ReservableNumber,a.ReservedNumber,a.SignedNumber,b.coachid,b.CoachName,a.ScheduleId,a.StoreId,a.StoreName
+        a.CourseId::VARCHAR ,a.CourseName,a.ReservableNumber,a.ReservedNumber,a.SignedNumber,b.coachid::VARCHAR,b.CoachName,a.ScheduleId::VARCHAR,a.StoreId::VARCHAR ,a.StoreName
         from Cur_PrivSchedule a left join Cur_PrivCourse_Base b on a.courseid=b.courseid
         where ScheduleDate &gt;=#{begintime}::timestamp
         and ScheduleDate  &lt;#{endtime}::timestamp+ interval '1 day' and a.isremoved=false

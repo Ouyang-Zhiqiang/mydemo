@@ -127,10 +127,19 @@
     <select id="cpCoursereport" resultType="map">
         select cp.scheduledate,cpb.coachname,
         '私课' as coursetype,cp.coursename,
-        cp.schedulebegin,cp.reservednumber,
-        count(case when oo.signstate='1' then 1 else null end) as signednumber,
-        count(case when oo.ordstate='2' then 1 else null end) as Cancel,
-        cast(sum(case when oo.ordstate='1' then oo.courseprice else 0 end) AS decimal(10,2)) as curriculumprice,
+        cp.schedulebegin,
+        (select count(1) from Ord_OrderCourse
+        where scheduleid=cp.scheduleid  and isremoved=false
+        and coursename like '%私教%') as reservednumber,
+        (select count(1) from Ord_OrderCourse
+        where scheduleid=cp.scheduleid and signstate=1 and isremoved=false
+        and coursename like '%私教%') as signednumber,
+        (select count(1) from Ord_OrderCourse
+        where scheduleid=cp.scheduleid and ordstate=2 and coursename like '%私教%'
+        and isremoved=false) as Cancel,
+        COALESCE((select sum(courseprice) from Ord_OrderCourse
+        where scheduleid=cp.scheduleid and signstate=1 and isremoved=false
+        and coursename like '%私教%'),0)  as curriculumprice,
         COUNT(1) OVER() as total
         from Cur_PrivSchedule cp left join Ord_OrderCourse oo
         on cp.scheduleid=oo.scheduleid inner join Cur_PrivCourse_Base cpb
@@ -145,7 +154,7 @@
             and cp.storeid=#{storeid}::bigint
         </if>
         group by cp.scheduledate,cpb.coachname,cp.coursename,
-        cp.schedulebegin,cp.reservednumber
+        cp.schedulebegin,cp.reservednumber,cp.scheduleid
         order by cp.scheduledate desc,cp.ScheduleBegin asc
         limit #{limit}::bigint offset #{page}::bigint
     </select>
@@ -222,6 +231,7 @@
         and ct.ScheduleDate &gt;=#{begintime}::timestamp
         and ct.ScheduleDate &lt;#{endtime}::timestamp + interval '1 day'
         and oo.OrdState=1
+        and oo.cardtype='T' and oo.courseprice>0
         <if test="coachid !=null and coachid!=''">
             and oo.coachid=#{coachid}::bigint
         </if>

@@ -33,4 +33,11 @@ public class WxRemindController {
         }
 
     }
+
+    @RequestMapping(value = "/getunionId",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String getunionId(Param param) throws Exception {
+        System.err.println(param.getCode());
+        return wxRemindService.getunionId(param.getCode());
+    }
 }
