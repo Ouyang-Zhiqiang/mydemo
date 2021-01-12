@@ -247,10 +247,10 @@
 
     <insert id="inserttice">
         insert into Org_PhysicalTest_User(UserId,testtypeid,TestCategory,TestName,TestUnit,TestValue,CreatedOn,
-        CreatedBy,CreatedName,CreatedIp,LastedOn,LastedBy,LastedName,LastedIp
+        CreatedBy,CreatedName,CreatedIp,LastedOn,LastedBy,LastedName,LastedIp,isshow
         )values (
         #{userid}::bigint,#{testtypeid}::bigint,'D',#{testname},#{testunit},#{testvalue},now(),#{createdby},#{createdname},'::1',
-        now(),#{createdby},#{createdname},'::1'
+        now(),#{createdby},#{createdname},'::1',true
         )
     </insert>
 
