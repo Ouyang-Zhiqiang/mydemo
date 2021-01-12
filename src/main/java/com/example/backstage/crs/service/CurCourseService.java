@@ -281,21 +281,51 @@ public class CurCourseService {
     }
 
     public void inserttice(TiceEntity tice){
+        if (tice.getTizhi()!=null&&""!=tice.getTizhi()){
             curCourseMapper.inserttice(tice.getUserid(),"11","体脂率","%",tice.getTizhi(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getShengao()!=null&&""!=tice.getShengao()){
             curCourseMapper.inserttice(tice.getUserid(),"7","身高","cm",tice.getShengao(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getTizhong()!=null&&""!=tice.getTizhong()){
             curCourseMapper.inserttice(tice.getUserid(),"8","体重","kg",tice.getTizhong(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getJichudaixie()!=null&&""!=tice.getJichudaixie()){
             curCourseMapper.inserttice(tice.getUserid(),"10","基础代谢","cal",tice.getJichudaixie(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"7","大腿围L","cal",tice.getDatuiweil(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"20","大腿围R","cal",tice.getDatuiweir(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"5","小腿L","cal",tice.getXiaotuil(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"6","小腿R","cal",tice.getXiaotuir(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"8","手臂L","cal",tice.getShoubil(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"9","手臂R","cal",tice.getShoubir(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"14","胸围","cal",tice.getXiongwei(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"12","脂肪含量","cal",tice.getZhifang(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"13","骨骼肌含量","cal",tice.getGugeji(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"15","腰围","cal",tice.getYaowei(),tice.getCreatedby(),tice.getCreatedname());
-            curCourseMapper.inserttice(tice.getUserid(),"16","臀围","cal",tice.getTunwei(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getDatuiweil()!=null&&""!=tice.getDatuiweil()){
+            curCourseMapper.inserttice(tice.getUserid(),"7","大腿围L","cm",tice.getDatuiweil(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getDatuiweir()!=null&&""!=tice.getDatuiweir()){
+            curCourseMapper.inserttice(tice.getUserid(),"20","大腿围R","cm",tice.getDatuiweir(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getXiaotuil()!=null&&""!=tice.getXiaotuil()){
+            curCourseMapper.inserttice(tice.getUserid(),"5","小腿L","cm",tice.getXiaotuil(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getXiaotuir()!=null&&""!=tice.getXiaotuir()){
+            curCourseMapper.inserttice(tice.getUserid(),"6","小腿R","cm",tice.getXiaotuir(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getShoubil()!=null&&""!=tice.getShoubil()){
+            curCourseMapper.inserttice(tice.getUserid(),"8","手臂L","cm",tice.getShoubil(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getShoubir()!=null&&""!=tice.getShoubir()){
+            curCourseMapper.inserttice(tice.getUserid(),"9","手臂R","cm",tice.getShoubir(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getXiongwei()!=null&&""!=tice.getXiongwei()){
+            curCourseMapper.inserttice(tice.getUserid(),"14","胸围","cm",tice.getXiongwei(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getZhifang()!=null&&""!=tice.getZhifang()){
+            curCourseMapper.inserttice(tice.getUserid(),"12","脂肪含量","kg",tice.getZhifang(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getGugeji()!=null&&""!=tice.getGugeji()){
+            curCourseMapper.inserttice(tice.getUserid(),"13","骨骼肌含量","kg",tice.getGugeji(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getYaowei()!=null&&""!=tice.getYaowei()){
+            curCourseMapper.inserttice(tice.getUserid(),"15","腰围","cm",tice.getYaowei(),tice.getCreatedby(),tice.getCreatedname());
+        }
+        if (tice.getTunwei()!=null&&""!=tice.getTunwei()){
+            curCourseMapper.inserttice(tice.getUserid(),"16","臀围","cm",tice.getTunwei(),tice.getCreatedby(),tice.getCreatedname());
+        }
     }
 
     public void deletetice(String time,String userid){

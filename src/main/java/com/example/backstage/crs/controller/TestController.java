@@ -20,6 +20,15 @@ import java.net.URL;
 import java.util.*;
 
 @Controller
+@RequestMapping("/web/test")
 public class TestController {
-
+    @RequestMapping(value = "fun1",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public void fun(){
+        String str1="{\"tyonghuSex\": \"男\""+",\"tyonghuHead\":\"1 F305153P2 - 20. jpg\"}";
+        String str2="{tyonghuSex: 男,tyonghuHead:1 F305153P2 - 20. jpg}";
+        Map map = JSON.parseObject(str2);
+        System.err.println(map.get("tyonghuHead"));
+        System.err.println(map.get("tyonghuSex"));
+    }
 }
