@@ -1,10 +1,13 @@
 package com.example.backstage.crs.util;
 
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateTime;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
 public class DataUtil {
-
+    private static int _millisecond = 10000;
     public static BigDecimal getBigDecimal(Object value) {
         BigDecimal ret = null;
         if (value != null) {
@@ -22,5 +25,4 @@ public class DataUtil {
         }
         return ret;
     }
-
 }

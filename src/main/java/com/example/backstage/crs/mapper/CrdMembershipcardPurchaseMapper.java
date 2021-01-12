@@ -1,6 +1,7 @@
 package com.example.backstage.crs.mapper;
 
 
+import com.example.backstage.crs.entity.CrdMemberShipcardPurchaseResult;
 import com.example.backstage.crs.entity.CrdMembershipcardPurchaseEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -37,4 +38,6 @@ public interface CrdMembershipcardPurchaseMapper {
     List<Map<String, Object>> selectThirdaccount(String openid);
 
     List<CrdMembershipcardPurchaseEntity> GetAllListSpecialChar(@Param("storeId") String storeId, @Param("startDate")String startDate, @Param("endDate")String endDate);
+
+    List<CrdMemberShipcardPurchaseResult> GetCharBar2(@Param("startDate")String startDate, @Param("endDate")String endDate, @Param("storeId") String storeId, @Param("salerId") String salerId,@Param("buyType") String buyType);
 }
