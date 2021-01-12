@@ -13,6 +13,9 @@ import java.util.Map;
 @Repository
 public interface CrdMembershipcardPurchaseMapper {
 
+
+     List<CrdMembershipcardPurchaseEntity> GetAllListByPayWay(String storeId, String startDate, String endDate) ;
+
     int insertCrdMembershipCardPurchase(CrdMembershipcardPurchaseEntity crdMembershipcardPurchaseEntity);
 
     Map<String, Object> selectSellingfeeSumByStoreidAndSaleridAndDate(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend);
@@ -32,4 +35,6 @@ public interface CrdMembershipcardPurchaseMapper {
     List<Map<String, Object>> selectStaticListBySalerid(@Param("storeid") String storeid, @Param("salerid") String salerid, @Param("datebegin") String datebegin, @Param("dateend") String dateend, @Param("limits") Integer limits, @Param("pages") Integer page,@Param("name")String name);
 
     List<Map<String, Object>> selectThirdaccount(String openid);
+
+    List<CrdMembershipcardPurchaseEntity> GetAllListSpecialChar(@Param("storeId") String storeId, @Param("startDate")String startDate, @Param("endDate")String endDate);
 }

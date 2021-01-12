@@ -37,5 +37,7 @@ public class CrdMembershipcardPurchaseEntity {
   private Integer groupid;
   private Integer bargainingid;
   private Integer luckdrawid;
+  private Double Amount;
+  public String DateTime;
 
 }
