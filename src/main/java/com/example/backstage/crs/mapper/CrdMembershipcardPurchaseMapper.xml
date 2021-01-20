@@ -288,7 +288,7 @@
                 <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
             </if>
             <if test="storeId!=null and storeId!=''">
-                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId} ::bigint)
             </if>
         </where>
         union
@@ -305,7 +305,7 @@
                 <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
             </if>
             <if test="storeId!=null and storeId!=''">
-                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId} ::bigint)
             </if>
         </where>
         union
@@ -319,7 +319,7 @@
                 <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
             </if>
             <if test="storeId!=null and storeId!=''">
-                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId}::bigint)
             </if>
         </where>
         union
@@ -333,7 +333,7 @@
                 <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
             </if>
             <if test="storeId!=null and storeId!=''">
-                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId}::bigint)
             </if>
         </where>
         union
@@ -347,7 +347,7 @@
                 <![CDATA[ AND to_char(a.createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
             </if>
             <if test="storeId!=null and storeId!=''">
-                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId})
+                AND a.cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid=#{storeId}::bigint)
             </if>
         </where>
       ) as t
@@ -367,59 +367,55 @@
       SELECT payment as payments,SUM(sellingfee) as sellingfee FROM crd_membershipcard_purchase
       <where> 1=1
        <if test="startDate!=null and startDate!=''">
-        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+        AND to_char(createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd')
        </if>
        <if test="endDate!=null and endDate!=''">
            <![CDATA[AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
        </if>
        <if test="storeId!=null and storeId!=''">
-        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}::bigint))
        </if>
        </where>
       GROUP BY payment
-
       UNION
-
       SELECT payments,SUM(CASE when stoptype='P' THEN -fee else fee END) as sellingfee FROM crd_membershipcard_stop
       <where> 1=1
        <if test="startDate!=null and startDate!=''">
-        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+        AND to_char(createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd')
        </if>
        <if test="endDate!=null and endDate!=''">
-           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
+           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
        </if>
        <if test="storeId!=null and storeId!=''">
-        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}::bigint))
        </if>
        </where>
       GROUP BY payments
-
       UNION
       SELECT 4 as payments,SUM(fee) as sellingfee FROM crd_membershipcard_transfer
       <where> 1=1
        <if test="startDate!=null and startDate!=''">
-        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+        AND to_char(createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd')
        </if>
        <if test="endDate!=null and endDate!=''">
-           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
+           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
        </if>
        <if test="storeId!=null and storeId!=''">
-        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}::bigint))
        </if>
        </where>
       GROUP BY payments
-
       UNION
       SELECT 4 as payments,SUM(recamount) as sellingfee FROM crd_membershipcard_reconciliation
       <where> 1=1
        <if test="startDate!=null and startDate!=''">
-        AND to_char(createdon,'yyyy-MM-dd')>=#{startDate}
+        AND to_char(createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd')
        </if>
        <if test="endDate!=null and endDate!=''">
-           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=#{endDate}]]>
+           <![CDATA[ AND to_char(createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd') ]]>
        </if>
        <if test="storeId!=null and storeId!=''">
-        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}))
+        AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}::bigint))
        </if>
        </where>
       GROUP BY payments
@@ -427,4 +423,30 @@
       GROUP BY a.payments
     </select>
 
+
+    <select id="GetCharBar2" resultType="com.example.backstage.crs.entity.CrdMemberShipcardPurchaseResult">
+      SELECT t.cardid,t.cardcount,t.sellingfee as sellingfeeTotal,b.cardname
+      FROM (
+      SELECT COUNT(distinct(cardno)) AS cardcount,SUM(coalesce(sellingfee,0)) AS sellingfee,cardid
+      FROM  crd_membershipcard_purchase
+      <where> 1=1
+          <if test="startDate!=null and startDate!=''">
+            AND to_char(createdon,'yyyy-MM-dd')>=to_char(TO_DATE(#{startDate},'yyyy-MM-dd'),'yyyy-MM-dd')
+          </if>
+          <if test="endDate!=null and endDate!=''">
+            <![CDATA[AND to_char(createdon,'yyyy-MM-dd')<=to_char(TO_DATE(#{endDate},'yyyy-MM-dd'),'yyyy-MM-dd')]]>
+          </if>
+          <if test="buyType!=null and buyType!=''">
+            AND buytype=#{buyType}
+          </if>
+          <if test="salerId!=null and salerId!=''">
+            AND salerid=#{salerId}
+          </if>
+          <if test="storeId!=null and storeId!=''">
+              AND cardno in(SELECT cardno FROM crd_membershipcard_purchase WHERE storeid in (#{storeId}::bigint))
+          </if>
+      GROUP BY cardid) t
+      inner JOIN crd_membershipcardcategory_base b ON b.cardid=t.cardid
+      </where>
+    </select>
 </mapper>

@@ -30,4 +30,13 @@ public class RevenueAnalysisController {
         String result=revenueAnalysisService.DrawChart2(StoreId,StartDate,EndDate,days);
         return result;
     }
+
+    @RequestMapping(value = "BarChar2",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public String BarChar2(@RequestParam("StoreId")String StoreId,@RequestParam("StartDate") String StartDate, @RequestParam("EndDate")String EndDate,@RequestParam("days") Integer days
+    ,@RequestParam("SalerId") String SalerId,@RequestParam("BuyType") String BuyType) throws ParseException {
+        String result=revenueAnalysisService.BarChar2(StoreId,StartDate,EndDate,days,SalerId,BuyType);
+        return result;
+    }
+
 }

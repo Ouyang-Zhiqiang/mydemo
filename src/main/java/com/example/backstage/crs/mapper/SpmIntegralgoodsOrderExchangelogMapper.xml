@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.backstage.crs.mapper.SpmIntegralgoodsOrderExchangelogMapper">
+    <select id="selectSpmIntegralgoodsOrderByOrderid" resultType="com.example.backstage.crs.entity.SpmIntegralgoodsOrderEntity">
+       SELECT orderid, userid, username, userphone, goodscode, name, imgid,
+       imgurl, salespoint, storeid, storename, usedvaliditybegin, usedvalidityend,
+       salesstate, seqnum, opttype, state, isremoved, createdon, createdby,
+       createdname, createdip, lastedon, lastedby, lastedname, lastedip
+      FROM spm_integralgoods_order
+      WHERE orderid=#{orderid}
+    </select>
+
+    <insert id="Insert" parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsOrderExchangelogEntity" useGeneratedKeys="true" keyProperty="logid">
+        INSERT INTO spm_integralgoods_order_exchangelog(
+            logid, orderid, userid, username, userphone, goodscode, name,
+            imgid, imgurl, salespoint, storeid, storename, usedvaliditybegin,
+            usedvalidityend, salesstate, seqnum, opttype, state, logstate,
+            isremoved, createdon, createdby, createdname, createdip)
+    VALUES (#{logid}, #{orderid}, #{userid}, #{username}, #{userphone}, #{goodscode}, #{name},
+            #{imgid}, #{imgurl}, #{salespoint}, #{storeid}, #{storename}, #{usedvaliditybegin},
+            #{usedvalidityend}, #{salesstate}, #{seqnum}, #{opttype}, #{state}, #{logstate},
+            #{isremoved}::boolean, #{createdon}, #{createdby}, #{createdname}, #{createdip});
+    </insert>
+
+    <update id="Update" parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsOrderEntity" >
+        UPDATE spm_integralgoods_order
+           SET orderid=#{orderid}, userid=#{userid}, username=#{username}, userphone=#{userphone}, goodscode=#{goodscode}, name=#{name},
+               imgid=#{imgid}, imgurl=#{imgurl}, salespoint=#{salespoint}, storeid=#{storeid}, storename=#{storename}, usedvaliditybegin=#{usedvaliditybegin},
+               usedvalidityend=#{usedvalidityend}, salesstate=#{salesstate}, seqnum=#{seqnum}, opttype=#{opttype}, state=#{state},
+               isremoved=#{isremoved}::boolean,
+               lastedon=#{lastedon}, lastedby=#{lastedby}, lastedname=#{lastedname}, lastedip=#{lastedip}
+         WHERE orderid=#{orderid};
+    </update>
+</mapper>
