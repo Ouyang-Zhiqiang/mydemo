@@ -27,6 +27,9 @@ public class SpmIntegralgoodsBaseEntity {
   private String lastedby;
   private String lastedname;
   private String lastedip;
+  private Integer stock;
+  private Integer purchased;
+  private Integer totalpurchased;
 
   /*运动馆数组*/
   String store;

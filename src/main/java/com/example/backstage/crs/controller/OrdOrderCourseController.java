@@ -1,5 +1,6 @@
 package com.example.backstage.crs.controller;
 
+import com.example.backstage.crs.entity.CrdMembershipcardPurchaseEntity;
 import com.example.backstage.crs.entity.MarketingSeckillBaseEntity;
 import com.example.backstage.crs.entity.OrdOrdercourseEntity;
 import com.example.backstage.crs.service.CurCourseService;
@@ -31,6 +32,13 @@ public class OrdOrderCourseController {
     @ResponseBody
     public void CancelCourseOrdersByOrderIdAndUserId(@RequestParam("userid") String userid,@RequestParam("coachid") String coachid,@RequestParam("ordid")String ordid)throws Exception{
         cAnalysisService.CancelCourseOrdersByOrderIdAndUserId(Long.valueOf(userid),coachid,Long.valueOf(ordid));
+    }
+
+    /*购卡通知（DT）*/
+    @RequestMapping(value = "BuyCardSendToDT",produces = {"text/json;charset=UTF-8"})
+    @ResponseBody
+    public void BuyCardSendToDT(@RequestParam("cardno") String cardno,@RequestParam("userid") String userid)throws Exception{
+        cAnalysisService.BuyCardSendToDT(cardno,Long.valueOf(userid));
     }
 
 }

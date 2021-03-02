@@ -8,6 +8,8 @@ import java.math.BigInteger;
 
 public class DataUtil {
     private static int _millisecond = 10000;
+    private static int _isSucced;
+    private static int _millisecond2 = 1000;
     public static BigDecimal getBigDecimal(Object value) {
         BigDecimal ret = null;
         if (value != null) {
@@ -25,4 +27,5 @@ public class DataUtil {
         }
         return ret;
     }
+
 }

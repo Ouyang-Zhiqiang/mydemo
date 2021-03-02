@@ -93,4 +93,61 @@
         WHERE goodscode=#{goodscode}
     </update>
 
+    <update id="UpdateSpmGoodsOrder">
+        update spm_integralgoods_order set state=2 where state=0 and CURRENT_DATE>usedvalidityend
+    </update>
+
+    <select id="selectSpmGoodsOrderByStoreids" parameterType="Long"  resultType="java.util.HashMap">
+        select goodscode::varchar ,
+         name,
+         imgid,
+         imgurl,
+         salespoint,
+         storeid::varchar,
+         storename,
+         usedvaliditybegin,
+         usedvalidityend,
+         salesstate,
+         seqnum,
+        isremoved,
+         createdon,
+         createdby,
+         createdname,
+         createdip,
+         lastedon,
+         lastedby,
+         lastedname,
+         lastedip,
+         stock,
+         purchased,
+         totalpurchased from spm_integralgoods_base
+        <where>
+         salesstate=1 and isremoved='f'
+            <![CDATA[ and to_char(now(),'YYYY-MM-DD')<=to_char(usedvalidityend,'YYYY-MM-DD') ]]>
+        and storeid=#{storeid} order by seqnum asc
+        </where>
+    </select>
+
+    <insert id="insertApmInteralGoodsOrder" parameterType="Long">
+        insert into spm_integralgoods_order
+        (orderid,userid,username,userphone,goodscode,name,imgid,imgurl,salespoint,storeid,storename,usedvaliditybegin,
+        usedvalidityend,salesstate,seqnum,opttype,state,isremoved,createdon,createdby,createdname,createdip,lastedon,lastedby,lastedname,lastedip)
+        select #{goodscode},b.userid,b.name,b.tel,a.goodscode,a.name,a.imgid,a.imgurl,a.salespoint,a.storeid,a.storename,a.usedvaliditybegin,
+        a.usedvalidityend,a.salesstate,a.seqnum,1,0,'f',now(),b.userid,b.name,'::1',now(),b.userid,b.name,'::1' from spm_integralgoods_base as a
+        inner join user_base as b on b.userid=#{userid} and b.status=1 and b.points>=a.salespoint
+        <where> a.salesstate=1
+        and a.isremoved='f'
+            <![CDATA[  and to_char(now(),'YYYY-MM-DD')<=to_char(a.usedvalidityend,'YYYY-MM-DD')   ]]>
+        and a.goodscode=#{goodscode}
+        </where>
+    </insert>
+
+    <select id="selectSpmIntegralGoodsByGoodcode" parameterType="Long" resultType="java.util.HashMap">
+        select salespoint from spm_integralgoods_base where goodscode=#{goodscode}
+    </select>
+
+    <select id="selectAllSpmIntegralGoodsByGoodcode" parameterType="Long" resultType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity">
+        select * from spm_integralgoods_base where goodscode=#{goodscode}
+    </select>
+
 </mapper>
