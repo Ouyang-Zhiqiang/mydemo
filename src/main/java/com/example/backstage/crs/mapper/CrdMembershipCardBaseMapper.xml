@@ -121,6 +121,10 @@
         select Times,Points,OriginalFee from Crd_MembershipCard_Base where CardNo=#{cardno}
     </select>
 
+    <select id="selectCardByCardNo" parameterType="String" resultType="java.util.HashMap">
+        select cardname,originalfee,cardend from crd_membershipcard_base where cardno =#{cardno}
+    </select>
+
     <insert id="insertCrdMembershipcardBase" parameterType="com.example.backstage.crs.entity.CrdMembershipcardBaseEntity">
         insert into crd_membershipcard_base
         <trim prefix="(" suffix=")" suffixOverrides=",">

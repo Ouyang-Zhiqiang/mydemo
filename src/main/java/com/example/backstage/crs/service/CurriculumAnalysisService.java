@@ -2,9 +2,11 @@ package com.example.backstage.crs.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.example.backstage.crs.entity.CrdMembershipcardPurchaseEntity;
 import com.example.backstage.crs.entity.LogMobileMetaEntity;
 import com.example.backstage.crs.entity.OrdOrdercourseEntity;
 import com.example.backstage.crs.entity.Testcost;
+import com.example.backstage.crs.mapper.CrdMembershipCardBaseMapper;
 import com.example.backstage.crs.mapper.CurriculumAnalysisMapper;
 import com.example.backstage.crs.mapper.OrdOrdercourseMapper;
 import com.example.backstage.crs.util.MsgParam;
@@ -25,6 +27,8 @@ public class CurriculumAnalysisService {
     private CurriculumAnalysisMapper curriculumAnalysisMapper;
     @Resource
     private OrdOrdercourseMapper ordOrdercourseMapper;
+    @Resource
+    private CrdMembershipCardBaseMapper crdMembershipCardBaseMapper;
 
     /*上课人数*/
     public String getCoursesNumber(Param param) throws Exception {
@@ -651,6 +655,26 @@ public class CurriculumAnalysisService {
         Map<String,Object> map = ordOrdercourseMapper.selectOrderCourseByOrdid(orderid);
         if (map.get(course)!=null){
             return map.get(course).toString();
+        }else {
+            return "";
+        }
+    }
+
+    public void BuyCardSendToDT(String cardno,Long userid) throws Exception{
+        String varmsg2 = storeidOrTel(userid,"name")+"购买了"+"FaceBody"+userCard(cardno,"cardname")+"，金额："+userCard(cardno,"originalfee")+"，";
+        // 买卡通知员工
+        if (isSendOrNot("ygmktz")) {
+            // noticeAllStaff/31购卡续卡
+            sendNotice(storeidOrTel(Long.parseLong("2019011516101"),"tel"),"ygmktz",varmsg2,"");
+        }
+
+    }
+
+    // 获取需要的会员卡信息
+    public String userCard(String cardno,String card)throws Exception{
+        Map<String,Object> map =crdMembershipCardBaseMapper.selectCardByCardNo(cardno);
+        if (map.get(card)!=null){
+            return map.get(card).toString();
         }else {
             return "";
         }
