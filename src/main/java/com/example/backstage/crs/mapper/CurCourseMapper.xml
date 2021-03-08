@@ -151,7 +151,7 @@
     </insert>
 
     <select id="getcourseinformation" resultType="map">
-        select ub.name,ub.tel,oo.traineenum,cmb.cardname,oo.SignState,
+        select ub.name,ub.tel,oo.traineenum,cmb.cardname,oo.SignState,cmb.cardtype,
             oo.OrdState,oo.Remarks,oo.createdon,ct.reservablenumber,oo.ordid,oo.userid,oo.cardno
         from Cur_TeamSchedule ct
         inner join Ord_OrderCourse oo on ct.scheduleid=oo.scheduleid

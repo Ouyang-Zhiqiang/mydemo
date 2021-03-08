@@ -113,6 +113,7 @@
         and ScheduleDate &lt;#{endtime}::timestamp + interval '1 day'
         and ct.isremoved=false
         and (oo.cardtype='T' or oo.cardtype='S' )
+
         <if test="coachid !=null and coachid!=''">
             and ct.coachid=#{coachid}::bigint
         </if>

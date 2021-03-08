@@ -97,4 +97,14 @@ public class Param {
     private String templatetype;
     private String cardname;
     private String time;
+    private String day1;
+    private String day2;
+    private String strenth;
+    private String courseduration;
+    private String reservablenumber;
+    private String minpeople;
+    private String scheduledate;
+    private String scheduleend;
+    private String storename;
+    private String coachname;
 }

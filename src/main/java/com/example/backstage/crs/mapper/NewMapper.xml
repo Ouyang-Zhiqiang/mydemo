@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.backstage.crs.mapper.NewMapper">
+    <select id="getStoreIdAll" resultType="map">
+        select id::varchar,name from Org_Store where status=1;
+    </select>
+    <select id="login" resultType="map">
+        select userid, storeid::varchar , tel, name, sex, refuserid, saleuserid,
+        status,createdby, createdname, createdip
+        ,(select roleid from User_Staff b where b.userid=a.userid) as roleid from user_base a where tel=#{tel}
+    </select>
+    <select id="getCoachAll" resultType="map">
+        select a.userid,name from user_base a
+        inner join User_Staff b on a.userid=b.userid
+        where iscoach is true and b.status=1
+    </select>
+    <select id="getFunction" resultType="map">
+        select functionid id,functionpid pid,shortname,functionnamecn as title,
+       concat(array (select roleid from scr_role_function b where a.functionid=b.functionid)) as roles
+        from scr_function a where deleteflag=0 and enableflag=0
+    </select>
+    <select id="getTeamschedule" resultType="map">
+        select scheduledate,coursename,
+         schedulebegin::varchar , scheduleend::varchar ,storename,
+        reservablenumber,signednumber,reservedNumber,coachname,scheduleid::varchar ,coachid::varchar
+         from cur_teamschedule
+        where scheduledate &gt;=#{day1}::date and scheduledate &lt;=#{day2}::date
+        and isremoved=false
+        <if test="storeid!=null and storeid!=''" >
+            and   storeId=#{storeid} :: bigint
+        </if>
+        <if test="coachid!=null and coachid!=''" >
+            and   coachid=#{coachid} :: bigint
+        </if>
+        order by schedulebegin asc
+    </select>
+    <select id="getCourseAll" resultType="map">
+        select cid::varchar ,catetitle,reservablenumber,
+         minpeople,courseduration from Cur_TeamCourseCategory_Base where isremoved=false
+    </select>
+
+    <select id="getCurTeamStrength" resultType="map">
+        select sid::varchar ,sid::varchar mysid,strengthnumber from Cur_TeamCourseCategory_Strength
+        where isremoved=false
+        <if test="cid!=null and cid!=''" >
+            and   cid=#{cid} :: bigint
+        </if>
+        <if test="strenth!=null and strenth!=''" >
+            and   strengthgrade=#{strenth} :: bigint
+        </if>
+    </select>
+    <insert id="setCurTeamCourseBase" parameterType="com.example.backstage.crs.util.Param">
+        insert into Cur_TeamCourse_Base (courseid,cid, sid, coursename, courseduration, reservablenumber, minpeople,
+        state,isremoved,createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{courseid}::bigint,#{cid}::bigint,#{sid}::bigint,#{coursename},#{courseduration}::integer,#{reservablenumber}::integer,
+            #{minpeople}::integer,1,false,now(),#{createdby},#{createdname},'ip',now(),#{createdby},#{createdname},'ip'
+        )
+    </insert>
+    <insert id="setCurTeamSchedule" parameterType="com.example.backstage.crs.util.Param">
+        insert into Cur_TeamSchedule(scheduledate, schedulebegin, scheduleend, storeid, storename,
+        courseid, coursename, coachid, coachname, reservablenumber, reservednumber, signednumber,createdon,
+        createdby, createdname, createdip,lastedon, lastedby, lastedname, lastedip, cid, sid,
+        courseduration, minpeople)
+        values (
+            #{scheduledate}::date,#{schedulebegin}::time,#{scheduleend}::time+interval '1 hour',#{storeid}::bigint,
+            #{storename},#{courseid}::bigint,
+            #{coursename},#{coachid}::bigint,#{coachname},#{reservablenumber}::integer,0,0,
+            now(),#{createdby},#{createdname},'ip',now(),#{createdby},#{createdname},'ip',
+            #{cid}::bigint,#{sid}::bigint,#{courseduration}::integer,#{minpeople}::integer
+                                  )
+    </insert>
+    <update id="upreservablenumber">
+        update cur_teamschedule set ReservableNumber=#{reservablenumber}::integer where scheduleid=#{scheduleid}::bigint
+    </update>
+    <select id="getReservablenumber" resultType="map">
+        select reservablenumber from cur_teamschedule where scheduleid=#{scheduleid}::bigint
+    </select>
+    <select id="getRoleid" resultType="map">
+        select * from user_staff where userid=(select user_base.userid from user_base where tel=#{tel})
+    </select>
+    <select id="setPartsjson" resultType="map">
+        select b.partsjson from cur_teamschedule a
+        inner join Cur_TeamCourseCategory_Strength b on a.sid=b.sid
+        where a.scheduleid=#{scheduleid}::bigint
+    </select>
+</mapper>
