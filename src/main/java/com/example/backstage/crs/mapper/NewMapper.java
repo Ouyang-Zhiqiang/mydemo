@@ -25,6 +25,26 @@ public interface NewMapper {
     Map<Object,Object> getReservablenumber(@Param("scheduleid")String scheduleid);
     Map<Object,Object> getRoleid(@Param("tel")String tel);
     Map<Object,Object> setPartsjson(@Param("scheduleid")String scheduleid);
-
-
+    List<Map<Object,Object>> getXiaoshou();
+    void deletetk(@Param("scheduleid")String scheduleid);
+    void quxiaoyuyue1(@Param("traineenum")String traineenum,@Param("cardno")String cardno);
+    void quxiaoyuyue2(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
+    void quxiaoyuyue3(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
+    void signed1(@Param("ordid")String ordid);
+    void signed2(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
+    List<Map<Object,Object>> setUser(@Param("name")String name);
+    List<Map<Object,Object>> getAllcourse();
+    List<Map<Object,Object>> getStrenth(@Param("cid")String cid,@Param("strengthgrade")String strengthgrade,
+    @Param("limit")String limit,@Param("page")String page);
+    List<Map<Object,Object>> getUnits();
+    List<Map<Object,Object>> getCategory();
+    List<Map<Object,Object>> getStrength();
+    List<Map<Object,Object>> getAims();
+    List<Map<Object,Object>> getParts();
+    List<Map<Object,Object>> getactionlibrary(@Param("category")String category,@Param("strength")String strength);
+    void setStrength(com.example.backstage.crs.util.Param param);
+    void DeleteStrength(@Param("sid")String sid);
+    void UpdateStrength(com.example.backstage.crs.util.Param param);
+    List<Map<Object,Object>> getNumberofreservations(@Param("storeid")String storeid,
+                                                     @Param("day1")String day1,@Param("day2")String day2);
 }
