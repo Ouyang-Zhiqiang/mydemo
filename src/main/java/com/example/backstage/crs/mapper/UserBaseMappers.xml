@@ -246,6 +246,13 @@
         </where>
     </select>
 
+    <select id="userByNameAndTel" parameterType="String"  resultType="java.util.HashMap">
+        select ub.userid,ub.name,ub.tel,br.resurl as imgurl,ub.sex  from user_base ub
+        left join User_Images ui on  ub.userid=ui.userid
+        left join base_resources br on ui.resid = br.resid
+        where ub.name=#{name} and ub.tel=#{tel};
+    </select>
+
     <update id="updateClassNumber" parameterType="Integer">
             update
             user_base

@@ -22,10 +22,11 @@ public class  OrdOrdercourseEntity {
   private long coachid;
   private String coachname;
   private long userid;
-  private long traineenum;
+  private int traineenum;
+  private int curtimes;
   private String coursetime;
   private String cardno;
-  private long usabletimes;
+  private int usabletimes;
   private long ordtimes;
   private long ordstate;
   private long signstate;

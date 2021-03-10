@@ -98,6 +98,7 @@ public class Param {
     private String cardname;
     private String time;
     private String day1;
+    private String coursedate;
     private String day2;
     private String strenth;
     private String courseduration;
@@ -107,4 +108,12 @@ public class Param {
     private String scheduleend;
     private String storename;
     private String coachname;
+    private String cardtype;
+    private String ordid;
+    private String strengthgrade;
+    private String category;
+    private String strength;
+    private String strengthnumber;
+    private String partsjson;
+
 }

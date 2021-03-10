@@ -20,19 +20,21 @@
         from scr_function a where deleteflag=0 and enableflag=0
     </select>
     <select id="getTeamschedule" resultType="map">
-        select scheduledate,coursename,
-         schedulebegin::varchar , scheduleend::varchar ,storename,
-        reservablenumber,signednumber,reservedNumber,coachname,scheduleid::varchar ,coachid::varchar
-         from cur_teamschedule
-        where scheduledate &gt;=#{day1}::date and scheduledate &lt;=#{day2}::date
-        and isremoved=false
+        select ct.scheduledate,ct.courseid::varchar,ct.coursename,
+        ct.schedulebegin::varchar , ct.scheduleend::varchar ,ct.storeid ::varchar ,ct.storename,
+        ct.reservablenumber,ct.signednumber,ct.reservedNumber,ct.coachname,ct.scheduleid::varchar ,ct.coachid::varchar,ctb.cid::varchar
+        from cur_teamschedule ct
+        left join cur_teamcourse_base ctb on ctb.courseid=ct.courseid
+        where ct.scheduledate &gt;=#{day1}::date and ct.scheduledate &lt;=#{day2}::date
+        and ct.isremoved=false
+        and ctb.isremoved=false
         <if test="storeid!=null and storeid!=''" >
-            and   storeId=#{storeid} :: bigint
+            and   ct.storeId=#{storeid} :: bigint
         </if>
         <if test="coachid!=null and coachid!=''" >
-            and   coachid=#{coachid} :: bigint
+            and   ct.coachid=#{coachid} :: bigint
         </if>
-        order by schedulebegin asc
+        order by ct.schedulebegin asc
     </select>
     <select id="getCourseAll" resultType="map">
         select cid::varchar ,catetitle,reservablenumber,
@@ -83,5 +85,92 @@
         select b.partsjson from cur_teamschedule a
         inner join Cur_TeamCourseCategory_Strength b on a.sid=b.sid
         where a.scheduleid=#{scheduleid}::bigint
+    </select>
+    <select id="getXiaoshou" resultType="map">
+        select a.name,a.userid from user_base a
+        inner join user_staff b on a.userid=b.userid
+        where b.status=1 and strpos(b.roleid,'2018053014053010003')!=0
+    </select>
+    <update id="deletetk">
+        update cur_teamschedule set isremoved=true where scheduleid=#{scheduleid}::bigint
+    </update>
+    <update id="quxiaoyuyue1">
+        update crd_membershipcard_base set curtimes=curtimes+#{traineenum}::integer where cardno=#{cardno}
+    </update>
+    <update id="quxiaoyuyue2">
+        update ord_ordercourse set OrdState=2 where scheduleid=#{scheduleid}::bigint
+    </update>
+    <update id="quxiaoyuyue3">
+        update Cur_TeamSchedule set ReservedNumber=ReservedNumber-#{traineenum}::integer where scheduleid=#{scheduleid}::bigint
+    </update>
+    <update id="signed1">
+        update ord_ordercourse set SignState=1 where ordid=#{ordid}::bigint
+    </update>
+    <update id="signed2">
+        update cur_teamschedule set SignedNumber=SignedNumber+#{traineenum}::integer where scheduleid=#{scheduleid}::bigint
+    </update>
+    <select id="setUser" parameterType="String"  resultType="java.util.HashMap">
+        select  userid as name,CONCAT(name,' ',tel) as value from user_base where name like '%'||#{name}||'%' or tel like '%'||#{name}||'%'
+        and status=1
+    </select>
+    <select id="getAllcourse" resultType="map">
+        select *,cid::varchar as mycid from Cur_TeamCourseCategory_Base
+        where isremoved=false
+        order by createdon desc
+    </select>
+    <select id="getStrenth" resultType="map">
+        select sid::varchar , cid::varchar , strengthnumber, strengthgrade,  partsjson,(select count(1) from Cur_TeamCourseCategory_Strength
+        where cid=#{cid}::bigint and strengthgrade=#{strengthgrade}::integer
+        and strengthnumber!='' and isremoved=false
+        ) as counts from Cur_TeamCourseCategory_Strength
+        where cid=#{cid}::bigint and strengthgrade=#{strengthgrade}::integer
+        and strengthnumber!='' and isremoved=false
+        order by createdon desc
+        limit #{limit}::bigint offset #{page}::bigint
+    </select>
+    <select id="getUnits" resultType="map">
+        select * from base_dictionary where type='unit' and isremoved=false
+    </select>
+    <select id="getCategory" resultType="map">
+        select * from cur_actionlibrary_category
+    </select>
+    <select id="getStrength" resultType="map">
+        select * from cur_actionlibrary_strength
+    </select>
+    <select id="getAims" resultType="map">
+        select * from base_dictionary where type='aims' and isremoved=false
+    </select>
+    <select id="getParts" resultType="map">
+        select * from base_dictionary where type='zhm' and isremoved=false
+    </select>
+    <select id="getactionlibrary" resultType="map">
+        select * from cur_actionlibrary where category=#{category} and strength=#{strength}
+    </select>
+    <insert id="setStrength" parameterType="com.example.backstage.crs.util.Param">
+        insert into cur_teamcoursecategory_strength(sid, cid, strengthnumber, strengthgrade, imgsjson,
+        trainingjson, isremoved, createdon, createdby, createdname, createdip,
+        lastedon, lastedby, lastedname, lastedip, partsjson)
+        values (
+            #{sid}::bigint,#{cid}::bigint,#{strengthnumber},#{strengthgrade}::integer,'[]','[]',
+            false,now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1',
+            #{partsjson}
+        )
+    </insert>
+    <update id="DeleteStrength">
+        update cur_teamcoursecategory_strength set isremoved=true where sid=#{sid}::bigint
+    </update>
+    <update id="UpdateStrength" parameterType="com.example.backstage.crs.util.Param">
+        update cur_teamcoursecategory_strength set partsjson=#{partsjson},strengthnumber=#{strengthnumber},
+        strengthgrade=#{strengthgrade}::integer,lastedon=now() where sid=#{sid}::bigint
+    </update>
+    <select id="getNumberofreservations" resultType="map">
+        select to_date(createdon::text,'yyyy-MM-dd'),sum(traineenum) from ord_ordercourse
+        where createdon &gt; #{day1}::date and createdon &lt; #{day2}::date+interval '1 day'
+        <if test="storeid!=null and storeid!=''" >
+            and   storeId=#{storeid} :: bigint
+        </if>
+        group by to_date(createdon::text,'yyyy-MM-dd')
+        order by to_date(createdon::text,'yyyy-MM-dd') asc
+        ;
     </select>
 </mapper>
