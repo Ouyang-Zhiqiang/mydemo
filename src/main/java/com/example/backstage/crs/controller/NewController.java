@@ -2,6 +2,7 @@ package com.example.backstage.crs.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.example.backstage.crs.entity.GetUsersEntity;
 import com.example.backstage.crs.mapper.NewMapper;
 import com.example.backstage.crs.service.AppletService;
 import com.example.backstage.crs.util.Param;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -106,8 +108,15 @@ public class NewController {
     @RequestMapping("/cancelReservation2")
     @ResponseBody
     public String cancelReservation2(Param param){
-        newMapper.quxiaoyuyue2(param.getTraineenum(),param.getScheduleid());
+        newMapper.quxiaoyuyue2(param.getScheduleid());
         newMapper.quxiaoyuyue3(param.getTraineenum(),param.getScheduleid());
+        return "ok";
+    }
+    @RequestMapping("/cancelReservation3")
+    @ResponseBody
+    public String cancelReservation3(Param param){
+        newMapper.quxiaoyuyue2(param.getScheduleid());
+        newMapper.quxiaoyuyuesj(param.getTraineenum(),param.getScheduleid());
         return "ok";
     }
     @RequestMapping("/signed")
@@ -115,6 +124,13 @@ public class NewController {
     public String signed(Param param){
         newMapper.signed1(param.getOrdid());
         newMapper.signed2(param.getTraineenum(),param.getScheduleid());
+        return "ok";
+    }
+    @RequestMapping("/signedsj")
+    @ResponseBody
+    public String signedsj(Param param){
+        newMapper.signed1(param.getOrdid());
+        newMapper.signedsj(param.getScheduleid());
         return "ok";
     }
 
@@ -189,5 +205,67 @@ public class NewController {
         return JSON.toJSONStringWithDateFormat(numberofreservations, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
 
     }
-
+    @RequestMapping("/getPreCourse")
+    @ResponseBody
+    public String getPreCourse(){
+        return JSON.toJSONString(newMapper.getPreCourse());
+    }
+    @RequestMapping("/setCurprivschedule")
+    @ResponseBody
+    public String setCurprivschedule(Param param){
+        newMapper.setCurprivschedule(param);
+        return "ok";
+    }
+    @RequestMapping("/getPivateuser")
+    @ResponseBody
+    public String getPivateuser(String scheduleid){
+        List<Map<Object, Object>> pivateuser = newMapper.getPivateuser(scheduleid);
+        return JSON.toJSONStringWithDateFormat(pivateuser, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
+    }
+    @RequestMapping("/deletesj")
+    @ResponseBody
+    public String deletesj(String scheduleid){
+        newMapper.deletesj(scheduleid);
+        return "ok";
+    }
+    @RequestMapping("/getAllhyk")
+    @ResponseBody
+    public String getAllhyk(){
+        return JSON.toJSONString(newMapper.getAllhyk());
+    }
+    @RequestMapping("/getUsers")
+    @ResponseBody
+    public String getUsers(GetUsersEntity getUsersEntity){
+        List<Map<Object, Object>> users = newMapper.getUsers(getUsersEntity);
+        return JSON.toJSONStringWithDateFormat(users, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
+    }
+    @RequestMapping("/updateUser")
+    @ResponseBody
+    public String updateUser(Param param){
+        newMapper.updateUser(param);
+        return "ok";
+    }
+    @RequestMapping("/DisableUser")
+    @ResponseBody
+    public String DisableUser(Param param){
+        newMapper.DisableUser(param);
+        return "ok";
+    }
+    @RequestMapping("/updatePoints")
+    @ResponseBody
+    public String updatePoints(Param param){
+        param.setLogid(String.valueOf(new Date().getTime()));
+        newMapper.setLogUserPoints(param);
+        if(param.getActionstate().equals("-")){
+            param.setPoints(String.valueOf(Double.valueOf(param.getPoints())-(Double.valueOf(param.getPoints())*2)));
+        }
+        newMapper.updatePoints(param);
+        return "ok";
+    }
+    @RequestMapping("/updateMemgrade")
+    @ResponseBody
+    public String updateMemgrade(Param param){
+        newMapper.updateMemgrade(param);
+        return "ok";
+    }
 }

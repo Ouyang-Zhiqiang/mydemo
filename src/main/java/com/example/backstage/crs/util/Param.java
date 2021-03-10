@@ -114,5 +114,11 @@ public class Param {
     private String strength;
     private String strengthnumber;
     private String partsjson;
-
+    private String intervaltime;
+    private String tel;
+    private String surpluspoints;
+    private String actionstate;
+    private String currentpoints;
+    private String logid;
+    private String memgrade;
 }

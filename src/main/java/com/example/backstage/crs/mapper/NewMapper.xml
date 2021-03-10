@@ -124,7 +124,7 @@
         where cid=#{cid}::bigint and strengthgrade=#{strengthgrade}::integer
         and strengthnumber!='' and isremoved=false
         order by createdon desc
-        limit #{limit}::bigint offset #{page}::bigint
+        limit #{limit}::bigint offset #{limit}::bigint*#{page}::bigint
     </select>
     <select id="getUnits" resultType="map">
         select * from base_dictionary where type='unit' and isremoved=false
@@ -171,4 +171,117 @@
         order by to_date(createdon::text,'yyyy-MM-dd') asc
         ;
     </select>
+    <select id="getPreCourse" resultType="map">
+        select courseid::varchar as mycourseid, coursename
+        from Cur_PrivCourse_Base where isremoved=false order by createdon desc
+    </select>
+    <insert id="setCurprivschedule" parameterType="com.example.backstage.crs.util.Param">
+        insert into cur_privschedule(storeid, storename, courseid, coursename,
+        scheduledate, schedulebegin, scheduleend, intervaltime, reservablenumber, reservednumber,
+        signednumber, isremoved, createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{storeid}::bigint,#{storename},#{courseid}::bigint,
+            #{coursename},#{scheduledate}::date,#{schedulebegin}::time,#{scheduleend}::time,#{intervaltime}::integer,
+            0,0,0,false,now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <select id="getPivateuser" resultType="map">
+        select ordid::varchar ,scheduleid::varchar,* from ord_ordercourse a
+        inner join user_base b on a.userid=b.userid
+        inner join crd_membershipcard_base c on a.cardno=c.cardno
+        where (a.cardtype='P' or a.cardtype='S')  and scheduleid=#{scheduleid}::bigint
+    </select>
+    <update id="deletesj">
+        update cur_privschedule set isremoved=true where scheduleid=#{scheduleid}::bigint
+    </update>
+    <update id="signedsj">
+        update cur_privschedule set SignedNumber=SignedNumber+1 where scheduleid=#{scheduleid}::bigint
+    </update>
+    <update id="quxiaoyuyuesj">
+        update cur_privschedule set ReservedNumber=ReservedNumber-#{traineenum}::integer where scheduleid=#{scheduleid}::bigint
+    </update>
+    <select id="getAllhyk" resultType="map">
+        select cardid::varchar,cardname from Crd_MembershipCardCategory_Base where isremoved=false and state=1
+    </select>
+    <select id="getUsers" resultType="map" parameterType="com.example.backstage.crs.entity.GetUsersEntity">
+        select concat(array(select c.cardname from crd_membershipcard_user b
+        left join crd_membershipcard_base c on b.cardno=c.cardno
+        where a.userid=b.userid
+        )) as cardsname,a.memgrade,a.name,a.tel,a.userid,a.createdon,a.status,f.name as storename,
+        a.sex,a.storeid::varchar,a.sourcetype,saleuserid,a.points,
+         (select name from user_base where userid=a.refuserid) as tjr,
+         (select name from user_base where userid=a.saleuserid) as xs,a.remarks
+         from user_base a
+        left join crd_membershipcard_user d on a.userid=d.userid
+        left join crd_membershipcard_base e on d.cardno=e.cardno
+        left join org_store f on a.storeid=f.id
+        where 1=1
+        <if test="cardid!=null and cardid!=''" >
+            and e.cardid=#{cardid}::bigint
+        </if>
+        <if test="storeid!=null and storeid!=''" >
+            and a.storeId=#{storeid}::bigint
+        </if>
+        <if test="name!=null and name!=''" >
+            and a.name like '%'||#{name}||'%'
+        </if>
+        <if test="tel!=null and tel!=''" >
+            and a.tel like '%'||#{tel}||'%'
+        </if>
+        <if test="saleuserid!=null and saleuserid!=''" >
+            and a.saleuserid=#{saleuserid}::bigint
+        </if>
+        <if test="status!=null and status!=''" >
+            and a.status=#{status}::integer
+        </if>
+        group by a.userid,f.name
+        order by a.createdon desc
+        limit #{limit}::bigint offset case #{limit}::bigint
+        when 999999 then 0 else #{page}::bigint*#{limit}::bigint end
+    </select>
+    <select id="TimedTasktk" resultType="map">
+        select ordid::varchar,traineenum,scheduleid::varchar from ord_ordercourse
+        where isremoved=false and ordstate=1
+        and signstate=0 and coursedate>='2021-01-01' and cardtype='T'
+        and to_date(coursedate::text,'yyyy-MM-dd')=#{date}::date
+        and courseendtime &lt;#{time}::time-interval '1 hour'
+    </select>
+    <select id="TimedTasksj" resultType="map">
+        select ordid::varchar,traineenum,scheduleid::varchar from ord_ordercourse
+        where isremoved=false and ordstate=1
+        and signstate=0 and coursedate>='2021-01-01' and (cardtype='P' or cardtype='S')
+        and to_date(coursedate::text,'yyyy-MM-dd')=#{date}::date
+        and courseendtime &lt;#{time}::time-interval '1 hour'
+    </select>
+    <insert id="setlog">
+        insert into scr_log(logid,logcode,message, logtype,projectname,methodname,
+        filename,classname, createdon,createdname)
+        values (
+            #{logid}::bigint,'OK',#{message},1,'FaceBody.NET','configureTasks','TimedTaskController','TimedTaskController',now(),'系统管理员'
+        )
+    </insert>
+    <update id="updateUser" parameterType="com.example.backstage.crs.util.Param">
+        update user_base set name=#{name},tel=#{tel},sex=#{sex},storeid=#{storeid}::bigint,
+        saleuserid=#{saleuserid}::bigint,remarks=#{remarks} where userid=#{userid}::bigint
+    </update>
+    <update id="DisableUser" parameterType="com.example.backstage.crs.util.Param">
+        update user_base set status=#{status}::integer where userid=#{userid}::bigint
+    </update>
+    <update id="updatePoints" parameterType="com.example.backstage.crs.util.Param">
+        update user_base set points=points+#{points}::numeric where userid=#{userid}::bigint
+    </update>
+    <insert id="setLogUserPoints" parameterType="com.example.backstage.crs.util.Param">
+        insert into Log_User_Points (logid, userid, currentpoints, points,
+         surpluspoints, remarks,
+        createdon, createdby, createdname, createdip, actionstate, changeaction)
+        values (
+            #{logid}::bigint,#{userid}::bigint,#{currentpoints}::numeric,#{points}::numeric,
+            #{surpluspoints}::numeric,
+            #{remarks},now(),'系统管理员','系统管理员','127.0.0.1',
+            #{actionstate},#{remarks}
+        )
+    </insert>
+    <update id="updateMemgrade" parameterType="com.example.backstage.crs.util.Param">
+        update user_base set memgrade=#{memgrade} where userid=#{userid}::bigint
+    </update>
 </mapper>

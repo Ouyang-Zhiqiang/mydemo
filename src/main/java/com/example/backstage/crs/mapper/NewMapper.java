@@ -1,5 +1,6 @@
 package com.example.backstage.crs.mapper;
 
+import com.example.backstage.crs.entity.GetUsersEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -28,10 +29,12 @@ public interface NewMapper {
     List<Map<Object,Object>> getXiaoshou();
     void deletetk(@Param("scheduleid")String scheduleid);
     void quxiaoyuyue1(@Param("traineenum")String traineenum,@Param("cardno")String cardno);
-    void quxiaoyuyue2(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
+    void quxiaoyuyue2(@Param("scheduleid")String scheduleid);
     void quxiaoyuyue3(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
+    void quxiaoyuyuesj(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
     void signed1(@Param("ordid")String ordid);
     void signed2(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
+    void signedsj(@Param("scheduleid")String scheduleid);
     List<Map<Object,Object>> setUser(@Param("name")String name);
     List<Map<Object,Object>> getAllcourse();
     List<Map<Object,Object>> getStrenth(@Param("cid")String cid,@Param("strengthgrade")String strengthgrade,
@@ -47,4 +50,18 @@ public interface NewMapper {
     void UpdateStrength(com.example.backstage.crs.util.Param param);
     List<Map<Object,Object>> getNumberofreservations(@Param("storeid")String storeid,
                                                      @Param("day1")String day1,@Param("day2")String day2);
+    List<Map<Object,Object>> getPreCourse();
+    void setCurprivschedule(com.example.backstage.crs.util.Param param);
+    List<Map<Object,Object>> getPivateuser(@Param("scheduleid")String scheduleid);
+    void deletesj(@Param("scheduleid")String scheduleid);
+    List<Map<Object,Object>> getAllhyk();
+    List<Map<Object,Object>> getUsers(GetUsersEntity getUsersEntity);
+    List<Map<Object,Object>> TimedTasktk(@Param("date")String date,@Param("time")String time);
+    List<Map<Object,Object>> TimedTasksj(@Param("date")String date,@Param("time")String time);
+    void setlog(@Param("logid")String logid,@Param("message")String message);
+    void updateUser(com.example.backstage.crs.util.Param param);
+    void DisableUser(com.example.backstage.crs.util.Param param);
+    void setLogUserPoints(com.example.backstage.crs.util.Param param);
+    void updatePoints(com.example.backstage.crs.util.Param param);
+    void updateMemgrade(com.example.backstage.crs.util.Param param);
 }
