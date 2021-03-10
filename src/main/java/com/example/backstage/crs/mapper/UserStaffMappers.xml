@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.backstage.crs.mapper.UserStaffMappers">
+
+    <select id="isStaff" parameterType="String" resultType="java.util.HashMap">
+        select userid from user_staff where userid=#{userid}::INT8
+    </select>
+
+
+</mapper>

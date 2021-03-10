@@ -54,4 +54,5 @@ public interface UserBaseMappers {
 
     int updateClassNumberNotClassnumber(long userid);
 
+    List<Map<String, Object>> userByNameAndTel(@Param("name") String name, @Param("tel") String tel);
 }

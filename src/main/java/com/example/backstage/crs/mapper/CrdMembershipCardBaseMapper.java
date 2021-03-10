@@ -31,4 +31,8 @@ public interface CrdMembershipCardBaseMapper {
     List<Map<String, Object>> selectMemberShipCardByNameAndCreatedOn(@Param("name") String name,@Param("datebegin")  String datebegin,@Param("dateend")  String dateend);
 
     Map<String, Object> selectCardByCardNo(String cardno);
+
+    List<Map<String, Object>> selectCardListByStr(@Param("userid")String userid, @Param("coursetype")String coursetype,@Param("cid") String cid);
+
+    int activateCard(CrdMembershipcardBaseEntity crdMembershipcardBaseEntity);
 }

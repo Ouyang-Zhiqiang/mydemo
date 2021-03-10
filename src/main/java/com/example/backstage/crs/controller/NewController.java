@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 @Controller
 @RequestMapping("/web/new")
 public class NewController {
@@ -133,7 +131,6 @@ public class NewController {
         newMapper.signedsj(param.getScheduleid());
         return "ok";
     }
-
     @RequestMapping("/setUser")
     @ResponseBody
     public String setUser(String name){
@@ -203,7 +200,6 @@ public class NewController {
     public String getNumberofreservations(Param param){
         List<Map<Object, Object>> numberofreservations = newMapper.getNumberofreservations(param.getStoreid(), param.getDay1(), param.getDay2());
         return JSON.toJSONStringWithDateFormat(numberofreservations, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
-
     }
     @RequestMapping("/getPreCourse")
     @ResponseBody

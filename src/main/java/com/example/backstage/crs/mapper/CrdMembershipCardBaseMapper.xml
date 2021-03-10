@@ -125,6 +125,36 @@
         select cardname,originalfee,cardend from crd_membershipcard_base where cardno =#{cardno}
     </select>
 
+    <select id="selectCardListByStr"  parameterType="String" resultType="java.util.HashMap">
+        select cmd.CardName,cmd.CardNo,cmd.IsOpen,cmd.times,to_char(cmd.cardbegin,'yyyy-MM-dd') as cardbegin, to_char(cmd.cardend,'yyyy-MM-dd') as cardend ,
+         cmd.cardtype,cmd.curtimes,cmd.PeriodValidity,cmd.State,cmd.TypeId,cmd.CardId,cmd.timefee
+         from crd_membershipcard_base cmd
+        left join crd_membershipcard_user cmu on cmd.cardno = cmu.cardno
+        left join crd_membershipcardcategory_base cmbb on cmd.cardid=cmbb.cardid
+        left join crd_membershipcardcategory_teamcourse cmt on cmbb.cardid = cmt.cardid
+        <where>
+         times>0
+        and cmu.userid=#{userid}::INT8
+        and cmbb.coursetype=#{coursetype}
+        and cmd.disablebegin is null
+        and cmd.disableend is null
+            and cmt.courseid=#{cid} ::INT8
+            and ( (
+            isopen=true
+            <![CDATA[ and to_char(cardbegin,'yyyy-MM-dd')<=to_char(now(),'yyyy-MM-dd')  ]]>
+           <![CDATA[ and to_char(now(),'yyyy-MM-dd')<=to_char(cardend,'yyyy-MM-dd')  ]]>)
+            or isopen=false)
+        </where>
+    </select>
+
+    <update id="activateCard"  parameterType="com.example.backstage.crs.entity.CrdMembershipcardBaseEntity">
+        update crd_membershipcard_base set isopen=true
+        , cardbegin=now()
+        , cardend=(to_char(now(),'yyyy-MM-dd')::timestamp +(#{periodvalidity}|| ' day') ::interval)
+        where cardno=#{cardno}
+    </update>
+
+
     <insert id="insertCrdMembershipcardBase" parameterType="com.example.backstage.crs.entity.CrdMembershipcardBaseEntity">
         insert into crd_membershipcard_base
         <trim prefix="(" suffix=")" suffixOverrides=",">

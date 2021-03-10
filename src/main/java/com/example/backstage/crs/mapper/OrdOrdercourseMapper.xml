@@ -235,7 +235,7 @@
 			</if>
 		group by a.userid
 		</where>
-		) as s1 where number>=4;
+		) as s1 where number>=4,
 	</select>
 
 	<!--查询课程信息-->
@@ -250,6 +250,95 @@
 				and ordstate='1' and signstate='1'
 		group by userid
 	</select>
+
+	<select id="selectStoreByUserid" parameterType="String" resultType="java.util.HashMap">
+		select * from user_base where userid=#{userid} ::INT8
+	</select>
+
+
+	<update id="updateCurtimes">
+        update crd_membershipcard_base set curtimes=#{usabletimes} ::integer
+        where cardno=#{cardno}
+    </update>
+
+
+
+	<insert id="appointmentCourse" parameterType="com.example.backstage.crs.entity.OrdOrdercourseEntity"  keyProperty="ordid" useGeneratedKeys="true">
+		INSERT into ord_ordercourse(
+							   ordtype,
+								 cardtype,
+							   coursedate,
+							   storeid,
+							   storename,
+							   scheduleid,
+							   courseid,
+							   coursename,
+							   courseprice,
+							   coachid,
+							   coachname,
+							   userid,
+							   traineenum,
+							   coursetime,
+							   cardno,
+							   usabletimes,
+							   ordtimes,
+							   ordstate,
+							   signstate,
+							   remarks,
+							   isremoved,
+							   createdon,
+							   createdby,
+							   createdname,
+							   createdip,
+							   lastedon,
+							   lastedby,
+							   lastedname,
+							   lastedip,
+							   courseendtime,
+							   issenduser,
+							   issendcoach,
+							   issendwxevaluate,
+							   grades,
+							   reviews
+							
+		) VALUES(
+							   #{ordtype},
+								 #{cardtype},
+							  #{coursedate},
+							  #{storeid},
+							   #{storename},
+							  #{scheduleid},
+							  #{courseid},
+							   #{coursename},
+							   #{courseprice} ::numeric ,
+							  #{coachid},
+							   #{coachname},
+							  #{userid},
+							  #{traineenum},
+							   #{coursetime} ::time,
+							   #{cardno},
+							  #{usabletimes},
+							  #{ordtimes},
+							  1,
+							  0,
+							   #{remarks},
+							   false,
+								now(),
+							   #{createdby},
+							   #{createdname},
+							   '12',
+								now(),
+							   #{createdby},
+							   #{createdname},
+							   '12',
+							   #{courseendtime}::time,
+							   false,
+							   false,
+							   false,
+							   '',
+							   ''
+		)
+	</insert>
 
 	<update id="updateReduce" parameterType="Long">
 		update User_Base set memgrade=(memgrade ::int-1)::varchar

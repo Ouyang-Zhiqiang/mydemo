@@ -17,7 +17,7 @@ public interface NewMapper {
     List<Map<Object,Object>> getFunction();
     List<Map<Object,Object>> getCourseAll();
     List<Map<Object,Object>> getTeamschedule(@Param("storeid")String storeid,@Param("coachid")String coachid,
-    @Param("day1")String day1,@Param("day2")String day2
+                                             @Param("day1")String day1,@Param("day2")String day2
     );
     List<Map<Object,Object>> getCurTeamStrength(@Param("cid")String cid,@Param("strenth")String strenth);
     void setCurTeamCourseBase(com.example.backstage.crs.util.Param param);

@@ -1,5 +1,7 @@
 package com.example.backstage.crs.mapper;
 
+import com.example.backstage.crs.entity.OrdOrdercourseEntity;
+import com.example.mydemo.pojo.UserBase;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -24,4 +26,9 @@ public interface OrdOrdercourseMapper {
 
     int updateReduce(@Param("useridArray") Long[] useridArray);
 
+    int appointmentCourse(OrdOrdercourseEntity ordOrdercourseEntity);
+
+    Map<String, Object> selectStoreByUserid(String userid);
+
+    int updateCurtimes(@Param("usabletimes") Integer usabletimes,@Param("cardno") String cardno);
 }
