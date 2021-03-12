@@ -31,4 +31,8 @@ public interface OrdOrdercourseMapper {
     Map<String, Object> selectStoreByUserid(String userid);
 
     int updateCurtimes(@Param("usabletimes") Integer usabletimes,@Param("cardno") String cardno);
+
+    int cancelUpdateCardCurtimes(@Param("cardno") String cardno, @Param("traineenum") String traineenum);
+
+    int updateOrdstate(com.example.backstage.crs.util.Param param);
 }

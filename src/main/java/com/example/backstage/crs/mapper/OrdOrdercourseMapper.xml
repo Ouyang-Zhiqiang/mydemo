@@ -261,7 +261,14 @@
         where cardno=#{cardno}
     </update>
 
+	<update id="cancelUpdateCardCurtimes">
+        update crd_membershipcard_base set curtimes=curtimes+#{traineenum} ::integer
+        where cardno=#{cardno}
+    </update>
 
+	<update id="updateOrdstate" >
+		  update ord_ordercourse set OrdState=2 where scheduleid=#{scheduleid}::bigint
+	</update>
 
 	<insert id="appointmentCourse" parameterType="com.example.backstage.crs.entity.OrdOrdercourseEntity"  keyProperty="ordid" useGeneratedKeys="true">
 		INSERT into ord_ordercourse(
@@ -305,15 +312,15 @@
 							   #{ordtype},
 								 #{cardtype},
 							  #{coursedate},
-							  #{storeid},
+							  #{storeid}::int8,
 							   #{storename},
-							  #{scheduleid},
-							  #{courseid},
+							  #{scheduleid}::INT8,
+							  #{courseid}::INT8,
 							   #{coursename},
 							   #{courseprice} ::numeric ,
-							  #{coachid},
+							  #{coachid} ::INT8,
 							   #{coachname},
-							  #{userid},
+							  #{userid} ::INT8,
 							  #{traineenum},
 							   #{coursetime} ::time,
 							   #{cardno},

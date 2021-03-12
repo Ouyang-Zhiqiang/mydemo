@@ -1,7 +1,136 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.backstage.crs.mapper.CurTeamscheduleMapper">
+
+    <resultMap id="teamScheduleMap" type="com.example.backstage.crs.entity.CurTeamscheduleEntity" >
+        <result property="scheduleid" column="scheduleid" javaType="string" jdbcType="VARCHAR"/>
+        <result property="scheduledate" column="scheduledate"/>
+        <result property="schedulebegin" column="schedulebegin"/>
+        <result property="scheduleend" column="scheduleend"/>
+        <result property="storeid" column="storeid" javaType="string" jdbcType="VARCHAR"/>
+        <result property="storename" column="storename"/>
+        <result property="courseid" column="courseid" javaType="string" jdbcType="VARCHAR"/>
+        <result property="cid" column="cid" javaType="string" jdbcType="VARCHAR"/>
+        <result property="coursename" column="coursename"/>
+        <result property="coachid" column="coachid" javaType="string" jdbcType="VARCHAR"/>
+        <result property="coachname" column="coachname"/>
+        <result property="reservablenumber" column="reservablenumber"/>
+        <result property="reservednumber" column="reservednumber"/>
+        <result property="isopened" column="isopened"/>
+        <result property="signednumber" column="signednumber"/>
+        <collection property="users" javaType="ArrayList" ofType="com.example.backstage.crs.entity.OrdOrdercourseEntity"  column="ordid">
+            <id property="ordid" column="OrdId"/>
+            <result property="ordtype" column="OrdType"/>
+            <result property="cardtype" column="CardType"/>
+            <result property="coursedate" column="CourseDate"/>
+            <result property="storeid" column="StoreId" javaType="string" jdbcType="VARCHAR"/>
+            <result property="tel" column="tel"/>
+            <result property="name" column="name"/>
+            <result property="storename" column="StoreName"/>
+            <result property="cardname" column="CardName"/>
+            <result property="curtimes" column="curtimes"/>
+            <result property="scheduleid" column="ScheduleId" javaType="string" jdbcType="VARCHAR"/>
+            <result property="courseprice" column="CoursePrice"/>
+            <result property="userid" column="UserId"/>
+            <result property="traineenum" column="TraineeNum"/>
+            <result property="coursetime" column="CourseTime"/>
+            <result property="cardno" column="CardNo"/>
+            <result property="usabletimes" column="UsableTimes"/>
+            <result property="ordtimes" column="ordtimes"/>
+            <result property="ordstate" column="ordstate"/>
+            <result property="signstate" column="signstate"/>
+            <result property="lastedon" column="lastedon"/>
+            <result property="remarks" column="remarks"/>
+        </collection>
+    </resultMap>
+
+
     <update id="updateReservedNumber">
         update Cur_TeamSchedule set ReservedNumber=ReservedNumber+#{traineenum} where ScheduleId=#{scheduleid}
     </update>
+
+    <select id="getAllTeam" resultMap="teamScheduleMap" parameterType="com.example.backstage.crs.util.Param">
+        select ct.*,users.*,ub.tel,ub.name,cmb.CardName,cmb.curtimes,ctb.cid from (
+        select * from Cur_TeamSchedule
+        <where>
+            <![CDATA[ scheduledate>=#{day1}::Date and scheduledate<=#{day2}::Date ]]>
+            <if test="storeid != null and storeid !='' and storeid !='A'.toString()">
+                and   storeid=#{storeid}::INT8
+            </if>
+            <if test="coachid!=null and coachid!=''">
+                and   coachid=#{coachid}::INT8
+            </if>
+        </where>
+        limit #{limit}::INT8 offset #{page}::INT8) as ct
+        left join cur_teamcourse_base ctb on ctb.courseid=ct.courseid
+        left join ord_ordercourse users on ct.scheduleid=users.scheduleid and users.cardtype='T'
+        <if test="status != null and status !='' and status=='1'.toString()">
+            and   signstate=1
+        </if>
+        <if test="status != null and status !='' and status=='2'.toString()">
+            and   ordstate=2
+        </if>
+        left join user_base ub on users.userid=ub.userid
+        left join Crd_MembershipCard_Base cmb on users.cardno=cmb.cardno
+        order by ct.scheduledate,ct.schedulebegin asc
+    </select>
+
+    <select id="getAllPrivate" resultMap="teamScheduleMap" parameterType="com.example.backstage.crs.util.Param">
+        select ct.*,users.*,ub.tel,ub.name,cmb.CardName,cmb.curtimes from (
+        select * from cur_privschedule
+        <where>
+            <![CDATA[ scheduledate>=#{day1}::Date and scheduledate<=#{day2}::Date ]]>
+            <if test="storeid != null and storeid !='' and storeid !='A'.toString()">
+                and   storeid=#{storeid}::INT8
+            </if>
+            <if test="coachid!=null and coachid!=''">
+                and   coachid=#{coachid}::INT8
+            </if>
+        </where>
+        limit #{limit}::INT8 offset #{page}::INT8) as ct
+        left join ord_ordercourse users on ct.scheduleid=users.scheduleid and users.cardtype='P'
+        <if test="status != null and status !='' and status=='1'.toString()">
+            and   signstate=1
+        </if>
+        <if test="status != null and status !='' and status=='2'.toString()">
+            and   ordstate=2
+        </if>
+        left join user_base ub on users.userid=ub.userid
+        left join Crd_MembershipCard_Base cmb on users.cardno=cmb.cardno
+        order by ct.scheduledate asc
+    </select>
+
+    <select id="getAllTeamCounts"  parameterType="com.example.backstage.crs.util.Param" resultType="Integer">
+        select count(cc.scheduleid) as counts  from Cur_TeamSchedule cc
+        <where>
+            <![CDATA[ scheduledate>=#{day1}::Date and scheduledate<=#{day2}::Date ]]>
+            <if test="storeid != null and storeid !='' and storeid !='A'.toString()">
+                and   storeid=#{storeid}::INT8
+            </if>
+            <if test="coachid!=null and coachid!=''">
+                and   coachid=#{coachid}::INT8
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllPrivateCounts"  parameterType="com.example.backstage.crs.util.Param" resultType="Integer">
+        select count(cc.scheduleid) as counts  from cur_privschedule cc
+        <where>
+            <![CDATA[ scheduledate>=#{day1}::Date and scheduledate<=#{day2}::Date ]]>
+            <if test="storeid != null and storeid !='' and storeid !='A'.toString()">
+                and   storeid=#{storeid}::INT8
+            </if>
+            <if test="coachid!=null and coachid!=''">
+                and   coachid=#{coachid}::INT8
+            </if>
+        </where>
+    </select>
+
+
+
+    <update id="cancelTeam" parameterType="String">
+        update Cur_TeamSchedule set ReservedNumber=ReservedNumber-#{traineenum}::INT8 where ScheduleId=#{scheduleid}::INT8
+    </update>
+
+
 </mapper>

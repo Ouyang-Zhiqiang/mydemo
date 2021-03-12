@@ -5,4 +5,8 @@
     <update id="updateReservedNumberPrivate" parameterType="com.example.backstage.crs.entity.CurPrivscheduleEntity">
             update  Cur_PrivSchedule set ReservedNumber=ReservedNumber+#{traineenum} where ScheduleId=#{scheduleid}
     </update>
+
+    <update id="cancelPrivate" parameterType="String">
+        update Cur_PrivSchedule set ReservedNumber=ReservedNumber-#{traineenum}::INT8 where ScheduleId=#{scheduleid}::INT8
+    </update>
 </mapper>

@@ -1,5 +1,7 @@
 package com.example.backstage.crs.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,9 +15,9 @@ public class  OrdOrdercourseEntity {
     private String cardtype;
   @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date coursedate;
-  private long storeid;
+  private String storeid;
   private String storename;
-  private long scheduleid;
+  private String scheduleid;
   private long courseid;
   private String coursename;
   private String courseprice;
@@ -38,6 +40,7 @@ public class  OrdOrdercourseEntity {
   private String createdname;
   private String createdip;
   @DateTimeFormat(pattern = "yyyy-MM-dd")
+  @JsonFormat(pattern ="yyyy-MM-dd", timezone = "GMT+8")
   private Date lastedon;
   private String lastedby;
   private String lastedname;
@@ -48,6 +51,9 @@ public class  OrdOrdercourseEntity {
   private String issendwxevaluate;
   private String grades;
   private String reviews;
+  private String tel;
+  private String name;
+  private String cardname;
 
 
 }

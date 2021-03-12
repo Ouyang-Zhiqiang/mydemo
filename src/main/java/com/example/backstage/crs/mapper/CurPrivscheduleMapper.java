@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CurPrivscheduleMapper {
     int updateReservedNumberPrivate(long scheduleid,@Param("traineenum") int traineenum);
+
+    int cancelPrivate(@Param("scheduleid")String scheduleid, @Param("traineenum")String traineenum);
 }
