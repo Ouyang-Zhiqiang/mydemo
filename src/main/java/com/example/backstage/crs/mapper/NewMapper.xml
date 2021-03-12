@@ -98,7 +98,7 @@
         update crd_membershipcard_base set curtimes=curtimes+#{traineenum}::integer where cardno=#{cardno}
     </update>
     <update id="quxiaoyuyue2">
-        update ord_ordercourse set OrdState=2 where scheduleid=#{scheduleid}::bigint
+        update ord_ordercourse set OrdState=2 where ordid=#{ordid}::bigint
     </update>
     <update id="quxiaoyuyue3">
         update Cur_TeamSchedule set ReservedNumber=ReservedNumber-#{traineenum}::integer where scheduleid=#{scheduleid}::bigint
@@ -203,7 +203,7 @@
         update cur_privschedule set ReservedNumber=ReservedNumber-#{traineenum}::integer where scheduleid=#{scheduleid}::bigint
     </update>
     <select id="getAllhyk" resultType="map">
-        select cardid::varchar,cardname from Crd_MembershipCardCategory_Base where isremoved=false and state=1
+        select cardid::varchar,cardname,cardtype from Crd_MembershipCardCategory_Base where isremoved=false and state=1
     </select>
     <select id="getUsers" resultType="map" parameterType="com.example.backstage.crs.entity.GetUsersEntity">
         select concat(array(select c.cardname from crd_membershipcard_user b
@@ -246,14 +246,14 @@
         where isremoved=false and ordstate=1
         and signstate=0 and coursedate>='2021-01-01' and cardtype='T'
         and to_date(coursedate::text,'yyyy-MM-dd')=#{date}::date
-        and courseendtime &lt;#{time}::time-interval '1 hour'
+        and (courseendtime+interval '1 hour') &lt;#{time}::time
     </select>
     <select id="TimedTasksj" resultType="map">
         select ordid::varchar,traineenum,scheduleid::varchar from ord_ordercourse
         where isremoved=false and ordstate=1
         and signstate=0 and coursedate>='2021-01-01' and (cardtype='P' or cardtype='S')
         and to_date(coursedate::text,'yyyy-MM-dd')=#{date}::date
-        and courseendtime &lt;#{time}::time-interval '1 hour'
+        and (courseendtime+interval '1 hour') &lt;#{time}::time
     </select>
     <insert id="setlog">
         insert into scr_log(logid,logcode,message, logtype,projectname,methodname,
@@ -286,4 +286,270 @@
     <update id="updateMemgrade" parameterType="com.example.backstage.crs.util.Param">
         update user_base set memgrade=#{memgrade} where userid=#{userid}::bigint
     </update>
+    <select id="getImage" resultType="map">
+        select c.originalpath as img  from user_base a
+        left join User_Images b on a.userid=b.userid
+        left join base_resources c on b.resid=c.resid
+        where a.userid=#{userid}::bigint
+        limit 1
+    </select>
+    <select id="getAmount" resultType="map">
+        select sum(b.TotalFee) from crd_membershipcard_user a
+        inner join crd_membershipcard_base b on a.cardno=b.cardno
+        where a.userid=#{userid}::bigint
+    </select>
+    <select id="getCourseAmount" resultType="map">
+        select count(1) from ord_ordercourse
+        where signstate=1
+        and userid=#{userid}::bigint
+    </select>
+    <select id="getCardByUserid" resultType="map">
+        select a.cardno,b.cardname,b.createdon,b.state,sum(c.sellingfee) as sellingfee,
+        b.cardbegin,b.cardend,a.remarks,b.curtimes,b.lastedby,b.cardtype,b.cardid::varchar,TypeId::varchar,
+        b.OriginalFee,b.totalfee,b.timefee,b.isopen,b.periodvalidity,b.disablebegin,b.disableend,
+        c.payment,c.storeid::varchar ,c.storename,c.salerid,c.salername,b.times,b.isfree
+        from crd_membershipcard_user a
+        inner join crd_membershipcard_base b on a.cardno=b.cardno
+        inner join crd_membershipcard_purchase c on b.cardno=c.cardno
+        where a.userid=#{userid}::bigint
+        and curtimes &gt; 0 and case when b.cardend is not null then b.cardend &gt;now() else 1=1 end
+        group by a.cardno, b.cardname, b.createdon, b.state, b.cardbegin, b.cardend, a.remarks,b.curtimes,b.lastedby,
+        b.cardtype,b.cardid,TypeId,b.OriginalFee,b.totalfee,b.timefee,b.isopen,b.periodvalidity,b.disablebegin,b.disableend,
+        c.payment,c.storeid,c.storename,c.salerid,c.salername,b.times,b.isfree
+    </select>
+    <select id="getCardByUseridsx" resultType="map">
+        select a.cardno,b.cardname,b.createdon,b.state,sum(c.sellingfee) as sellingfee,
+        b.cardbegin,b.cardend,a.remarks,b.curtimes,b.lastedby,b.cardtype,b.cardid::varchar,TypeId::varchar,
+        b.OriginalFee,b.totalfee,b.timefee,b.isopen,b.periodvalidity,b.disablebegin,b.disableend,
+        c.payment,c.storeid::varchar ,c.storename,c.salerid,c.salername,b.times,b.isfree
+        from crd_membershipcard_user a
+        inner join crd_membershipcard_base b on a.cardno=b.cardno
+        inner join crd_membershipcard_purchase c on b.cardno=c.cardno
+        where a.userid=#{userid}::bigint
+        and (curtimes &lt;=0 or case when b.cardend is not null then b.cardend &lt;now() else false end)
+        group by a.cardno, b.cardname, b.createdon, b.state, b.cardbegin, b.cardend, a.remarks,b.curtimes,b.lastedby,
+        b.cardtype,b.cardid,TypeId,b.OriginalFee,b.totalfee,b.timefee,b.isopen,b.periodvalidity,b.disablebegin,b.disableend,
+        c.payment,c.storeid,c.storename,c.salerid,c.salername,b.times,b.isfree
+    </select>
+    <select id="setCrdMembershipcardPurchase" parameterType="com.example.backstage.crs.util.Param">
+        insert into crd_membershipcard_purchase (cardid, cardname, cardno, buytype,
+        buytimes, points, sellingfee, payment, storeid, storename, salerid, salername,
+        cardbegin, cardend, remarks, isremoved, createdon, createdby, createdname, createdip,
+        lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{cardid}::bigint,#{cardname},#{cardno},#{buytype},#{buytimes}::integer,
+            0,#{sellingfee}::numeric,#{payments}::integer,#{storeid}::bigint,#{storename},#{saleid}::bigint,#{salename},
+            #{day1}::date,#{day2}::date,
+            #{remarks},false ,now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </select>
+    <update id="xuka" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_base set CurTimes=CurTimes+#{buytimes}::integer ,
+        TotalTimes=TotalTimes+#{buytimes}::integer ,
+        TotalFee=TotalFee+#{sellingfee}::numeric
+        where cardno=#{cardno}
+    </update>
+    <select id="setCrdMembershipcardStop" parameterType="com.example.backstage.crs.util.Param">
+        insert into crd_membershipcard_stop(userid, cardno, cardid, cardname, typeid, curtimes,
+        stoptype, begindate, beginend, fee, payments, remarks, createdon, createdby, createdname, createdip)
+        values (
+            #{userid}::bigint,#{cardno},#{cardid}::bigint,#{cardname},#{typeid}::bigint,#{curtimes}::integer ,
+            #{stoptype},#{day1}::date,#{day2}::date,#{fee}::numeric,#{payments}::integer,#{remarks},
+            now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </select>
+    <update id="tingka" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_base set State=0,
+        DisableBegin=#{day1}::date,
+        DisableEnd=#{day2}::date
+        where cardno=#{cardno}
+    </update>
+    <update id="huifu">
+        update crd_membershipcard_base set state=1,disablebegin=null,disableend=null
+        where cardno=#{cardno}
+    </update>
+    <insert id="setCrdMembershipCardReduce" parameterType="com.example.backstage.crs.util.Param">
+        insert into Crd_MembershipCard_Reduce(userid, cardno, usersjson, cardid, cardname,
+        typeid, originalfee, times, remarks, createdon, createdby, createdname, createdip)
+        values (
+            #{userid}::bigint,#{cardno},#{usersjson}::json,#{cardid}::bigint,#{cardname},
+            #{typeid}::bigint,#{originalfee}::numeric,#{times}::integer ,#{remarks},
+            now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <update id="kouci" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_base set CurTimes=CurTimes-#{times}::integer
+        where cardno=#{cardno}
+    </update>
+    <insert id="setCrdMembershipCardChangePeriod" parameterType="com.example.backstage.crs.util.Param">
+        insert into Crd_MembershipCard_ChangePeriod(userid, cardno, cardid, cardname, typeid,
+        oldbegin, oldend, newbegin, newend, remarks, createdon, createdby, createdname, createdip)
+        values (
+            #{userid}::bigint,#{cardno},#{cardid}::bigint,#{cardname},#{typeid}::bigint,
+            #{day1}::date,#{day2}::date,#{schedulebegin}::date,#{scheduleend}::date,
+            #{remarks},now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <update id="qixianbiangeng" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_base set cardend=#{scheduleend}::date,cardbegin=#{schedulebegin}::date,
+        isopen=true,
+        curtimes= case when #{cardtype}='P' then #{scheduleend}::date-#{schedulebegin}::date else curtimes end
+        where cardno=#{cardno}
+    </update>
+    <insert id="setCrdMembershipCardReconciliation" parameterType="com.example.backstage.crs.util.Param">
+        insert into Crd_MembershipCard_Reconciliation(userid, cardno, cardid, cardname, typeid, rectype,
+        recamount, remarks, createdon, createdby, createdname, createdip)
+        values (
+            #{userid}::bigint,#{cardno},#{cardid}::bigint,#{cardname},#{typeid}::bigint,
+            #{rectype},#{recamount}::numeric,#{remarks},
+            now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <update id="pingzhang1" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_base set TotalFee=TotalFee+#{recamount}::numeric
+        where cardno=#{cardno}
+    </update>
+    <update id="pingzhang2" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_purchase set sellingfee=sellingfee+#{recamount}::numeric
+        where cardno=#{cardno}
+    </update>
+<!--    部分转卡-->
+    <update id="bufenzhuanka" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_base set totalfee=totalfee-#{fee}::numeric,
+        totaltimes=totaltimes-#{curtimes}::integer ,remarks=#{remarks},curtimes=curtimes-#{curtimes}::integer
+        where cardno=#{cardno}
+    </update>
+<!--    全部转卡-->
+    <update id="quanbuzhuanka" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_base set totalfee=totalfee-#{fee}::numeric,
+        totaltimes=totaltimes-#{curtimes}::integer,remarks=#{remarks},state=0,lastedby='转卡',
+        curtimes=curtimes-#{curtimes}::integer
+        where cardno=#{cardno}
+    </update>
+    <update id="zhuankakouci" parameterType="com.example.backstage.crs.util.Param">
+        update crd_membershipcard_purchase set sellingfee=sellingfee-#{fee}::numeric,buytimes=buytimes-#{curtimes}::integer
+        where cardno=#{cardno}
+    </update>
+    <insert id="bangka1"  parameterType="com.example.backstage.crs.util.Param">
+        insert into crd_membershipcard_user (userid, cardno, ispoint, remarks, state, isremoved,
+        createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{userid}::bigint,#{cardno},true ,#{remarks},1,false ,
+            now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <insert id="bangka2"  parameterType="com.example.backstage.crs.util.Param">
+        insert into crd_membershipcard_purchase(cardid, cardname, cardno, buytype, buytimes,
+        points, sellingfee, payment, storeid, storename, salerid, salername, cardbegin, cardend, remarks,
+        isremoved, createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{cardid}::bigint,#{cardname},#{cardno},'F', #{totaltimes}::integer,
+            0,#{totalfee}::numeric,#{payments}::integer,#{storeid}::bigint,#{storename},#{saleid}::bigint,
+            #{salename},#{day1}::date,#{day2}::date,#{remarks},false ,
+            now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <insert id="bangka3"  parameterType="com.example.backstage.crs.util.Param">
+        insert into crd_membershipcard_base(cardno, cardid, cardname, cardtype, isfree, typeid, originalfee,
+        isopen, cardbegin, periodvalidity, cardend, times, points, curtimes, totaltimes, totalfee,remarks,
+        state,createdon, createdby,
+        createdname, createdip, lastedon, lastedby, lastedname, lastedip, timefee)
+        values (
+            #{cardno},#{cardid}::bigint,#{cardname},#{cardtype},false ,#{typeid}::bigint,#{originalfee}::numeric,
+            #{isopen},#{day1}::date,#{periodvalidity}::integer ,#{day2}::date,#{times}::integer ,0,#{totaltimes}::integer ,
+            #{totaltimes}::integer ,#{totalfee}::numeric,#{remarks},1,
+            now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1',
+            #{timefee}::numeric
+        )
+    </insert>
+    <insert id="setCrdMembershipCardTransfer"  parameterType="com.example.backstage.crs.entity.SetCrdMembershipCardTransferEntity">
+        insert into Crd_MembershipCard_Transfer(userid, username, userphone, cardno, cardid, cardname,
+        typeid, curtimes, newuserid, newusername, newuserphone, fee, payments, remarks,
+        createdon, createdby, createdname, createdip)
+        values (
+            #{userid}::bigint,#{username},#{userphone},#{cardno},#{cardid}::bigint,#{cardname},
+            #{typeid}::bigint,#{curtimes}::integer,#{newuserid}::bigint,#{newusername},#{newuserphone},
+            0,4,null, now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <select id="getUserSalesFollowup" resultType="map">
+        select * from User_Sales_Followup where userid=#{userid}::bigint
+    </select>
+    <select id="getOrdOrdercourse" resultType="map">
+        select *,
+         (select count(1) from ord_ordercourse where userid=#{userid}::bigint and isremoved=false)
+         from ord_ordercourse
+        where userid=#{userid}::bigint and isremoved=false
+        order by createdon desc
+        limit #{limit}::integer offset #{limit}::integer*#{page}::integer
+    </select>
+    <select id="getCaozuojilu" resultType="map">
+        (select b.createdon operatingtime,c.cardname vipcard,case b.buytype when 'F' then '首充' else '续卡' end operatingtype,
+        b.buytimes operatingchange,b.sellingfee operatingfee,
+        (to_date(c.cardbegin::text,'yyyy-MM-dd')::varchar ||' ~ '||to_date(c.cardend::text,'yyyy-MM-dd')::varchar ) operatingtheterm,
+        c.createdname operatingpeople,c.remarks operatingremarks
+        from crd_membershipcard_user a
+        inner join crd_membershipcard_purchase b on a.cardno=b.cardno
+        inner join crd_membershipcard_base c on b.cardno=c.cardno
+        where a.userid=#{userid}::bigint
+        order by b.createdon desc )
+        UNION ALL
+        (
+        select a.createdon,a.cardname,case a.stoptype when 'T' then '临时停卡' else '永久停卡' end,
+        a.curtimes,a.fee,(to_date(a.begindate::text,'yyyy-MM-dd')::varchar ||' ~ '||to_date(a.beginend::text,'yyyy-MM-dd')::varchar ),
+        a.createdname,a.remarks
+        from Crd_MembershipCard_Stop a
+        inner join crd_membershipcard_user b on a.cardno=b.cardno
+        where b.userid=#{userid}::bigint
+        )
+        UNION ALL
+        (
+        select a.createdon,a.cardname,'扣次',
+        a.times,null,null,a.createdname,a.remarks
+        from Crd_MembershipCard_Reduce a
+        inner join crd_membershipcard_user b on a.cardno=b.cardno
+        where b.userid=#{userid}::bigint
+        )
+        UNION ALL
+        (
+        select a.createdon,a.cardname,'期限变更',
+        null,null,(to_date(a.newbegin::text,'yyyy-MM-dd')::varchar ||' ~ '||to_date(a.newend::text,'yyyy-MM-dd')::varchar ),
+        a.createdname,a.remarks
+        from Crd_MembershipCard_ChangePeriod a
+        inner join crd_membershipcard_user b on a.cardno=b.cardno
+        where b.userid=#{userid}::bigint
+        )
+        UNION ALL
+        (
+        select a.createdon,a.cardname,'平账',
+        null,a.recamount,null,a.createdname,a.remarks
+        from Crd_MembershipCard_Reconciliation a
+        inner join crd_membershipcard_user b on a.cardno=b.cardno
+        where b.userid=#{userid}::bigint
+        )
+        UNION ALL
+        (
+        select a.createdon,a.cardname,'转卡',
+        a.curtimes,null,null,a.createdname,a.remarks
+        from Crd_MembershipCard_Transfer a
+        inner join crd_membershipcard_user b on a.cardno=b.cardno
+        where b.userid=#{userid}::bigint
+        )
+        order by operatingtime desc
+        limit #{limit}::integer offset #{limit}::integer*#{page}::integer
+    </select>
+    <select id="setUserSalesFollowup">
+        insert into User_Sales_Followup(userid, remarks, createdon,
+        createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{userid}::bigint,#{remarks},
+            now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </select>
+    <select id="getCrdMembershipCardCategoryTypeCard" resultType="map">
+        select tid::varchar,cardid::varchar,cardtype
+        ,times,fee,periodvalidity,points
+        from Crd_MembershipCardCategory_TypeCard where cardid=#{cardid}::bigint
+        and isremoved=false
+    </select>
 </mapper>

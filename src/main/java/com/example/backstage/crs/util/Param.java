@@ -122,4 +122,22 @@ public class Param {
     private String currentpoints;
     private String logid;
     private String memgrade;
+    private String buytimes;
+    private String payments;
+    private String saleid;
+    private String salename;
+    private String sellingfee;
+    private String curtimes;
+    private String typeid;
+    private String stoptype;
+    private String usersjson;
+    private String originalfee;
+    private String times;
+    private String rectype;
+    private String recamount;
+    private String totalfee;
+    private String totaltimes;
+    private String periodvalidity;
+    private String timefee;
+    private String isopen;
 }
