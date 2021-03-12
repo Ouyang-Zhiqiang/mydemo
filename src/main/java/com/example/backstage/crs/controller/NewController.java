@@ -3,6 +3,7 @@ package com.example.backstage.crs.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.example.backstage.crs.entity.GetUsersEntity;
+import com.example.backstage.crs.entity.SetCrdMembershipCardTransferEntity;
 import com.example.backstage.crs.mapper.NewMapper;
 import com.example.backstage.crs.service.AppletService;
 import com.example.backstage.crs.util.Param;
@@ -106,7 +107,7 @@ public class NewController {
     @RequestMapping("/cancelReservation2")
     @ResponseBody
     public String cancelReservation2(Param param){
-        newMapper.quxiaoyuyue2(param.getScheduleid());
+        newMapper.quxiaoyuyue2(param.getOrdid());
         newMapper.quxiaoyuyue3(param.getTraineenum(),param.getScheduleid());
         return "ok";
     }
@@ -264,4 +265,135 @@ public class NewController {
         newMapper.updateMemgrade(param);
         return "ok";
     }
+    @RequestMapping("/getImage")
+    @ResponseBody
+    public String getImage(String userid){
+        return JSON.toJSONString(newMapper.getImage(userid));
+    }
+    @RequestMapping("/getAmount")
+    @ResponseBody
+    public String getAmount(String userid){
+        return JSON.toJSONString(newMapper.getAmount(userid));
+    }
+    @RequestMapping("/getCourseAmount")
+    @ResponseBody
+    public String getCourseAmount(String userid){
+        return JSON.toJSONString(newMapper.getCourseAmount(userid));
+    }
+    @RequestMapping("/getCardByUserid")
+    @ResponseBody
+    public String getCardByUserid(String userid){
+        List<Map<Object, Object>> cardByUserid = newMapper.getCardByUserid(userid);
+        return JSON.toJSONStringWithDateFormat(cardByUserid, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+
+    }
+    @RequestMapping("/getCardByUseridsx")
+    @ResponseBody
+    public String getCardByUseridsx(String userid){
+        List<Map<Object, Object>> cardByUserid = newMapper.getCardByUseridsx(userid);
+        return JSON.toJSONStringWithDateFormat(cardByUserid, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+    }
+
+    @RequestMapping("/xuka")
+    @ResponseBody
+    public String xuka(Param param){
+        newMapper.xuka(param);
+        newMapper.setCrdMembershipcardPurchase(param);
+        return "ok";
+    }
+    @RequestMapping("/tingka")
+    @ResponseBody
+    public String tingka(Param param){
+        newMapper.tingka(param);
+        newMapper.setCrdMembershipcardStop(param);
+        return "ok";
+    }
+    @RequestMapping("/huifu")
+    @ResponseBody
+    public String huifu(String cardno){
+        newMapper.huifu(cardno);
+        return "ok";
+    }
+    @RequestMapping("/kouci")
+    @ResponseBody
+    public String kouci(Param param){
+        newMapper.kouci(param);
+        newMapper.setCrdMembershipCardReduce(param);
+        return "ok";
+    }
+    @RequestMapping("/qixianbiangeng")
+    @ResponseBody
+    public String qixianbiangeng(Param param){
+        System.err.println(param);
+        newMapper.qixianbiangeng(param);
+        newMapper.setCrdMembershipCardChangePeriod(param);
+        return "ok";
+    }
+    @RequestMapping("/pingzhang")
+    @ResponseBody
+    public String pingzhang(Param param){
+        newMapper.setCrdMembershipCardReconciliation(param);
+        newMapper.pingzhang1(param);
+        newMapper.pingzhang2(param);
+        return "ok";
+    }
+    @RequestMapping("/bufenzhuanka")
+    @ResponseBody
+    public String bufenzhuanka(Param param){
+        newMapper.bufenzhuanka(param);
+        newMapper.zhuankakouci(param);
+        return "ok";
+    }
+    @RequestMapping("/quanbuzhuanka")
+    @ResponseBody
+    public String quanbuzhuanka(Param param){
+        newMapper.quanbuzhuanka(param);
+        newMapper.setCrdMembershipcardStop(param);
+        newMapper.zhuankakouci(param);
+        return "ok";
+    }
+    @RequestMapping("/bangka")
+    @ResponseBody
+    public String bangka(Param param){
+        newMapper.bangka1(param);
+        newMapper.bangka2(param);
+        newMapper.bangka3(param);
+        return "ok";
+    }
+    @RequestMapping("/setCrdMembershipCardTransfer")
+    @ResponseBody
+    public String setCrdMembershipCardTransfer(SetCrdMembershipCardTransferEntity s){
+        newMapper.setCrdMembershipCardTransfer(s);
+        return "ok";
+    }
+    @RequestMapping("/getUserSalesFollowup")
+    @ResponseBody
+    public String getUserSalesFollowup(String userid){
+        List<Map<Object, Object>> userSalesFollowup = newMapper.getUserSalesFollowup(userid);
+        return JSON.toJSONStringWithDateFormat(userSalesFollowup, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
+    }
+    @RequestMapping("/getOrdOrdercourse")
+    @ResponseBody
+    public String getOrdOrdercourse(Param param){
+        List<Map<Object, Object>> userSalesFollowup = newMapper.getOrdOrdercourse(param.getUserid(),param.getLimit(),param.getPage());
+        return JSON.toJSONStringWithDateFormat(userSalesFollowup, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+    }
+    @RequestMapping("/getCaozuojilu")
+    @ResponseBody
+    public String getCaozuojilu(Param param){
+        List<Map<Object, Object>> userSalesFollowup = newMapper.getCaozuojilu(param.getUserid(),param.getLimit(),param.getPage());
+        return JSON.toJSONStringWithDateFormat(userSalesFollowup, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+    }
+    @RequestMapping("/setUserSalesFollowup")
+    @ResponseBody
+    public String setUserSalesFollowup(Param param){
+        newMapper.setUserSalesFollowup(param.getUserid(),param.getRemarks());
+        return "ok";
+    }
+    @RequestMapping("/getCrdMembershipCardCategoryTypeCard")
+    @ResponseBody
+    public String getCrdMembershipCardCategoryTypeCard(String cardid){
+        return JSON.toJSONString(newMapper.getCrdMembershipCardCategoryTypeCard(cardid));
+    }
+
 }

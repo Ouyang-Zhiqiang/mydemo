@@ -29,7 +29,7 @@ public interface NewMapper {
     List<Map<Object,Object>> getXiaoshou();
     void deletetk(@Param("scheduleid")String scheduleid);
     void quxiaoyuyue1(@Param("traineenum")String traineenum,@Param("cardno")String cardno);
-    void quxiaoyuyue2(@Param("scheduleid")String scheduleid);
+    void quxiaoyuyue2(@Param("ordid")String ordid);
     void quxiaoyuyue3(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
     void quxiaoyuyuesj(@Param("traineenum")String traineenum,@Param("scheduleid")String scheduleid);
     void signed1(@Param("ordid")String ordid);
@@ -64,4 +64,35 @@ public interface NewMapper {
     void setLogUserPoints(com.example.backstage.crs.util.Param param);
     void updatePoints(com.example.backstage.crs.util.Param param);
     void updateMemgrade(com.example.backstage.crs.util.Param param);
+    Map<Object,Object> getImage(@Param("userid")String userid);
+    Map<Object,Object> getAmount(@Param("userid")String userid);
+    Map<Object,Object> getCourseAmount(@Param("userid")String userid);
+    List<Map<Object,Object>> getCardByUserid(@Param("userid")String userid);
+    List<Map<Object,Object>> getCardByUseridsx(@Param("userid")String userid);
+    void setCrdMembershipcardPurchase(com.example.backstage.crs.util.Param param);
+    void xuka(com.example.backstage.crs.util.Param param);
+    void setCrdMembershipcardStop(com.example.backstage.crs.util.Param param);
+    void tingka(com.example.backstage.crs.util.Param param);
+    void huifu(String cardno);
+    void setCrdMembershipCardReduce(com.example.backstage.crs.util.Param param);
+    void kouci(com.example.backstage.crs.util.Param param);
+    void setCrdMembershipCardChangePeriod(com.example.backstage.crs.util.Param param);
+    void qixianbiangeng(com.example.backstage.crs.util.Param param);
+    void setCrdMembershipCardReconciliation(com.example.backstage.crs.util.Param param);
+    void pingzhang1(com.example.backstage.crs.util.Param param);
+    void pingzhang2(com.example.backstage.crs.util.Param param);
+    void bufenzhuanka(com.example.backstage.crs.util.Param param);
+    void quanbuzhuanka(com.example.backstage.crs.util.Param param);
+    void zhuankakouci(com.example.backstage.crs.util.Param param);
+    void bangka1(com.example.backstage.crs.util.Param param);
+    void bangka2(com.example.backstage.crs.util.Param param);
+    void bangka3(com.example.backstage.crs.util.Param param);
+    void setCrdMembershipCardTransfer(com.example.backstage.crs.entity.SetCrdMembershipCardTransferEntity s);
+    List<Map<Object,Object>> getUserSalesFollowup(@Param("userid") String userid);
+    List<Map<Object,Object>> getOrdOrdercourse(@Param("userid") String userid,@Param("limit") String limit
+    ,@Param("page") String page);
+    List<Map<Object,Object>> getCaozuojilu(@Param("userid") String userid,@Param("limit") String limit
+            ,@Param("page") String page);
+    void setUserSalesFollowup(@Param("userid") String userid,@Param("remarks") String remarks);
+    List<Map<Object,Object>> getCrdMembershipCardCategoryTypeCard(@Param("cardid")String cardid);
 }
