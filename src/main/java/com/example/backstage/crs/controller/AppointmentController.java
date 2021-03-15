@@ -143,5 +143,4 @@ public class AppointmentController {
         return counts;
     }
 
-
 }

@@ -405,6 +405,4 @@ public class NewController {
     public String getCrdMembershipCardCategoryTeamCourse(String cardid){
         return JSON.toJSONString(newMapper.getCrdMembershipCardCategoryTeamCourse(cardid));
     }
-
-
 }
