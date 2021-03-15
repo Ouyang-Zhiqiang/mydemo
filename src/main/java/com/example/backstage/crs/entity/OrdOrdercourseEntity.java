@@ -21,7 +21,7 @@ public class  OrdOrdercourseEntity {
   private long courseid;
   private String coursename;
   private String courseprice;
-  private long coachid;
+  private String coachid;
   private String coachname;
   private long userid;
   private int traineenum;
