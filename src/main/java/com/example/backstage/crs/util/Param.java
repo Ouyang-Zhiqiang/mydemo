@@ -140,4 +140,5 @@ public class Param {
     private String periodvalidity;
     private String timefee;
     private String isopen;
+    private String isonlinebuy;
 }

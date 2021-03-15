@@ -150,6 +150,8 @@
            <![CDATA[ and to_char(now(),'yyyy-MM-dd')<=to_char(cardend,'yyyy-MM-dd')  ]]>)
             or isopen=false)
         </where>
+        group by cmd.CardName,cmd.CardNo,cmd.IsOpen,cmd.times,to_char(cmd.cardbegin,'yyyy-MM-dd'), to_char(cmd.cardend,'yyyy-MM-dd'),
+        cmd.cardtype,cmd.curtimes,cmd.PeriodValidity,cmd.State,cmd.TypeId,cmd.CardId,cmd.timefee
     </select>
 
     <update id="activateCard"  parameterType="com.example.backstage.crs.entity.CrdMembershipcardBaseEntity">

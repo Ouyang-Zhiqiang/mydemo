@@ -456,7 +456,7 @@
         createdname, createdip, lastedon, lastedby, lastedname, lastedip, timefee)
         values (
             #{cardno},#{cardid}::bigint,#{cardname},#{cardtype},false ,#{typeid}::bigint,#{originalfee}::numeric,
-            #{isopen},#{day1}::date,#{periodvalidity}::integer ,#{day2}::date,#{times}::integer ,0,#{totaltimes}::integer ,
+            #{isopen}::boolean,#{day1}::date,#{periodvalidity}::integer ,#{day2}::date,#{times}::integer ,0,#{totaltimes}::integer ,
             #{totaltimes}::integer ,#{totalfee}::numeric,#{remarks},1,
             now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1',
             #{timefee}::numeric
@@ -536,7 +536,7 @@
         where b.userid=#{userid}::bigint
         )
         order by operatingtime desc
-        limit #{limit}::integer offset #{limit}::integer*#{page}::integer
+        #{limit}::integer offset #{limit}::integer*#{page}::integer
     </select>
     <select id="setUserSalesFollowup">
         insert into User_Sales_Followup(userid, remarks, createdon,
@@ -551,5 +551,44 @@
         ,times,fee,periodvalidity,points
         from Crd_MembershipCardCategory_TypeCard where cardid=#{cardid}::bigint
         and isremoved=false
+    </select>
+    <select id="getAllCards" resultType="map" parameterType="com.example.backstage.crs.util.Param">
+        select cardid::varchar, cardname, cardtype, logoid::varchar, resurl, istransfer, ismulmem,
+        isonlinebuy, isopenedbyfirst, coursetype, isfree, labels, seqno, storesjson::varchar ,state,
+        (select count(1) from Crd_MembershipCardCategory_Base
+        where isremoved=false
+        <if test="status!=null and status!=''" >
+            and State=#{status}::integer
+        </if>
+        <if test="cardname!=null and cardname!=''" >
+            and cardname like '%'||#{cardname}||'%'
+        </if>
+        <if test="cardtype!=null and cardtype!=''" >
+            and cardtype=#{cardtype}
+        </if>
+        <if test="isonlinebuy!=null and isonlinebuy!=''" >
+            and isonlinebuy=#{isonlinebuy}::boolean
+        </if>
+        ) counts
+         from Crd_MembershipCardCategory_Base
+        where isremoved=false
+        <if test="status!=null and status!=''" >
+            and State=#{status}::integer
+        </if>
+        <if test="cardname!=null and cardname!=''" >
+            and cardname like '%'||#{cardname}||'%'
+        </if>
+        <if test="cardtype!=null and cardtype!=''" >
+            and cardtype=#{cardtype}
+        </if>
+        <if test="isonlinebuy!=null and isonlinebuy!=''" >
+            and isonlinebuy=#{isonlinebuy}::boolean
+        </if>
+        limit #{limit}::integer offset #{limit}::integer*#{page}::integer
+    </select>
+    <select id="getCrdMembershipCardCategoryTeamCourse" resultType="map">
+        select tcid::varchar , cardid::varchar , courseid::varchar , coursename, constimes,
+        preferconstimes, state from Crd_MembershipCardCategory_TeamCourse
+        where cardid=#{cardid}::bigint;
     </select>
 </mapper>

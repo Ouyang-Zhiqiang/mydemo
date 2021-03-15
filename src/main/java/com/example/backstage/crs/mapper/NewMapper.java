@@ -95,4 +95,6 @@ public interface NewMapper {
             ,@Param("page") String page);
     void setUserSalesFollowup(@Param("userid") String userid,@Param("remarks") String remarks);
     List<Map<Object,Object>> getCrdMembershipCardCategoryTypeCard(@Param("cardid")String cardid);
+    List<Map<Object,Object>> getAllCards(com.example.backstage.crs.util.Param param);
+    List<Map<Object,Object>> getCrdMembershipCardCategoryTeamCourse(@Param("cardid")String cardid);
 }

@@ -376,7 +376,7 @@ public class NewController {
     @ResponseBody
     public String getOrdOrdercourse(Param param){
         List<Map<Object, Object>> userSalesFollowup = newMapper.getOrdOrdercourse(param.getUserid(),param.getLimit(),param.getPage());
-        return JSON.toJSONStringWithDateFormat(userSalesFollowup, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        return JSON.toJSONStringWithDateFormat(userSalesFollowup, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
     }
     @RequestMapping("/getCaozuojilu")
     @ResponseBody
@@ -395,5 +395,16 @@ public class NewController {
     public String getCrdMembershipCardCategoryTypeCard(String cardid){
         return JSON.toJSONString(newMapper.getCrdMembershipCardCategoryTypeCard(cardid));
     }
+    @RequestMapping("/getAllCards")
+    @ResponseBody
+    public String getAllCards(Param param){
+        return JSON.toJSONString(newMapper.getAllCards(param));
+    }
+    @RequestMapping("/getCrdMembershipCardCategoryTeamCourse")
+    @ResponseBody
+    public String getCrdMembershipCardCategoryTeamCourse(String cardid){
+        return JSON.toJSONString(newMapper.getCrdMembershipCardCategoryTeamCourse(cardid));
+    }
+
 
 }
