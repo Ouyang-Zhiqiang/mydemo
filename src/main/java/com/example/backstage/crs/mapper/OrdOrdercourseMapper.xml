@@ -267,7 +267,7 @@
     </update>
 
 	<update id="updateOrdstate" >
-		  update ord_ordercourse set OrdState=2 where scheduleid=#{scheduleid}::bigint
+		  update ord_ordercourse set OrdState=2 where ordid=#{ordid}::bigint
 	</update>
 
 	<insert id="appointmentCourse" parameterType="com.example.backstage.crs.entity.OrdOrdercourseEntity"  keyProperty="ordid" useGeneratedKeys="true">

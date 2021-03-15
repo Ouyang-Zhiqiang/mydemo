@@ -76,24 +76,25 @@
     </select>
 
     <select id="getAllPrivate" resultMap="teamScheduleMap" parameterType="com.example.backstage.crs.util.Param">
-        select ct.*,users.*,ub.tel,ub.name,cmb.CardName,cmb.curtimes from (
+        select  spb.coachid::varchar ,spb.coachname,ct.*,users.*,ub.tel,ub.name,cmb.CardName,cmb.curtimes from (
         select * from cur_privschedule
         <where>
             <![CDATA[ scheduledate>=#{day1}::Date and scheduledate<=#{day2}::Date ]]>
             <if test="storeid != null and storeid !='' and storeid !='A'.toString()">
                 and   storeid=#{storeid}::INT8
             </if>
-            <if test="coachid!=null and coachid!=''">
-                and   coachid=#{coachid}::INT8
-            </if>
         </where>
         limit #{limit}::INT8 offset #{page}::INT8) as ct
+        left join Cur_PrivCourse_Base spb on ct.courseid=spb.courseid
         left join ord_ordercourse users on ct.scheduleid=users.scheduleid and users.cardtype='P'
+        <if test="coachid!=null and coachid!=''">
+            and   spb.coachid=#{coachid}::INT8
+        </if>
         <if test="status != null and status !='' and status=='1'.toString()">
-            and   signstate=1
+            and   users.signstate=1
         </if>
         <if test="status != null and status !='' and status=='2'.toString()">
-            and   ordstate=2
+            and   users.ordstate=2
         </if>
         left join user_base ub on users.userid=ub.userid
         left join Crd_MembershipCard_Base cmb on users.cardno=cmb.cardno
