@@ -451,5 +451,4 @@ public class NewController {
         newMapper.xiugaihykzt(c);
         return "ok";
     }
-
 }

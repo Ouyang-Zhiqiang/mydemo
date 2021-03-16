@@ -72,6 +72,9 @@
             delete from SPM_IntegralGoods_Base where goodscode = #{goodscode}
     </delete>
 
+    <update id="updateIntegralGoodsPurchased" parameterType="String">
+        update spm_integralgoods_base set purchased=purchased+1 where goodscode=#{goodscode}::INT8;
+    </update>
 
     <update id="updateSPMIntegralGoodsBaseSalesState"  parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity" >
         UPDATE SPM_IntegralGoods_Base
@@ -149,5 +152,6 @@
     <select id="selectAllSpmIntegralGoodsByGoodcode" parameterType="Long" resultType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity">
         select * from spm_integralgoods_base where goodscode=#{goodscode}
     </select>
+
 
 </mapper>

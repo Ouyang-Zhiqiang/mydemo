@@ -30,4 +30,6 @@ public interface SPMIntegralGoodsBaseMapper {
     Map<String,Object> selectSpmIntegralGoodsByGoodcode(@Param("goodscode")Long goodscode);
 
     SpmIntegralgoodsBaseEntity selectAllSpmIntegralGoodsByGoodcode(@Param("goodscode")String goodscode);
+
+    int updateIntegralGoodsPurchased(String goodscode);
 }

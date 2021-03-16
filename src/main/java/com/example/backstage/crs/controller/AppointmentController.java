@@ -30,6 +30,8 @@ public class AppointmentController {
     private CurPrivscheduleMapper curPrivscheduleMapper;
     @Autowired
     private OrdOrdercourseMapper ordOrdercourseMapper;
+    @Autowired
+    private SPMIntegralGoodsBaseMapper spmIntegralGoodsBaseMapper;
 
     @RequestMapping("/userByNameAndTel")
     @ResponseBody
@@ -143,5 +145,11 @@ public class AppointmentController {
         return counts;
     }
 
-
+    /*积分限购时修改已购数量*/
+    @RequestMapping("/updateIntegralGoodsPurchased")
+    @ResponseBody
+    public int  updateIntegralGoodsPurchased(String goodscode){
+        int counts=spmIntegralGoodsBaseMapper.updateIntegralGoodsPurchased(goodscode);
+        return counts;
+    }
 }
