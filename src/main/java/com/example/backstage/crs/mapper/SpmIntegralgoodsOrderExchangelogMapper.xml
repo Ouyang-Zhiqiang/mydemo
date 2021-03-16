@@ -12,24 +12,23 @@
     </select>
 
     <insert id="Insert" parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsOrderExchangelogEntity" useGeneratedKeys="true" keyProperty="logid">
-        INSERT INTO spm_integralgoods_order_exchangelog(
-            logid, orderid, userid, username, userphone, goodscode, name,
+        INSERT INTO spm_integralgoods_order_exchangelog(orderid, userid, username, userphone, goodscode, name,
             imgid, imgurl, salespoint, storeid, storename, usedvaliditybegin,
             usedvalidityend, salesstate, seqnum, opttype, state, logstate,
             isremoved, createdon, createdby, createdname, createdip)
-    VALUES (#{logid}, #{orderid}, #{userid}, #{username}, #{userphone}, #{goodscode}, #{name},
-            #{imgid}, #{imgurl}, #{salespoint}, #{storeid}, #{storename}, #{usedvaliditybegin},
+    VALUES (#{orderid} ::bigint, #{userid}::bigint, #{username}, #{userphone}, #{goodscode}::bigint, #{name},
+            #{imgid}::bigint, #{imgurl}, #{salespoint}, #{storeid}::bigint, #{storename}, #{usedvaliditybegin},
             #{usedvalidityend}, #{salesstate}, #{seqnum}, #{opttype}, #{state}, #{logstate},
             #{isremoved}::boolean, #{createdon}, #{createdby}, #{createdname}, #{createdip});
     </insert>
 
     <update id="Update" parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsOrderEntity" >
         UPDATE spm_integralgoods_order
-           SET orderid=#{orderid}, userid=#{userid}, username=#{username}, userphone=#{userphone}, goodscode=#{goodscode}, name=#{name},
-               imgid=#{imgid}, imgurl=#{imgurl}, salespoint=#{salespoint}, storeid=#{storeid}, storename=#{storename}, usedvaliditybegin=#{usedvaliditybegin},
+           SET orderid=#{orderid}::bigint, userid=#{userid}::bigint, username=#{username}, userphone=#{userphone}, goodscode=#{goodscode}::bigint, name=#{name},
+               imgid=#{imgid}::bigint, imgurl=#{imgurl}, salespoint=#{salespoint}, storeid=#{storeid}::bigint, storename=#{storename}, usedvaliditybegin=#{usedvaliditybegin},
                usedvalidityend=#{usedvalidityend}, salesstate=#{salesstate}, seqnum=#{seqnum}, opttype=#{opttype}, state=#{state},
                isremoved=#{isremoved}::boolean,
                lastedon=#{lastedon}, lastedby=#{lastedby}, lastedname=#{lastedname}, lastedip=#{lastedip}
-         WHERE orderid=#{orderid};
+         WHERE orderid=#{orderid}::bigint;
     </update>
 </mapper>

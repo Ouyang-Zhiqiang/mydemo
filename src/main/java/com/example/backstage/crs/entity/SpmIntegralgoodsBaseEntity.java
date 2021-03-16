@@ -1,6 +1,7 @@
 package com.example.backstage.crs.entity;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -19,6 +20,7 @@ public class SpmIntegralgoodsBaseEntity {
   private long salesstate;
   private long seqnum;
   private Boolean isremoved;
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date createdon;
   private String createdby;
   private String createdname;

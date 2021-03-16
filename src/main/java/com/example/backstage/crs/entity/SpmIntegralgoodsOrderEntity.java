@@ -1,13 +1,14 @@
 package com.example.backstage.crs.entity;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
 @Data
 public class SpmIntegralgoodsOrderEntity {
 
-  private long orderid;
+  private String orderid;
   private long userid;
   private String username;
   private String userphone;
@@ -25,6 +26,7 @@ public class SpmIntegralgoodsOrderEntity {
   private long opttype;
   private long state;
   private String isremoved;
+  @DateTimeFormat(pattern = "yyyy-MM-dd")
   private Date createdon;
   private String createdby;
   private String createdname;

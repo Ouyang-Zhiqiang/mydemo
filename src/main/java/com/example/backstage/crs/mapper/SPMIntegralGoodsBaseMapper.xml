@@ -28,6 +28,62 @@
     </insert>
 
 
+    <select id="getGoodsList" parameterType="String" resultType="java.util.HashMap">
+        select * from SPM_IntegralGoods_Base
+        <where>
+            <if test="storeid !=null and storeid!=''">
+            storeid=#{storeid}::INT8
+            </if>
+        </where>
+        order by createdon desc
+    </select>
+
+    <select id="selectGoodsOrderList" parameterType="String" resultType="com.example.backstage.crs.entity.SpmIntegralgoodsOrderEntity">
+        select
+        orderid::varchar ,
+          userid ::varchar,
+          username ,
+          userphone ,
+          goodscode ,
+          name ,
+          imgid::varchar ,
+          imgurl ,
+          salespoint ,
+          storeid ::varchar,
+          storename ,
+          usedvaliditybegin ,
+          usedvalidityend ,
+          salesstate ,
+          seqnum ,
+          opttype ,
+          state ,
+          isremoved ,
+          to_char(createdon,'yyyy-MM-dd'),
+          createdby ,
+          createdname ,
+          createdip ,
+          to_char(lastedon,'yyyy-MM-dd') ,
+          lastedby ,
+          lastedname ,
+          lastedip  from SPM_IntegralGoods_Order
+        <where>
+            <if test="storeid !=null and storeid!=''">
+                storeid=#{storeid}::INT8
+            </if>
+        </where>
+        order by createdon desc
+    </select>
+
+    <select id="selectGoodsOrderExchangeList" parameterType="String" resultType="java.util.HashMap">
+        select * from SPM_IntegralGoods_Order_exchangelog
+        <where>
+            <if test="storeid !=null and storeid!=''">
+                storeid=#{storeid}::INT8
+            </if>
+        </where>
+        order by createdon desc
+    </select>
+
     <update id="updateSPMIntegralGoodsBase"  parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity" >
         UPDATE SPM_IntegralGoods_Base
         <trim prefix="SET" suffixOverrides=",">
@@ -73,7 +129,7 @@
     </delete>
 
     <update id="updateIntegralGoodsPurchased" parameterType="String">
-        update spm_integralgoods_base set purchased=purchased+1 where goodscode=#{goodscode}::INT8;
+        update spm_integralgoods_base set purchased=purchased+1 where goodscode=#{goodscode}::INT8 ,
     </update>
 
     <update id="updateSPMIntegralGoodsBaseSalesState"  parameterType="com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity" >
@@ -112,7 +168,6 @@
          usedvalidityend,
          salesstate,
          seqnum,
-        isremoved,
          createdon,
          createdby,
          createdname,
@@ -120,7 +175,6 @@
          lastedon,
          lastedby,
          lastedname,
-         lastedip,
          stock,
          purchased,
          totalpurchased from spm_integralgoods_base

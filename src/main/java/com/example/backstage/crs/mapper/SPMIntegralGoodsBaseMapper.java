@@ -2,6 +2,7 @@ package com.example.backstage.crs.mapper;
 
 
 import com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity;
+import com.example.backstage.crs.entity.SpmIntegralgoodsOrderEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -32,4 +33,10 @@ public interface SPMIntegralGoodsBaseMapper {
     SpmIntegralgoodsBaseEntity selectAllSpmIntegralGoodsByGoodcode(@Param("goodscode")String goodscode);
 
     int updateIntegralGoodsPurchased(String goodscode);
+
+    List<Map<String, Object>> getGoodsList(String storeid);
+
+    List<SpmIntegralgoodsOrderEntity> selectGoodsOrderList(String storeid);
+
+    List<Map<String, Object>> selectGoodsOrderExchangeList(String storeid);
 }

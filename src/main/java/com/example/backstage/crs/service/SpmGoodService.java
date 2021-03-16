@@ -1,17 +1,14 @@
 package com.example.backstage.crs.service;
 
-import cn.hutool.core.date.DateTime;
 import com.alibaba.fastjson.JSON;
 import com.example.backstage.crs.entity.SpmIntegralgoodsBaseEntity;
 import com.example.backstage.crs.entity.SpmIntegralgoodsOrderEntity;
 import com.example.backstage.crs.entity.SpmIntegralgoodsOrderExchangelogEntity;
 import com.example.backstage.crs.mapper.SPMIntegralGoodsBaseMapper;
 import com.example.backstage.crs.mapper.SpmIntegralgoodsOrderExchangelogMapper;
-import com.example.backstage.crs.util.Param;
 import com.example.backstage.crs.util.Send;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.Date;
 import java.util.List;
@@ -54,7 +51,7 @@ public class SpmGoodService {
         slmodel.setCreatedon(new Date());
         int success=spmIntegralgoodsOrderExchangelogMapper.Insert(slmodel);
 
-        detail.setOrderid(orderId);
+        detail.setOrderid(orderId.toString());
         detail.setState(1);
         detail.setLastedby(createdby);
         detail.setLastedname(createdname);
@@ -91,6 +88,18 @@ public class SpmGoodService {
             return JSON.toJSONString("");
         }
         return JSON.toJSONString("");
+    }
+
+    public List<Map<String,Object>> getGoodsList(String storeid) {
+        return spmIntegralGoodsBaseMapper.getGoodsList(storeid);
+    }
+
+    public List<SpmIntegralgoodsOrderEntity> selectGoodsOrderList(String storeid) {
+        return spmIntegralGoodsBaseMapper.selectGoodsOrderList(storeid);
+    }
+
+    public List<Map<String, Object>> selectGoodsOrderExchangeList(String storeid) {
+        return spmIntegralGoodsBaseMapper.selectGoodsOrderExchangeList(storeid);
     }
 
 //    // 接口38 会员换购积分商品 web/spms/BuyIntegralgoods.xhtml
