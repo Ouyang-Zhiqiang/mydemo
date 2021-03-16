@@ -82,7 +82,7 @@
         select * from user_staff where userid=(select user_base.userid from user_base where tel=#{tel})
     </select>
     <select id="setPartsjson" resultType="map">
-        select b.partsjson,ctb.purposes from cur_teamschedule a
+        select b.partsjson,ctb.purposes,a.coursename from cur_teamschedule a
         inner join Cur_TeamCourseCategory_Strength b on a.sid=b.sid
         inner join Cur_TeamCourseCategory_Base ctb on ctb.cid=b.cid
         where a.scheduleid=#{scheduleid}::bigint
