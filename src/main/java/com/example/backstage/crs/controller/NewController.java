@@ -2,6 +2,7 @@ package com.example.backstage.crs.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.example.backstage.crs.entity.CardBaseEntity;
 import com.example.backstage.crs.entity.GetUsersEntity;
 import com.example.backstage.crs.entity.SetCrdMembershipCardTransferEntity;
 import com.example.backstage.crs.mapper.NewMapper;
@@ -114,7 +115,7 @@ public class NewController {
     @RequestMapping("/cancelReservation3")
     @ResponseBody
     public String cancelReservation3(Param param){
-        newMapper.quxiaoyuyue2(param.getScheduleid());
+        newMapper.quxiaoyuyue2(param.getOrdid());
         newMapper.quxiaoyuyuesj(param.getTraineenum(),param.getScheduleid());
         return "ok";
     }
@@ -382,7 +383,7 @@ public class NewController {
     @ResponseBody
     public String getCaozuojilu(Param param){
         List<Map<Object, Object>> userSalesFollowup = newMapper.getCaozuojilu(param.getUserid(),param.getLimit(),param.getPage());
-        return JSON.toJSONStringWithDateFormat(userSalesFollowup, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        return JSON.toJSONStringWithDateFormat(userSalesFollowup, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
     }
     @RequestMapping("/setUserSalesFollowup")
     @ResponseBody
@@ -405,6 +406,50 @@ public class NewController {
     public String getCrdMembershipCardCategoryTeamCourse(String cardid){
         return JSON.toJSONString(newMapper.getCrdMembershipCardCategoryTeamCourse(cardid));
     }
-
+    @RequestMapping("/setImage")
+    @ResponseBody
+    public String setImage(Param param){
+        newMapper.setImage(param.getResid(),param.getResurl());
+        return "ok";
+    }
+    @RequestMapping("/xiugaihuiyuanka")
+    @ResponseBody
+    public String xiugaihuiyuanka(CardBaseEntity c){
+        newMapper.xiugaihuiyuanka(c);
+        return "ok";
+    }
+    @RequestMapping("/xiugaihuiyuankakecheng")
+    @ResponseBody
+    public String xiugaihuiyuankakecheng(CardBaseEntity c){
+        newMapper.xiugaikecheng(c.getCardid());
+        for (Map map : c.getCourseId()) {
+            newMapper.setCrdMembershipCardCategoryTeamCourse(String.valueOf(new Date().getTime()),c.getCardid(),
+                    map.get("courseid").toString(),map.get("coursename").toString());
+        }
+        return "ok";
+    }
+    @RequestMapping("/xiugaihuiyuankatidu")
+    @ResponseBody
+    public String xiugaihuiyuankatidu(CardBaseEntity c){
+        if(c.getTidu()!=null){
+            for (Map map : c.getTidu()) {
+                newMapper.setCrdMembershipCardCategoryTypeCard(c.getCardid(),c.getCardtype(),map.get("times").toString(),
+                        map.get("fee").toString(),map.get("periodvalidity").toString());
+            }
+        }
+        return "ok";
+    }
+    @RequestMapping("/xinzenghuiyuanka")
+    @ResponseBody
+    public String xinzenghuiyuanka(CardBaseEntity c){
+        newMapper.setCrdmembershipcardcategoryBase(c);
+        return "ok";
+    }
+    @RequestMapping("/xiugaihykzt")
+    @ResponseBody
+    public String xiugaihykzt(CardBaseEntity c){
+        newMapper.xiugaihykzt(c);
+        return "ok";
+    }
 
 }

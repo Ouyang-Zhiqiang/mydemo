@@ -151,12 +151,13 @@
     </insert>
 
     <select id="getcourseinformation" resultType="map">
-        select ub.name,ub.tel,oo.traineenum,cmb.cardname,oo.SignState,cmb.cardtype,
-            oo.OrdState,oo.Remarks,oo.createdon,ct.reservablenumber,oo.ordid,oo.userid,oo.cardno
-        from Cur_TeamSchedule ct
-        inner join Ord_OrderCourse oo on ct.scheduleid=oo.scheduleid
-        inner join user_base ub on oo.userid=ub.userid
-        inner join Crd_MembershipCard_Base cmb on oo.cardno=cmb.cardno
+        select ub.name,ub.tel,oo.traineenum,cmb.cardname,oo.SignState,e.cardtype,
+       oo.OrdState,oo.Remarks,oo.createdon,ct.reservablenumber,oo.ordid,oo.userid,oo.cardno
+from Cur_TeamSchedule ct
+         inner join Ord_OrderCourse oo on ct.scheduleid=oo.scheduleid
+         inner join user_base ub on oo.userid=ub.userid
+         inner join Crd_MembershipCard_Base cmb on oo.cardno=cmb.cardno
+inner join crd_membershipcardcategory_base e on cmb.cardid=e.cardid
         where oo.cardtype='T' and  ct.ScheduleId=#{ScheduleId}::bigint
     </select>
 

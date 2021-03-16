@@ -188,9 +188,13 @@
         )
     </insert>
     <select id="getPivateuser" resultType="map">
-        select ordid::varchar ,scheduleid::varchar,* from ord_ordercourse a
+        select ordid::varchar ,scheduleid::varchar,b.name,b.userid,b.tel,
+        a.traineenum,d.cardtype,d.cardname,a.ordstate,a.signstate,a.remarks,
+        a.createdon,c.cardno,a.coachid
+        from ord_ordercourse a
         inner join user_base b on a.userid=b.userid
         inner join crd_membershipcard_base c on a.cardno=c.cardno
+        inner join crd_membershipcardcategory_base d on c.cardid=d.cardid
         where (a.cardtype='P' or a.cardtype='S')  and scheduleid=#{scheduleid}::bigint
     </select>
     <update id="deletesj">
@@ -536,7 +540,7 @@
         where b.userid=#{userid}::bigint
         )
         order by operatingtime desc
-        #{limit}::integer offset #{limit}::integer*#{page}::integer
+        limit #{limit}::integer offset #{limit}::integer*#{page}::integer
     </select>
     <select id="setUserSalesFollowup">
         insert into User_Sales_Followup(userid, remarks, createdon,
@@ -589,6 +593,57 @@
     <select id="getCrdMembershipCardCategoryTeamCourse" resultType="map">
         select tcid::varchar , cardid::varchar , courseid::varchar , coursename, constimes,
         preferconstimes, state from Crd_MembershipCardCategory_TeamCourse
-        where cardid=#{cardid}::bigint;
+        where cardid=#{cardid}::bigint and isremoved=false
     </select>
+    <insert id="setImage">
+        insert into Base_Resources (resid, restype,resurl, isremoved,
+        createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{resid}::bigint,'img',#{resurl},false ,
+            now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <update id="xiugaihuiyuanka" parameterType="com.example.backstage.crs.entity.CardBaseEntity">
+        update crd_membershipcardcategory_base
+        set cardname=#{cardname},storesjson=#{storesjson}::json,istransfer=#{istransfer}::boolean,
+        ismulmem=#{ismulmem}::boolean,isonlinebuy=#{isonlinebuy}::boolean,
+        isopenedbyfirst=#{isopenedbyfirst}::boolean,isfree=#{isfree}::boolean
+        where cardid=#{cardid}::bigint
+    </update>
+
+    <insert id="setCrdMembershipCardCategoryTeamCourse">
+        insert into Crd_MembershipCardCategory_TeamCourse(tcid, cardid, courseid, coursename, constimes, preferconstimes,
+        state,isremoved, createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{tcid}::bigint,#{cardid}::bigint,#{courseid}::bigint,#{coursename},1,0,0,false ,
+            now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <delete id="xiugaikecheng">
+        delete from Crd_MembershipCardCategory_TeamCourse where cardid=#{cardid}::bigint
+    </delete>
+
+    <insert id="setCrdMembershipCardCategoryTypeCard">
+        insert into Crd_MembershipCardCategory_TypeCard(cardid, cardtype, times, fee, periodvalidity,
+        preferintros, points, state,isremoved, createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{cardid}::bigint,#{cardtype},#{times}::integer,#{fee}::numeric,#{periodvalidity}::integer ,
+            0,0,0,false ,now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <insert id="setCrdmembershipcardcategoryBase" parameterType="com.example.backstage.crs.entity.CardBaseEntity">
+        insert into crd_membershipcardcategory_base(cardid, cardname, cardtype, logoid, resurl, istransfer, ismulmem,
+        isonlinebuy, isopenedbyfirst, coursetype, isfree, labels, seqno, storesjson, state,isremoved,
+        createdon, createdby, createdname, createdip, lastedon, lastedby, lastedname, lastedip)
+        values (
+            #{cardid}::bigint,#{cardname},#{cardtype},#{logid}::bigint,#{resurl},#{istransfer}::boolean,
+            #{ismulmem}::boolean,#{isonlinebuy}::boolean,#{isopenedbyfirst}::boolean,#{coursetype},#{isfree}::boolean,
+            null,0,#{storesjson}::json,1,false ,
+            now(),'系统管理员','系统管理员','127.0.0.1',now(),'系统管理员','系统管理员','127.0.0.1'
+        )
+    </insert>
+    <update id="xiugaihykzt" parameterType="com.example.backstage.crs.entity.CardBaseEntity">
+        update crd_membershipcardcategory_base set state=#{state}::smallint
+        where cardid=#{cardid}::bigint
+    </update>
 </mapper>

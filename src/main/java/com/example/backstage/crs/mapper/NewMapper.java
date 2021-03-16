@@ -1,5 +1,6 @@
 package com.example.backstage.crs.mapper;
 
+import com.example.backstage.crs.entity.CardBaseEntity;
 import com.example.backstage.crs.entity.GetUsersEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -97,4 +98,13 @@ public interface NewMapper {
     List<Map<Object,Object>> getCrdMembershipCardCategoryTypeCard(@Param("cardid")String cardid);
     List<Map<Object,Object>> getAllCards(com.example.backstage.crs.util.Param param);
     List<Map<Object,Object>> getCrdMembershipCardCategoryTeamCourse(@Param("cardid")String cardid);
+    void setImage(@Param("resid") String resid,@Param("resurl") String resurl);
+    void xiugaihuiyuanka(CardBaseEntity cardBaseEntity);
+    void xiugaikecheng(@Param("cardid")String cardid);
+    void setCrdMembershipCardCategoryTeamCourse(@Param("tcid")String tcid,@Param("cardid")String cardid,
+                                                @Param("courseid")String courseid,@Param("coursename")String coursename);
+    void setCrdMembershipCardCategoryTypeCard(@Param("cardid")String cardid,@Param("cardtype")String cardtype,
+                                                @Param("times")String times,@Param("fee")String fee,@Param("periodvalidity")String periodvalidity);
+    void setCrdmembershipcardcategoryBase(CardBaseEntity cardBaseEntity);
+    void xiugaihykzt(CardBaseEntity cardBaseEntity);
 }
