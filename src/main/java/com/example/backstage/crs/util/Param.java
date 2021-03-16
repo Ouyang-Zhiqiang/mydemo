@@ -141,4 +141,6 @@ public class Param {
     private String timefee;
     private String isopen;
     private String isonlinebuy;
+    private String resid;
+    private String resurl;
 }
