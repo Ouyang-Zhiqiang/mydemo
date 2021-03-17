@@ -19,7 +19,7 @@
         <result property="isopened" column="isopened"/>
         <result property="signednumber" column="signednumber"/>
         <collection property="users" javaType="ArrayList" ofType="com.example.backstage.crs.entity.OrdOrdercourseEntity"  column="ordid">
-            <id property="ordid" column="OrdId"/>
+            <id property="ordid" column="OrdId"  javaType="string" jdbcType="VARCHAR"/>
             <result property="ordtype" column="OrdType"/>
             <result property="cardtype" column="CardType"/>
             <result property="coursedate" column="CourseDate"/>

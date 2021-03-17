@@ -214,7 +214,7 @@
         select concat(array(select c.cardname from crd_membershipcard_user b
         left join crd_membershipcard_base c on b.cardno=c.cardno
         where a.userid=b.userid
-        )) as cardsname,a.memgrade,a.name,a.tel,a.userid,a.createdon,a.status,f.name as storename,
+        )) as cardsname,a.memgrade,a.name,a.tel,a.userid,to_char(a.createdon,'yyyy-mm-dd hh24:mi') as createdon,a.status,f.name as storename,
         a.sex,a.storeid::varchar,a.sourcetype,saleuserid,a.points,
          (select name from user_base where userid=a.refuserid) as tjr,
          (select name from user_base where userid=a.saleuserid) as xs,a.remarks
@@ -243,8 +243,6 @@
         </if>
         group by a.userid,f.name
         order by a.createdon desc
-        limit #{limit}::bigint offset case #{limit}::bigint
-        when 999999 then 0 else #{page}::bigint*#{limit}::bigint end
     </select>
     <select id="TimedTasktk" resultType="map">
         select ordid::varchar,traineenum,scheduleid::varchar from ord_ordercourse

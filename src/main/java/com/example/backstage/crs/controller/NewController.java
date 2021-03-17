@@ -8,6 +8,8 @@ import com.example.backstage.crs.entity.SetCrdMembershipCardTransferEntity;
 import com.example.backstage.crs.mapper.NewMapper;
 import com.example.backstage.crs.service.AppletService;
 import com.example.backstage.crs.util.Param;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -233,9 +235,11 @@ public class NewController {
     }
     @RequestMapping("/getUsers")
     @ResponseBody
-    public String getUsers(GetUsersEntity getUsersEntity){
+    public PageInfo getUsers(GetUsersEntity getUsersEntity){
+        PageHelper.startPage(Integer.parseInt(getUsersEntity.getPage()), Integer.parseInt(getUsersEntity.getLimit()));
         List<Map<Object, Object>> users = newMapper.getUsers(getUsersEntity);
-        return JSON.toJSONStringWithDateFormat(users, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
+        PageInfo pageInfo=new PageInfo(users);
+        return pageInfo;
     }
     @RequestMapping("/updateUser")
     @ResponseBody

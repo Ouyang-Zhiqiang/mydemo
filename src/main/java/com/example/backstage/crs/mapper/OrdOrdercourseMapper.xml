@@ -240,7 +240,7 @@
 
 	<!--查询课程信息-->
 	<select id="selectOrderCourseByOrdid"  resultType="java.util.HashMap">
-		select coursedate,coursetime,coursename,courseendtime,cardtype from ord_ordercourse where ordid = #{ordid}
+		select coursedate,coursetime,coursename,courseendtime,cardtype from ord_ordercourse where ordid = #{ordid}::bigint
 	</select>
 
 	<select id="selectOnCourseThreeMonth" resultType="Long">

@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class  OrdOrdercourseEntity {
 
-  private long ordid;
+  private String ordid;
   private String ordtype;
     private String cardtype;
   @DateTimeFormat(pattern = "yyyy-MM-dd")
